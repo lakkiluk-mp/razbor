@@ -1,0 +1,23 @@
+{
+  "name": "@razbor/api",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@pothos/core": "^4.3.0",
+    "@pothos/plugin-prisma": "^4.2.0",
+    "@razbor/db": "workspace:*",
+    "graphql": "^16.9.0",
+    "graphql-yoga": "^5.10.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

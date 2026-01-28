@@ -1,0 +1,197 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum BodyType {
+  sedan
+  hatchback
+  liftback
+  crossover
+  suv
+  wagon
+  coupe
+  minivan
+  pickup
+}
+
+enum PartCategory {
+  body
+  optics
+  glass
+  interior
+  engine
+  transmission
+  suspension
+  electrical
+  cooling
+  other
+}
+
+enum ZoneType {
+  exterior
+  interior
+  mechanical
+}
+
+// ============================================
+// КАТАЛОГ АВТОМОБИЛЕЙ
+// ============================================
+
+model Brand {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  logo      String?
+  sortOrder Int      @default(0)
+
+  models    Model[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sortOrder])
+  @@map("brands")
+}
+
+model Model {
+  id         String   @id @default(cuid())
+  brandId    String
+  name       String
+  slug       String
+  isPopular  Boolean  @default(false)
+  sortOrder  Int      @default(0)
+
+  brand       Brand        @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  generations Generation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([brandId, slug])
+  @@index([brandId])
+  @@index([sortOrder])
+  @@map("models")
+}
+
+model Generation {
+  id        String   @id @default(cuid())
+  modelId   String
+  name      String
+  slug      String
+  yearStart Int
+  yearEnd   Int?
+  bodyType  BodyType
+  isActive  Boolean  @default(true)
+
+  model      Model       @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  modelParts ModelPart[]
+  prices     Price[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([modelId, slug])
+  @@index([modelId])
+  @@index([bodyType])
+  @@index([isActive])
+  @@map("generations")
+}
+
+// ============================================
+// ЗАПЧАСТИ
+// ============================================
+
+model Part {
+  id              String       @id @default(cuid())
+  name            String
+  slug            String       @unique
+  category        PartCategory
+  schematicZoneId String?
+  searchQueries   String[]     @default([])
+
+  schematicZone SchematicZone? @relation(fields: [schematicZoneId], references: [id])
+  modelParts    ModelPart[]
+  prices        Price[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([schematicZoneId])
+  @@map("parts")
+}
+
+model ModelPart {
+  id           String  @id @default(cuid())
+  generationId String
+  partId       String
+  isDefault    Boolean @default(true)
+
+  generation Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  part       Part       @relation(fields: [partId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([generationId, partId])
+  @@index([generationId])
+  @@index([partId])
+  @@map("model_parts")
+}
+
+// ============================================
+// ТРАФАРЕТ (СХЕМА АВТО)
+// ============================================
+
+model SchematicZone {
+  id        String     @id @default(cuid())
+  code      String     @unique
+  name      String
+  zoneType  ZoneType
+  sortOrder Int        @default(0)
+
+  parts Part[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("schematic_zones")
+}
+
+// ============================================
+// ЦЕНЫ
+// ============================================
+
+model Price {
+  id           String   @id @default(cuid())
+  partId       String
+  generationId String
+  minPrice     Int
+  maxPrice     Int
+  median       Int
+  avgPrice     Int
+  sampleSize   Int
+  source       String   @default("avito")
+  fetchedAt    DateTime @default(now())
+
+  part       Part       @relation(fields: [partId], references: [id], onDelete: Cascade)
+  generation Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([partId, generationId])
+  @@index([partId])
+  @@index([generationId])
+  @@index([updatedAt])
+  @@map("prices")
+}
