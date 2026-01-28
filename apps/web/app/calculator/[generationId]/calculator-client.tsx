@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, X } from 'lucide-react'
+import NProgress from 'nprogress'
 import { Button } from '@/components/ui/button'
 import { DamageSelector } from '@/components/features/damage-selector'
 import { incrementUsage } from '@/components/features/usage-counter'
@@ -40,11 +41,13 @@ export function CalculatorClient({ generation }: CalculatorClientProps) {
   const handleCalculate = async () => {
     const canUse = incrementUsage()
     if (!canUse) {
+      NProgress.start()
       router.push('/limit-reached')
       return
     }
 
     setIsCalculating(true)
+    NProgress.start()
 
     try {
       const result = await fetchGraphQL<{ calculate: CalculationResult }>(
@@ -68,9 +71,11 @@ export function CalculatorClient({ generation }: CalculatorClientProps) {
         damages: Array.from(selectedDamages).join(','),
       })
 
+      NProgress.done()
       router.push(`/result?${searchParams.toString()}`)
     } catch (error) {
       console.error('Calculation error:', error)
+      NProgress.done()
       alert('Ошибка при расчёте. Попробуйте ещё раз.')
     } finally {
       setIsCalculating(false)
@@ -97,9 +102,9 @@ export function CalculatorClient({ generation }: CalculatorClientProps) {
       </header>
 
       <div className="px-4 pb-4">
-        <h1 className="text-2xl font-bold text-zinc-100 mb-1">Состояние кузова</h1>
+        <h1 className="text-2xl font-bold text-zinc-100 mb-1">Состояние кузова и основных элементов</h1>
         <p className="text-zinc-500 text-sm">
-          Укажите что было повреждено или окрашено
+          Укажите что было повреждено
         </p>
       </div>
 
@@ -114,7 +119,7 @@ export function CalculatorClient({ generation }: CalculatorClientProps) {
           disabled={isCalculating}
           className="w-full h-14 bg-amber-500 hover:bg-amber-400 text-zinc-900 text-base font-semibold rounded-2xl disabled:opacity-50"
         >
-          {isCalculating ? 'Рассчитываем...' : 'РАССЧИТАТЬ'}
+          РАССЧИТАТЬ
         </Button>
       </div>
     </div>

@@ -29,3 +29,22 @@ builder.queryField('generation', (t) =>
     },
   })
 )
+
+builder.queryField('generationById', (t) =>
+  t.prismaField({
+    type: 'Generation',
+    nullable: true,
+    args: {
+      id: t.arg.string({ required: true }),
+    },
+    resolve: async (query, _root, args, ctx) => {
+      return ctx.prisma.generation.findFirst({
+        ...query,
+        where: {
+          id: args.id,
+          isActive: true,
+        },
+      })
+    },
+  })
+)

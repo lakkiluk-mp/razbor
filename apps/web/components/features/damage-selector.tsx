@@ -25,35 +25,56 @@ interface DamagePoint {
 
 const damagePointsByView: Record<CarView, DamagePoint[]> = {
   front: [
-    { code: 'hood', x: 50, y: 35, label: 'Капот' },
-    { code: 'fender_fl', x: 25, y: 50, label: 'Крыло ПЛ' },
-    { code: 'fender_fr', x: 75, y: 50, label: 'Крыло ПП' },
-    { code: 'bumper_f', x: 50, y: 70, label: 'Бампер П' },
-    { code: 'headlight_l', x: 30, y: 60, label: 'Фара Л' },
-    { code: 'headlight_r', x: 70, y: 60, label: 'Фара П' },
+    { code: 'roof', x: 50, y: 5, label: 'Крыша' },
     { code: 'windshield', x: 50, y: 25, label: 'Лобовое' },
+    { code: 'hood', x: 50, y: 44, label: 'Капот' },
+    { code: 'bumper_f', x: 50, y: 72, label: 'Бампер П' },
+    { code: 'headlight_l', x: 28, y: 58, label: 'Фара Л' },
+    { code: 'headlight_r', x: 72, y: 58, label: 'Фара П' },
   ],
   left: [
-    { code: 'fender_fl', x: 18, y: 48, label: 'Крыло ПЛ' },
-    { code: 'door_fl', x: 38, y: 52, label: 'Дверь ПЛ' },
-    { code: 'door_rl', x: 58, y: 52, label: 'Дверь ЗЛ' },
-    { code: 'fender_rl', x: 78, y: 48, label: 'Крыло ЗЛ' },
-    { code: 'mirror_l', x: 25, y: 35, label: 'Зеркало Л' },
+    { code: 'fender_fl', x: 18, y: 52, label: 'Крыло ПЛ' },
+    { code: 'door_fl', x: 38, y: 62, label: 'Дверь ПЛ' },
+    { code: 'door_rl', x: 58, y: 62, label: 'Дверь ЗЛ' },
+    { code: 'quarter_panel_l', x: 80, y: 52, label: 'Крыло ЗЛ' },
   ],
   back: [
-    { code: 'trunk', x: 50, y: 30, label: 'Багажник' },
-    { code: 'taillight_l', x: 30, y: 45, label: 'Фонарь Л' },
-    { code: 'taillight_r', x: 70, y: 45, label: 'Фонарь П' },
-    { code: 'bumper_r', x: 50, y: 65, label: 'Бампер З' },
-    { code: 'rear_glass', x: 50, y: 20, label: 'Заднее стекло' },
+    { code: 'rear_glass', x: 50, y: 22, label: 'Заднее стекло' },
+    { code: 'trunk', x: 50, y: 50, label: 'Багажник' },
+    { code: 'bumper_r', x: 50, y: 75, label: 'Бампер З' },
+    { code: 'taillight_l', x: 22, y: 48, label: 'Фонарь Л' },
+    { code: 'taillight_r', x: 77, y: 48, label: 'Фонарь П' },
   ],
   right: [
-    { code: 'fender_rr', x: 18, y: 48, label: 'Крыло ЗП' },
-    { code: 'door_rr', x: 38, y: 52, label: 'Дверь ЗП' },
-    { code: 'door_fr', x: 58, y: 52, label: 'Дверь ПП' },
-    { code: 'fender_fr', x: 78, y: 48, label: 'Крыло ПП' },
-    { code: 'mirror_r', x: 75, y: 35, label: 'Зеркало П' },
+    { code: 'quarter_panel_r', x: 20, y: 52, label: 'Крыло ЗП' },
+    { code: 'door_rr', x: 42, y: 62, label: 'Дверь ЗП' },
+    { code: 'door_fr', x: 62, y: 62, label: 'Дверь ПП' },
+    { code: 'fender_fr', x: 82, y: 52, label: 'Крыло ПП' },
   ],
+}
+
+const allDamageLabels: Record<string, string> = {
+  roof: 'Крыша',
+  windshield: 'Лобовое',
+  hood: 'Капот',
+  bumper_f: 'Бампер П',
+  headlight_l: 'Фара Л',
+  headlight_r: 'Фара П',
+  fender_fl: 'Крыло ПЛ',
+  door_fl: 'Дверь ПЛ',
+  door_rl: 'Дверь ЗЛ',
+  quarter_panel_l: 'Крыло ЗЛ',
+  rear_glass: 'Заднее стекло',
+  trunk: 'Багажник',
+  bumper_r: 'Бампер З',
+  taillight_l: 'Фонарь Л',
+  taillight_r: 'Фонарь П',
+  quarter_panel_r: 'Крыло ЗП',
+  door_rr: 'Дверь ЗП',
+  door_fr: 'Дверь ПП',
+  fender_fr: 'Крыло ПП',
+  engine: 'Двигатель',
+  transmission: 'КПП',
 }
 
 const aggregates = [
@@ -70,13 +91,17 @@ export function DamageSelector({
   selectedDamages,
   onToggleDamage,
 }: DamageSelectorProps) {
-  const [currentView, setCurrentView] = useState<CarView>('left')
+  const [currentView, setCurrentView] = useState<CarView>('front')
 
   const views: CarView[] = ['front', 'left', 'back', 'right']
 
-  const renderCarSvg = () => {
-    const svgClass = 'w-full h-auto max-h-[220px] text-zinc-400'
-    switch (currentView) {
+  const selectedLabels = Array.from(selectedDamages)
+    .map((code) => allDamageLabels[code])
+    .filter(Boolean)
+
+  const renderCarSvgByView = (view: CarView) => {
+    const svgClass = 'w-full h-full'
+    switch (view) {
       case 'front':
         return <CarFrontSvg className={svgClass} />
       case 'back':
@@ -105,31 +130,48 @@ export function DamageSelector({
   return (
     <>
       <div className="flex-1 flex items-center justify-center px-4 relative min-h-[280px]">
-        <div className="relative w-full max-w-md">
-          {renderCarSvg()}
-          {damagePointsByView[currentView].map((point) => {
-            const isSelected = selectedDamages.has(point.code)
+        <div className="relative w-full max-w-md h-[220px]">
+          {views.map((view) => {
+            const isActive = currentView === view
             return (
-              <button
-                key={point.code}
-                onClick={() => onToggleDamage(point.code)}
+              <div
+                key={view}
                 className={cn(
-                  'absolute w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 transform -translate-x-1/2 -translate-y-1/2',
-                  isSelected
-                    ? 'bg-amber-500 text-zinc-900 scale-110'
-                    : 'bg-zinc-800/80 text-zinc-400 border border-zinc-600 hover:bg-zinc-700'
+                  'absolute inset-0 flex items-center justify-center transition-opacity duration-300 ease-in-out',
+                  isActive
+                    ? 'opacity-100 z-10'
+                    : 'opacity-0 z-0 pointer-events-none'
                 )}
-                style={{ left: `${point.x}%`, top: `${point.y}%` }}
-                title={point.label}
-                aria-label={`${isSelected ? 'Убрать' : 'Отметить'} повреждение: ${point.label}`}
-                aria-pressed={isSelected}
               >
-                {isSelected ? (
-                  <Check className="w-4 h-4 stroke-[3]" />
-                ) : (
-                  <Plus className="w-4 h-4" />
-                )}
-              </button>
+                <div className="relative w-full h-full flex items-center justify-center">
+                  {renderCarSvgByView(view)}
+                  {damagePointsByView[view].map((point) => {
+                    const isSelected = selectedDamages.has(point.code)
+                    return (
+                      <button
+                        key={point.code}
+                        onClick={() => onToggleDamage(point.code)}
+                        className={cn(
+                          'absolute w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 transform -translate-x-1/2 -translate-y-1/2',
+                          isSelected
+                            ? 'bg-amber-500 text-zinc-900 scale-110'
+                            : 'bg-zinc-800/80 text-zinc-400 border border-zinc-600 hover:bg-zinc-700'
+                        )}
+                        style={{ left: `${point.x}%`, top: `${point.y}%` }}
+                        title={point.label}
+                        aria-label={`${isSelected ? 'Убрать' : 'Отметить'} повреждение: ${point.label}`}
+                        aria-pressed={isSelected}
+                      >
+                        {isSelected ? (
+                          <Check className="w-4 h-4 stroke-[3]" />
+                        ) : (
+                          <Plus className="w-4 h-4" />
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
             )
           })}
         </div>
@@ -165,7 +207,19 @@ export function DamageSelector({
       </div>
 
       <div className="px-4 pb-4">
-        <p className="text-zinc-400 text-sm mb-3">Агрегаты</p>
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-zinc-400 text-sm">Агрегаты</p>
+          <span
+            className={cn(
+              'text-xs px-2 py-1 rounded-lg min-w-[85px] text-center',
+              selectedLabels.length > 0
+                ? 'text-amber-400 bg-amber-500/10'
+                : 'text-zinc-600 bg-zinc-800/50'
+            )}
+          >
+            {selectedLabels.length} поврежд.
+          </span>
+        </div>
         <div className="flex gap-2">
           {aggregates.map((agg) => {
             const isSelected = selectedDamages.has(agg.code)

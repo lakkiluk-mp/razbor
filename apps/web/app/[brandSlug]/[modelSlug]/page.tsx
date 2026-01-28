@@ -59,7 +59,7 @@ export default async function GenerationsPage({ params }: Props) {
             >
               <div className="text-left">
                 <span className="text-zinc-100 font-medium">
-                  {gen.name} ({formatYears(gen.yearStart, gen.yearEnd)})
+                  {gen.name}
                 </span>
                 <span className="text-zinc-500 ml-2">
                   • {bodyTypeLabels[gen.bodyType] || gen.bodyType}

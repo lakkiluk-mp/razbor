@@ -1,34 +1,10 @@
 import { BodyType, PartCategory } from '@prisma/client'
-
-interface PartData {
-  name: string
-  slug: string
-  category: PartCategory
-  schematicZoneCode: string | null
-  searchQueries: string[]
-  price: {
-    minPrice: number
-    maxPrice: number
-    median: number
-    avgPrice: number
-    sampleSize: number
-  }
-}
-
-interface GenerationData {
-  name: string
-  slug: string
-  yearStart: number
-  yearEnd: number | null
-  bodyType: BodyType
-  isActive: boolean
-  priceMultiplier: number
-}
+import type { PartData, GenerationData } from './types'
 
 const baseParts: PartData[] = [
   {
     name: 'Капот',
-    slug: 'hood',
+    slug: 'lada-vesta-hood',
     category: 'body' as PartCategory,
     schematicZoneCode: 'hood',
     searchQueries: ['капот vesta', 'капот веста'],
@@ -42,7 +18,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Крыло переднее левое',
-    slug: 'fender-fl',
+    slug: 'lada-vesta-fender-fl',
     category: 'body' as PartCategory,
     schematicZoneCode: 'fender_fl',
     searchQueries: ['крыло vesta левое переднее', 'крыло веста переднее левое'],
@@ -56,7 +32,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Крыло переднее правое',
-    slug: 'fender-fr',
+    slug: 'lada-vesta-fender-fr',
     category: 'body' as PartCategory,
     schematicZoneCode: 'fender_fr',
     searchQueries: ['крыло vesta правое переднее', 'крыло веста переднее правое'],
@@ -70,7 +46,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Крыло заднее левое',
-    slug: 'fender-rl',
+    slug: 'lada-vesta-fender-rl',
     category: 'body' as PartCategory,
     schematicZoneCode: 'quarter_panel_l',
     searchQueries: ['крыло vesta левое заднее', 'крыло веста заднее левое'],
@@ -84,7 +60,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Крыло заднее правое',
-    slug: 'fender-rr',
+    slug: 'lada-vesta-fender-rr',
     category: 'body' as PartCategory,
     schematicZoneCode: 'quarter_panel_r',
     searchQueries: ['крыло vesta правое заднее', 'крыло веста заднее правое'],
@@ -98,7 +74,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Дверь передняя левая',
-    slug: 'door-fl',
+    slug: 'lada-vesta-door-fl',
     category: 'body' as PartCategory,
     schematicZoneCode: 'door_fl',
     searchQueries: ['дверь vesta передняя левая', 'дверь водителя vesta'],
@@ -112,7 +88,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Дверь передняя правая',
-    slug: 'door-fr',
+    slug: 'lada-vesta-door-fr',
     category: 'body' as PartCategory,
     schematicZoneCode: 'door_fr',
     searchQueries: ['дверь vesta передняя правая', 'дверь пассажира vesta'],
@@ -126,7 +102,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Дверь задняя левая',
-    slug: 'door-rl',
+    slug: 'lada-vesta-door-rl',
     category: 'body' as PartCategory,
     schematicZoneCode: 'door_rl',
     searchQueries: ['дверь vesta задняя левая', 'задняя дверь веста левая'],
@@ -140,7 +116,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Дверь задняя правая',
-    slug: 'door-rr',
+    slug: 'lada-vesta-door-rr',
     category: 'body' as PartCategory,
     schematicZoneCode: 'door_rr',
     searchQueries: ['дверь vesta задняя правая', 'задняя дверь веста правая'],
@@ -154,7 +130,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Крыша',
-    slug: 'roof',
+    slug: 'lada-vesta-roof',
     category: 'body' as PartCategory,
     schematicZoneCode: 'roof',
     searchQueries: ['крыша vesta', 'крыша веста'],
@@ -168,7 +144,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Крышка багажника',
-    slug: 'trunk',
+    slug: 'lada-vesta-trunk',
     category: 'body' as PartCategory,
     schematicZoneCode: 'trunk',
     searchQueries: ['крышка багажника vesta', 'багажник веста'],
@@ -182,7 +158,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Бампер передний',
-    slug: 'bumper-f',
+    slug: 'lada-vesta-bumper-f',
     category: 'body' as PartCategory,
     schematicZoneCode: 'bumper_f',
     searchQueries: ['бампер vesta передний', 'бампер веста передний'],
@@ -196,7 +172,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Бампер задний',
-    slug: 'bumper-r',
+    slug: 'lada-vesta-bumper-r',
     category: 'body' as PartCategory,
     schematicZoneCode: 'bumper_r',
     searchQueries: ['бампер vesta задний', 'бампер веста задний'],
@@ -210,7 +186,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Порог левый',
-    slug: 'sill-l',
+    slug: 'lada-vesta-sill-l',
     category: 'body' as PartCategory,
     schematicZoneCode: null,
     searchQueries: ['порог vesta левый', 'порог веста левый'],
@@ -224,7 +200,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Порог правый',
-    slug: 'sill-r',
+    slug: 'lada-vesta-sill-r',
     category: 'body' as PartCategory,
     schematicZoneCode: null,
     searchQueries: ['порог vesta правый', 'порог веста правый'],
@@ -238,7 +214,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Фара передняя левая',
-    slug: 'headlight-l',
+    slug: 'lada-vesta-headlight-l',
     category: 'optics' as PartCategory,
     schematicZoneCode: 'headlight_l',
     searchQueries: ['фара vesta левая', 'фара веста левая передняя'],
@@ -252,7 +228,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Фара передняя правая',
-    slug: 'headlight-r',
+    slug: 'lada-vesta-headlight-r',
     category: 'optics' as PartCategory,
     schematicZoneCode: 'headlight_r',
     searchQueries: ['фара vesta правая', 'фара веста правая передняя'],
@@ -266,7 +242,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Фонарь задний левый',
-    slug: 'taillight-l',
+    slug: 'lada-vesta-taillight-l',
     category: 'optics' as PartCategory,
     schematicZoneCode: 'taillight_l',
     searchQueries: ['фонарь vesta левый задний', 'стоп сигнал веста левый'],
@@ -280,7 +256,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Фонарь задний правый',
-    slug: 'taillight-r',
+    slug: 'lada-vesta-taillight-r',
     category: 'optics' as PartCategory,
     schematicZoneCode: 'taillight_r',
     searchQueries: ['фонарь vesta правый задний', 'стоп сигнал веста правый'],
@@ -294,7 +270,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Противотуманная фара левая',
-    slug: 'foglight-l',
+    slug: 'lada-vesta-foglight-l',
     category: 'optics' as PartCategory,
     schematicZoneCode: 'fog_light_l',
     searchQueries: ['противотуманка vesta левая', 'птф веста левая'],
@@ -308,7 +284,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Противотуманная фара правая',
-    slug: 'foglight-r',
+    slug: 'lada-vesta-foglight-r',
     category: 'optics' as PartCategory,
     schematicZoneCode: 'fog_light_r',
     searchQueries: ['противотуманка vesta правая', 'птф веста правая'],
@@ -322,7 +298,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Лобовое стекло',
-    slug: 'windshield',
+    slug: 'lada-vesta-windshield',
     category: 'glass' as PartCategory,
     schematicZoneCode: 'windshield',
     searchQueries: ['лобовое стекло vesta', 'ветровое стекло веста'],
@@ -336,7 +312,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Заднее стекло',
-    slug: 'rear-glass',
+    slug: 'lada-vesta-rear-glass',
     category: 'glass' as PartCategory,
     schematicZoneCode: 'rear_glass',
     searchQueries: ['заднее стекло vesta', 'стекло багажника веста'],
@@ -350,7 +326,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Стекло двери переднее левое',
-    slug: 'glass-door-fl',
+    slug: 'lada-vesta-glass-door-fl',
     category: 'glass' as PartCategory,
     schematicZoneCode: 'side_glass_fl',
     searchQueries: ['стекло двери vesta переднее левое'],
@@ -364,7 +340,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Стекло двери переднее правое',
-    slug: 'glass-door-fr',
+    slug: 'lada-vesta-glass-door-fr',
     category: 'glass' as PartCategory,
     schematicZoneCode: 'side_glass_fr',
     searchQueries: ['стекло двери vesta переднее правое'],
@@ -378,7 +354,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Стекло двери заднее левое',
-    slug: 'glass-door-rl',
+    slug: 'lada-vesta-glass-door-rl',
     category: 'glass' as PartCategory,
     schematicZoneCode: 'side_glass_rl',
     searchQueries: ['стекло двери vesta заднее левое'],
@@ -392,7 +368,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Стекло двери заднее правое',
-    slug: 'glass-door-rr',
+    slug: 'lada-vesta-glass-door-rr',
     category: 'glass' as PartCategory,
     schematicZoneCode: 'side_glass_rr',
     searchQueries: ['стекло двери vesta заднее правое'],
@@ -406,7 +382,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Зеркало левое',
-    slug: 'mirror-l',
+    slug: 'lada-vesta-mirror-l',
     category: 'body' as PartCategory,
     schematicZoneCode: 'mirror_l',
     searchQueries: ['зеркало vesta левое', 'зеркало веста левое'],
@@ -420,7 +396,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Зеркало правое',
-    slug: 'mirror-r',
+    slug: 'lada-vesta-mirror-r',
     category: 'body' as PartCategory,
     schematicZoneCode: 'mirror_r',
     searchQueries: ['зеркало vesta правое', 'зеркало веста правое'],
@@ -434,7 +410,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Двигатель 1.6 106 л.с. (21129)',
-    slug: 'engine-1-6-106',
+    slug: 'lada-vesta-engine-1-6-106',
     category: 'engine' as PartCategory,
     schematicZoneCode: 'engine',
     searchQueries: ['двигатель vesta 1.6', 'мотор vesta 21129', 'двс веста 1.6'],
@@ -448,7 +424,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Двигатель 1.8 122 л.с. (21179)',
-    slug: 'engine-1-8-122',
+    slug: 'lada-vesta-engine-1-8-122',
     category: 'engine' as PartCategory,
     schematicZoneCode: 'engine',
     searchQueries: ['двигатель vesta 1.8', 'мотор vesta 21179', 'двс веста 1.8'],
@@ -462,7 +438,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'МКПП JH3 5-ступ',
-    slug: 'transmission-mt-jh3',
+    slug: 'lada-vesta-transmission-mt-jh3',
     category: 'transmission' as PartCategory,
     schematicZoneCode: 'transmission',
     searchQueries: ['коробка vesta мкпп', 'кпп vesta jh3', 'мкпп веста'],
@@ -476,7 +452,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'АКПП Jatco (вариатор)',
-    slug: 'transmission-at-jatco',
+    slug: 'lada-vesta-transmission-at-jatco',
     category: 'transmission' as PartCategory,
     schematicZoneCode: 'transmission',
     searchQueries: ['коробка vesta акпп', 'вариатор vesta jatco', 'акпп веста'],
@@ -490,7 +466,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Радиатор охлаждения',
-    slug: 'radiator',
+    slug: 'lada-vesta-radiator',
     category: 'cooling' as PartCategory,
     schematicZoneCode: null,
     searchQueries: ['радиатор vesta охлаждения', 'радиатор веста'],
@@ -504,7 +480,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Радиатор кондиционера',
-    slug: 'ac-condenser',
+    slug: 'lada-vesta-ac-condenser',
     category: 'cooling' as PartCategory,
     schematicZoneCode: null,
     searchQueries: ['радиатор кондиционера vesta', 'конденсор веста'],
@@ -518,7 +494,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Панель приборов (торпедо)',
-    slug: 'dashboard',
+    slug: 'lada-vesta-dashboard',
     category: 'interior' as PartCategory,
     schematicZoneCode: 'dashboard',
     searchQueries: ['торпедо vesta', 'панель приборов vesta', 'торпеда веста'],
@@ -532,7 +508,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Сиденье переднее левое',
-    slug: 'seat-fl',
+    slug: 'lada-vesta-seat-fl',
     category: 'interior' as PartCategory,
     schematicZoneCode: 'seats_f',
     searchQueries: ['сиденье vesta водительское', 'кресло веста переднее левое'],
@@ -546,7 +522,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Сиденье переднее правое',
-    slug: 'seat-fr',
+    slug: 'lada-vesta-seat-fr',
     category: 'interior' as PartCategory,
     schematicZoneCode: 'seats_f',
     searchQueries: ['сиденье vesta пассажирское', 'кресло веста переднее правое'],
@@ -560,7 +536,7 @@ const baseParts: PartData[] = [
   },
   {
     name: 'Руль',
-    slug: 'steering-wheel',
+    slug: 'lada-vesta-steering-wheel',
     category: 'interior' as PartCategory,
     schematicZoneCode: 'steering_wheel',
     searchQueries: ['руль vesta', 'рулевое колесо веста'],

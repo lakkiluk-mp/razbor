@@ -31,42 +31,40 @@ export default async function CalculatorPage({ params, searchParams }: Props) {
   const { generationId } = parsedParams.data
   const { brand: brandSlug, model: modelSlug } = await searchParams
 
-  const generationQuery = `
-    query GetGenerationById($id: ID!) {
-      generation: node(id: $id) {
-        ... on Generation {
+  const generationByIdQuery = `
+    query GetGenerationById($id: String!) {
+      generation: generationById(id: $id) {
+        id
+        name
+        slug
+        yearStart
+        yearEnd
+        bodyType
+        model {
           id
           name
           slug
-          yearStart
-          yearEnd
-          bodyType
-          model {
+          brand {
             id
             name
             slug
-            brand {
-              id
-              name
-              slug
-            }
           }
-          parts {
+        }
+        parts {
+          id
+          name
+          category
+          schematicZone {
             id
+            code
             name
-            category
-            schematicZone {
-              id
-              code
-              name
-              type
-            }
-            price {
-              median
-              min
-              max
-              count
-            }
+            type
+          }
+          price {
+            median
+            min
+            max
+            count
           }
         }
       }
@@ -129,7 +127,7 @@ export default async function CalculatorPage({ params, searchParams }: Props) {
 
   if (!generation) {
     try {
-      const data = await fetchGraphQL<GenerationByIdResponse>(generationQuery, {
+      const data = await fetchGraphQL<GenerationByIdResponse>(generationByIdQuery, {
         id: generationId,
       })
       generation = data.generation

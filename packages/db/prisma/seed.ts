@@ -1,44 +1,36 @@
 import { PrismaClient } from '@prisma/client'
 import { schematicZones } from './seed/schematic-zones'
 import { ladaVestaSeed } from './seed/lada-vesta'
+import { ladaGrantaSeed } from './seed/lada-granta'
+import type { ModelSeed } from './seed/types'
 
 const prisma = new PrismaClient()
 
-async function main() {
-  console.log('Seeding database...')
+const modelSeeds: ModelSeed[] = [ladaVestaSeed, ladaGrantaSeed] as ModelSeed[]
 
-  console.log('Creating schematic zones...')
-  for (const zone of schematicZones) {
-    await prisma.schematicZone.upsert({
-      where: { code: zone.code },
-      update: {},
-      create: zone,
-    })
-  }
-  console.log(`Created ${schematicZones.length} schematic zones`)
+async function seedModel(seedData: ModelSeed) {
+  console.log(`\n--- Seeding ${seedData.brand.name} ${seedData.model.name} ---`)
 
-  console.log('Creating brand...')
   const brand = await prisma.brand.upsert({
-    where: { slug: ladaVestaSeed.brand.slug },
+    where: { slug: seedData.brand.slug },
     update: {},
-    create: ladaVestaSeed.brand,
+    create: seedData.brand,
   })
-  console.log(`Created brand: ${brand.name}`)
+  console.log(`Brand: ${brand.name}`)
 
-  console.log('Creating model...')
   const model = await prisma.model.upsert({
     where: {
-      brandId_slug: { brandId: brand.id, slug: ladaVestaSeed.model.slug }
+      brandId_slug: { brandId: brand.id, slug: seedData.model.slug }
     },
     update: {},
-    create: { ...ladaVestaSeed.model, brandId: brand.id },
+    create: { ...seedData.model, brandId: brand.id },
   })
-  console.log(`Created model: ${model.name}`)
+  console.log(`Model: ${model.name}`)
 
   let totalGenerations = 0
   let totalParts = 0
 
-  for (const genData of ladaVestaSeed.generations) {
+  for (const genData of seedData.generations) {
     console.log(`Creating generation: ${genData.name}...`)
 
     const generation = await prisma.generation.upsert({
@@ -51,14 +43,14 @@ async function main() {
         slug: genData.slug,
         yearStart: genData.yearStart,
         yearEnd: genData.yearEnd,
-        bodyType: genData.bodyType,
+        bodyType: genData.bodyType as 'sedan' | 'hatchback' | 'wagon' | 'crossover',
         isActive: genData.isActive,
         modelId: model.id,
       },
     })
     totalGenerations++
 
-    const parts = ladaVestaSeed.getPartsForGeneration(genData)
+    const parts = seedData.getPartsForGeneration(genData)
 
     for (const partData of parts) {
       let schematicZoneId = null
@@ -66,6 +58,9 @@ async function main() {
         const zone = await prisma.schematicZone.findUnique({
           where: { code: partData.schematicZoneCode }
         })
+        if (!zone) {
+          console.warn(`Warning: SchematicZone not found for code "${partData.schematicZoneCode}" (part: ${partData.name})`)
+        }
         schematicZoneId = zone?.id || null
       }
 
@@ -75,7 +70,7 @@ async function main() {
         create: {
           name: partData.name,
           slug: partData.slug,
-          category: partData.category,
+          category: partData.category as 'body' | 'optics' | 'glass' | 'engine' | 'transmission' | 'suspension' | 'interior' | 'electrical' | 'cooling' | 'other',
           schematicZoneId,
           searchQueries: partData.searchQueries || [],
         },
@@ -113,7 +108,32 @@ async function main() {
     console.log(`Created generation: ${generation.name} with ${parts.length} parts`)
   }
 
-  console.log(`Seeding completed! Created ${totalGenerations} generations, ${totalParts} parts with prices`)
+  return { totalGenerations, totalParts }
+}
+
+async function main() {
+  console.log('Seeding database...')
+
+  console.log('Creating schematic zones...')
+  for (const zone of schematicZones) {
+    await prisma.schematicZone.upsert({
+      where: { code: zone.code },
+      update: {},
+      create: zone,
+    })
+  }
+  console.log(`Created ${schematicZones.length} schematic zones`)
+
+  let totalGenerations = 0
+  let totalParts = 0
+
+  for (const seedData of modelSeeds) {
+    const result = await seedModel(seedData)
+    totalGenerations += result.totalGenerations
+    totalParts += result.totalParts
+  }
+
+  console.log(`\nSeeding completed! Created ${totalGenerations} generations, ${totalParts} parts with prices`)
 }
 
 main()
