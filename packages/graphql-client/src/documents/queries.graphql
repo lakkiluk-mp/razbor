@@ -1,0 +1,98 @@
+query GetBrands {
+  brands {
+    id
+    name
+    slug
+    logo
+  }
+}
+
+query GetBrand($slug: String!) {
+  brand(slug: $slug) {
+    id
+    name
+    slug
+    logo
+    models {
+      id
+      name
+      slug
+    }
+  }
+}
+
+query GetModel($brandSlug: String!, $modelSlug: String!) {
+  model(brandSlug: $brandSlug, modelSlug: $modelSlug) {
+    id
+    name
+    slug
+    brand {
+      id
+      name
+      slug
+    }
+    generations {
+      id
+      name
+      slug
+      yearStart
+      yearEnd
+      bodyType
+    }
+  }
+}
+
+query GetGeneration($brandSlug: String!, $modelSlug: String!, $generationSlug: String!) {
+  generation(brandSlug: $brandSlug, modelSlug: $modelSlug, generationSlug: $generationSlug) {
+    id
+    name
+    slug
+    yearStart
+    yearEnd
+    bodyType
+    model {
+      id
+      name
+      slug
+      brand {
+        id
+        name
+        slug
+      }
+    }
+    parts {
+      id
+      name
+      category
+      schematicZone {
+        id
+        code
+        name
+        type
+      }
+      price {
+        median
+        min
+        max
+        count
+      }
+    }
+  }
+}
+
+query GetSchematicZones($bodyType: BodyType!) {
+  schematicZones(bodyType: $bodyType) {
+    id
+    code
+    name
+    type
+  }
+}
+
+query GetUsageInfo {
+  usageInfo {
+    freeEstimatesUsed
+    freeEstimatesLimit
+    nextResetAt
+  }
+}

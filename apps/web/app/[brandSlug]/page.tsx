@@ -1,12 +1,10 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, ChevronRight } from 'lucide-react'
-import { fetchGraphQL, queries } from '@/lib/graphql'
-import type { Brand, Model } from '@/lib/types'
+import { fetchGraphQL, queries } from '@/lib/graphql-client'
+import type { BrandWithModels, BrandResponse } from '@razbor/hooks'
 
-interface BrandResponse {
-  brand: (Brand & { models: Model[] }) | null
-}
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ brandSlug: string }>

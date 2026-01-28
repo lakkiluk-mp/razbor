@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
+import { Providers } from '@/components/providers'
 import { NavigationProgress } from '@/components/features/navigation-progress'
 import './globals.css'
 
@@ -24,8 +25,10 @@ export default function RootLayout({
   return (
     <html lang="ru" className="dark">
       <body className={`${inter.className} antialiased`}>
-        <NavigationProgress />
-        {children}
+        <Providers>
+          <NavigationProgress />
+          {children}
+        </Providers>
       </body>
     </html>
   )

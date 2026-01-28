@@ -1,11 +1,9 @@
 import Link from 'next/link'
-import { fetchGraphQL, queries } from '@/lib/graphql'
-import type { Brand } from '@/lib/types'
+import { fetchGraphQL, queries } from '@/lib/graphql-client'
+import type { Brand, BrandsResponse } from '@razbor/hooks'
 import { UsageCounter } from '@/components/features/usage-counter'
 
-interface BrandsResponse {
-  brands: Brand[]
-}
+export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const data = await fetchGraphQL<BrandsResponse>(queries.brands)

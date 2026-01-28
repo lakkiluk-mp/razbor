@@ -1,0 +1,23 @@
+mutation Calculate($input: CalculateInput!) {
+  calculate(input: $input) {
+    totalPrice
+    parts {
+      part {
+        id
+        name
+        category
+        schematicZone {
+          id
+          code
+          name
+        }
+        price {
+          median
+        }
+      }
+      included
+      isDamaged
+      price
+    }
+  }
+}

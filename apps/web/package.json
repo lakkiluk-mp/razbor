@@ -13,7 +13,10 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@razbor/api": "workspace:*",
     "@razbor/db": "workspace:*",
+    "@razbor/graphql-client": "workspace:*",
+    "@razbor/hooks": "workspace:*",
     "@razbor/shared": "workspace:*",
+    "@tanstack/react-query": "^5.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.563.0",
@@ -26,6 +29,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/nprogress": "^0.2.3",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

@@ -100,18 +100,15 @@
 │
 ├── /packages
 │   │
-│   ├── /api                      # GraphQL сервер
+│   ├── /api                      # GraphQL сервер (graphql-yoga + Pothos)
 │   │   ├── /src
 │   │   │   ├── /schema          # Pothos схема
 │   │   │   │   ├── index.ts     # Главная схема
-│   │   │   │   ├── car.ts       # Car types & queries
-│   │   │   │   ├── part.ts      # Part types & queries
-│   │   │   │   └── calculation.ts
-│   │   │   ├── /resolvers       # Резолверы (если выносим)
+│   │   │   │   ├── builder.ts   # Pothos builder configuration
+│   │   │   │   ├── /types       # GraphQL типы
+│   │   │   │   ├── /queries     # Query fields
+│   │   │   │   └── /mutations   # Mutation fields
 │   │   │   ├── /services        # Бизнес-логика
-│   │   │   │   ├── car.service.ts
-│   │   │   │   ├── part.service.ts
-│   │   │   │   ├── price.service.ts
 │   │   │   │   └── calculator.service.ts
 │   │   │   └── index.ts         # Экспорт yoga сервера
 │   │   └── package.json
@@ -128,37 +125,28 @@
 │   ├── /shared                   # Общий код (Web + Mobile)
 │   │   ├── /src
 │   │   │   ├── /validators      # Zod схемы
-│   │   │   │   ├── car.ts
-│   │   │   │   ├── part.ts
-│   │   │   │   └── calculation.ts
-│   │   │   ├── /utils           # Чистые функции
-│   │   │   │   ├── calculator.ts    # Логика расчётов
-│   │   │   │   ├── formatters.ts    # Форматирование цен
-│   │   │   │   └── helpers.ts
+│   │   │   ├── /utils           # Чистые функции (форматирование, расчёты)
 │   │   │   ├── /constants       # Константы, енамы
-│   │   │   │   ├── metals.ts    # Цены на металл
-│   │   │   │   ├── categories.ts
-│   │   │   │   └── routes.ts    # Маршруты (абстракция)
 │   │   │   └── /types           # Общие типы
-│   │   │       └── index.ts
 │   │   └── package.json
 │   │
-│   ├── /hooks                    # React хуки (универсальные)
+│   ├── /graphql-client           # GraphQL клиент + codegen
 │   │   ├── /src
-│   │   │   ├── useCars.ts       # Запрос списка авто
-│   │   │   ├── useParts.ts      # Запрос запчастей
-│   │   │   ├── useCalculation.ts
-│   │   │   └── index.ts
+│   │   │   ├── client.ts        # graphql-request instance
+│   │   │   ├── /queries         # GraphQL query документы
+│   │   │   ├── /mutations       # GraphQL mutation документы
+│   │   │   └── /generated       # Сгенерированные типы (codegen)
+│   │   ├── codegen.ts           # Конфиг GraphQL Codegen
 │   │   └── package.json
 │   │
-│   └── /graphql-client           # GraphQL клиент
+│   └── /hooks                    # React Query хуки (универсальные Web + Mobile)
 │       ├── /src
-│       │   ├── client.ts        # graphql-request instance
-│       │   ├── /queries         # GraphQL queries
-│       │   └── /mutations       # GraphQL mutations
-│       ├── /generated           # Сгенерированные типы (codegen)
-│       │   └── graphql.ts
-│       ├── codegen.ts           # Конфиг codegen
+│       │   ├── useBrands.ts     # Запрос списка марок
+│       │   ├── useBrand.ts      # Запрос марки с моделями
+│       │   ├── useModel.ts      # Запрос модели с поколениями
+│       │   ├── useGeneration.ts # Запрос поколения с запчастями
+│       │   ├── useCalculate.ts  # Mutation расчёта стоимости
+│       │   └── index.ts         # Реэкспорт всех хуков
 │       └── package.json
 │
 ├── /tools
@@ -198,12 +186,12 @@
 
 | Пакет | Web | Mobile | Переиспользование |
 |-------|-----|--------|-------------------|
-| `@razbor/api` | ✓ | ✓ | 100% |
-| `@razbor/db` | ✓ | ✓ | 100% |
-| `@razbor/shared` | ✓ | ✓ | 100% |
-| `@razbor/hooks` | ✓ | ✓ | 100% |
-| `@razbor/graphql-client` | ✓ | ✓ | 100% |
-| `apps/web/components` | ✓ | ✗ | 0% (переписываем) |
+| `@razbor/api` | ✓ | ✓ | 100% — GraphQL сервер |
+| `@razbor/db` | ✓ | ✓ | 100% — Prisma Client |
+| `@razbor/shared` | ✓ | ✓ | 100% — валидация, утилиты, константы |
+| `@razbor/graphql-client` | ✓ | ✓ | 100% — GraphQL клиент, queries, mutations, codegen |
+| `@razbor/hooks` | ✓ | ✓ | 100% — React Query хуки (useBrands, useBrand, useModel, useGeneration, useCalculate) |
+| `apps/web/components` | ✓ | ✗ | 0% (переписываем для Native) |
 
 **Итого: ~80% кода переиспользуется при переходе на React Native**
 

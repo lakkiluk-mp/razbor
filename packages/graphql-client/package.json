@@ -1,0 +1,27 @@
+{
+  "name": "@razbor/graphql-client",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "codegen": "graphql-codegen --config codegen.ts"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "graphql": "^16.8.0"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/typescript": "^4.0.0",
+    "@graphql-codegen/typescript-operations": "^4.0.0",
+    "graphql": "^16.8.0",
+    "typescript": "^5.0.0"
+  }
+}

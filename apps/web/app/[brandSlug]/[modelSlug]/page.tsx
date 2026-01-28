@@ -1,13 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, ChevronRight } from 'lucide-react'
-import { fetchGraphQL, queries } from '@/lib/graphql'
-import type { Model, Generation, Brand } from '@/lib/types'
-import { bodyTypeLabels } from '@/lib/types'
+import { fetchGraphQL, queries } from '@/lib/graphql-client'
+import type { ModelWithGenerations, ModelResponse } from '@razbor/hooks'
+import { bodyTypeLabels, type BodyType } from '@/lib/types'
 
-interface ModelResponse {
-  model: (Model & { brand: Brand; generations: Generation[] }) | null
-}
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ brandSlug: string; modelSlug: string }>
@@ -62,7 +60,7 @@ export default async function GenerationsPage({ params }: Props) {
                   {gen.name}
                 </span>
                 <span className="text-zinc-500 ml-2">
-                  • {bodyTypeLabels[gen.bodyType] || gen.bodyType}
+                  • {bodyTypeLabels[gen.bodyType as BodyType] || gen.bodyType}
                 </span>
               </div>
               <ChevronRight className="w-5 h-5 text-zinc-500" />

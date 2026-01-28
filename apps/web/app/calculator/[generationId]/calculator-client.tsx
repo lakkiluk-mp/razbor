@@ -8,12 +8,12 @@ import NProgress from 'nprogress'
 import { Button } from '@/components/ui/button'
 import { DamageSelector } from '@/components/features/damage-selector'
 import { incrementUsage } from '@/components/features/usage-counter'
-import { fetchGraphQL, mutations } from '@/lib/graphql'
-import type { Generation, CalculationResult } from '@/lib/types'
+import { fetchGraphQL, mutations } from '@/lib/graphql-client'
+import type { GenerationWithParts, CalculationResult } from '@razbor/hooks'
 import { CALCULATION_PARTS_KEY } from '@/lib/constants'
 
 interface CalculatorClientProps {
-  generation: Generation
+  generation: GenerationWithParts
 }
 
 export function CalculatorClient({ generation }: CalculatorClientProps) {
