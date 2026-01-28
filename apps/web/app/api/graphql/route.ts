@@ -1,5 +1,9 @@
 import { yoga } from '@razbor/api'
 
-const { handleRequest } = yoga
+export async function GET(request: Request) {
+  return yoga.handleRequest(request, {})
+}
 
-export { handleRequest as GET, handleRequest as POST }
+export async function POST(request: Request) {
+  return yoga.handleRequest(request, {})
+}

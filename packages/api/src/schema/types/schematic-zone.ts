@@ -1,7 +1,7 @@
 import { builder } from '../builder'
 import { ZoneTypeEnum } from './enums'
 
-builder.prismaObject('SchematicZone', {
+export const SchematicZoneRef = builder.prismaObject('SchematicZone', {
   fields: (t) => ({
     id: t.exposeID('id'),
     code: t.exposeString('code'),

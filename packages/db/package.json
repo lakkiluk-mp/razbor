@@ -8,6 +8,10 @@
     ".": {
       "types": "./src/client.ts",
       "default": "./src/client.ts"
+    },
+    "./pothos-types": {
+      "types": "./src/pothos-types.ts",
+      "default": "./src/pothos-types.ts"
     }
   },
   "scripts": {

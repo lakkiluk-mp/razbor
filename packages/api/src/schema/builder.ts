@@ -1,7 +1,8 @@
 import SchemaBuilder from '@pothos/core'
+import '@pothos/plugin-prisma'
 import PrismaPlugin from '@pothos/plugin-prisma'
-import type PrismaTypes from '@pothos/plugin-prisma/generated'
-import { getDatamodel } from '@pothos/plugin-prisma/generated'
+import type PrismaTypes from '../pothos-types'
+import { getDatamodel } from '../pothos-types'
 import { type PrismaClient, prisma } from '@razbor/db'
 
 export interface Context {

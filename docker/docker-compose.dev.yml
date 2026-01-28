@@ -29,6 +29,32 @@ services:
       timeout: 5s
       retries: 5
 
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    container_name: razbor-web
+    ports:
+      - "3000:3000"
+    env_file:
+      - ../.env.docker
+    volumes:
+      - ../.env.docker:/app/.env:ro
+      - ../.env.docker:/app/packages/db/.env:ro
+      - ../apps/web:/app/apps/web
+      - ../packages:/app/packages
+      - /app/node_modules
+      - /app/apps/web/node_modules
+      - /app/apps/web/.next
+      - /app/packages/db/node_modules
+      - /app/packages/api/node_modules
+      - /app/packages/shared/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
 volumes:
   postgres_data:
   redis_data:

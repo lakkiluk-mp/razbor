@@ -1,11 +1,40 @@
-import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import { fetchGraphQL, queries } from '@/lib/graphql'
+import type { Brand } from '@/lib/types'
+import { UsageCounter } from '@/components/features/usage-counter'
 
-export default function Home() {
+interface BrandsResponse {
+  brands: Brand[]
+}
+
+export default async function HomePage() {
+  const data = await fetchGraphQL<BrandsResponse>(queries.brands)
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4">
-      <h1 className="text-2xl font-bold">Razbor</h1>
-      <p className="text-gray-600 mt-2">Калькулятор маржинальности авторазбора</p>
-      <Button className="mt-4">Начать расчёт</Button>
-    </main>
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col">
+      <header className="px-4 pt-6 pb-4">
+        <h1 className="text-2xl font-bold">Калькулятор запчастей</h1>
+        <p className="text-zinc-500 text-sm mt-1">Выберите марку автомобиля</p>
+      </header>
+
+      <div className="flex-1 px-4 pb-4">
+        <div className="grid grid-cols-3 gap-3">
+          {data.brands.map((brand) => (
+            <Link
+              key={brand.id}
+              href={`/${brand.slug}`}
+              className="aspect-square bg-zinc-900 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-zinc-800 transition-colors active:scale-95"
+            >
+              <div className="w-12 h-12 bg-zinc-800 rounded-full flex items-center justify-center text-lg font-bold text-zinc-300">
+                {brand.logo || brand.name.charAt(0)}
+              </div>
+              <span className="text-sm text-zinc-300">{brand.name}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <UsageCounter />
+    </div>
   )
 }

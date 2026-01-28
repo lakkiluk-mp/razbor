@@ -3,6 +3,7 @@ import { builder } from '../builder'
 import { PartCategoryEnum } from './enums'
 import type { PriceData } from './price'
 import { PriceType } from './price'
+import { SchematicZoneRef } from './schematic-zone'
 
 builder.prismaObject('Part', {
   fields: (t) => ({
@@ -36,7 +37,7 @@ builder.objectType(PartWithPriceType, {
       resolve: (part) => part.category,
     }),
     schematicZone: t.field({
-      type: builder.objectRef<SchematicZone>('SchematicZone'),
+      type: SchematicZoneRef,
       nullable: true,
       resolve: (part) => part.schematicZone,
     }),
