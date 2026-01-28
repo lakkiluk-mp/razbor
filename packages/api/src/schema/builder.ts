@@ -1,0 +1,27 @@
+import SchemaBuilder from '@pothos/core'
+import PrismaPlugin from '@pothos/plugin-prisma'
+import type PrismaTypes from '@pothos/plugin-prisma/generated'
+import { getDatamodel } from '@pothos/plugin-prisma/generated'
+import { type PrismaClient, prisma } from '@razbor/db'
+
+export interface Context {
+  prisma: PrismaClient
+}
+
+export const builder = new SchemaBuilder<{
+  PrismaTypes: PrismaTypes
+  Context: Context
+  Scalars: {
+    DateTime: {
+      Input: Date
+      Output: Date
+    }
+  }
+}>({
+  plugins: [PrismaPlugin],
+  prisma: {
+    client: prisma,
+    dmmf: getDatamodel(),
+    filterConnectionTotalCount: true,
+  },
+})
