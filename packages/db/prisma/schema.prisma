@@ -1,5 +1,5 @@
 generator client {
-оя  provider      = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
@@ -49,6 +49,7 @@ enum ZoneType {
   interior
   mechanical
 }
+
 
 // ============================================
 // КАТАЛОГ АВТОМОБИЛЕЙ
@@ -125,6 +126,7 @@ model Part {
   category        PartCategory
   schematicZoneId String?
   searchQueries   String[]     @default([])
+  configGroup     String?
 
   schematicZone SchematicZone? @relation(fields: [schematicZoneId], references: [id])
   modelParts    ModelPart[]
@@ -135,6 +137,7 @@ model Part {
 
   @@index([category])
   @@index([schematicZoneId])
+  @@index([configGroup])
   @@map("parts")
 }
 

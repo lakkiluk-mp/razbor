@@ -6,6 +6,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer'
+import { formatPrice } from '@razbor/shared'
 
 interface PriceDetailsDrawerProps {
   partName: string
@@ -17,10 +18,6 @@ interface PriceDetailsDrawerProps {
   } | null
   open: boolean
   onOpenChange: (open: boolean) => void
-}
-
-function formatPrice(value: number): string {
-  return value.toLocaleString('ru-RU')
 }
 
 export function PriceDetailsDrawer({

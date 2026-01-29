@@ -143,6 +143,22 @@ export const queries = {
       }
     }
   `,
+  generationConfigs: `
+    query GetGenerationConfigs($generationId: ID!) {
+      generationConfigs(generationId: $generationId) {
+        engines {
+          configGroup
+          name
+          price
+        }
+        transmissions {
+          configGroup
+          name
+          price
+        }
+      }
+    }
+  `,
 }
 
 export const mutations = {

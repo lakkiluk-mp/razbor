@@ -11,13 +11,6 @@ interface Props {
   params: Promise<{ brandSlug: string; modelSlug: string }>
 }
 
-function formatYears(yearStart: number, yearEnd: number | null): string {
-  if (yearEnd) {
-    return `${yearStart}-${yearEnd}`
-  }
-  return `${yearStart}-н.в.`
-}
-
 export default async function GenerationsPage({ params }: Props) {
   const { brandSlug, modelSlug } = await params
   const data = await fetchGraphQL<ModelResponse>(queries.model, {
@@ -52,7 +45,7 @@ export default async function GenerationsPage({ params }: Props) {
           {model.generations.map((gen) => (
             <Link
               key={gen.id}
-              href={`/calculator/${gen.id}?brand=${brandSlug}&model=${modelSlug}`}
+              href={`/${brandSlug}/${modelSlug}/${gen.slug}/config`}
               className="w-full bg-zinc-900 rounded-xl px-4 py-4 flex items-center justify-between hover:bg-zinc-800 transition-colors active:scale-[0.99]"
             >
               <div className="text-left">

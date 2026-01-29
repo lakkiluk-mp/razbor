@@ -1,5 +1,16 @@
 export { createClient, queries, mutations } from './client'
 
+export interface ConfigOption {
+  configGroup: string
+  name: string
+  price: number
+}
+
+export interface GenerationConfigs {
+  engines: ConfigOption[]
+  transmissions: ConfigOption[]
+}
+
 export { useBrands } from './use-brands'
 export type { Brand, BrandsResponse } from './use-brands'
 

@@ -15,6 +15,7 @@ builder.prismaObject('Part', {
       resolve: (part) => part.category,
     }),
     schematicZone: t.relation('schematicZone', { nullable: true }),
+    configGroup: t.exposeString('configGroup', { nullable: true }),
   }),
 })
 
@@ -24,6 +25,7 @@ export interface PartWithPriceData {
   category: PartCategory
   schematicZone: SchematicZone | null
   price: PriceData | null
+  configGroup: string | null
 }
 
 export const PartWithPriceType = builder.objectRef<PartWithPriceData>('PartWithPrice')
@@ -46,5 +48,6 @@ builder.objectType(PartWithPriceType, {
       nullable: true,
       resolve: (part) => part.price,
     }),
+    configGroup: t.exposeString('configGroup', { nullable: true }),
   }),
 })
