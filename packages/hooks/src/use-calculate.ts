@@ -19,6 +19,9 @@ export interface CalculationPart {
     } | null
     price: {
       median: number
+      min: number
+      max: number
+      count: number
     } | null
   }
   included: boolean

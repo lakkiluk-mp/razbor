@@ -1,0 +1,49 @@
+# Dependencies (устанавливаются в контейнере)
+node_modules
+**/node_modules
+
+# Next.js build output
+.next
+**/.next
+out
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Environment (копируется отдельно)
+.env
+.env.*
+!.env.example
+!.env.docker
+
+# Docker (кроме entrypoint)
+docker/
+!docker/entrypoint.dev.sh
+
+# Tests & coverage
+coverage
+.nyc_output
+
+# Turborepo
+.turbo
+
+# Misc
+*.md
+!README.md
+LICENSE

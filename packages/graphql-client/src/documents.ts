@@ -162,6 +162,9 @@ export const mutations = {
             }
             price {
               median
+              min
+              max
+              count
             }
           }
           included

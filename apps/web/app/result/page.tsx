@@ -3,7 +3,7 @@
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useMemo } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, X } from 'lucide-react'
+import { ArrowLeft, X, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react'
 import { getRemainingEstimates } from '@/components/features/usage-counter'
 import { CALCULATION_PARTS_KEY } from '@/lib/constants'
 import { z } from 'zod'
+import { PriceDetailsDrawer } from '@/components/features/price-details-drawer'
 
 const CalculationPartSchema = z.array(
   z.object({
@@ -30,6 +31,9 @@ const CalculationPartSchema = z.array(
       price: z
         .object({
           median: z.number(),
+          min: z.number(),
+          max: z.number(),
+          count: z.number(),
         })
         .nullable()
         .optional(),
@@ -46,6 +50,11 @@ function ResultContent() {
   const [remaining, setRemaining] = useState(3)
   const [parts, setParts] = useState<CalculationPart[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
+  const [selectedPart, setSelectedPart] = useState<{
+    name: string
+    price: { median: number; min: number; max: number; count: number } | null
+  } | null>(null)
+  const [drawerOpen, setDrawerOpen] = useState(false)
 
   useEffect(() => {
     setRemaining(getRemainingEstimates())
@@ -166,14 +175,32 @@ function ResultContent() {
                       повреждён
                     </span>
                   ) : (
-                    <span
-                      className={cn(
-                        'text-sm',
-                        isExcluded ? 'text-zinc-600 line-through' : 'text-zinc-300'
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={cn(
+                          'text-sm',
+                          isExcluded ? 'text-zinc-600 line-through' : 'text-zinc-300'
+                        )}
+                      >
+                        {item.price.toLocaleString('ru-RU')} ₽
+                      </span>
+                      {item.part.price && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setSelectedPart({
+                              name: item.part.name,
+                              price: item.part.price ?? null,
+                            })
+                            setDrawerOpen(true)
+                          }}
+                          className="w-11 h-11 flex items-center justify-center text-zinc-500 hover:text-zinc-300 transition-colors"
+                          aria-label="Подробнее о цене"
+                        >
+                          <Info className="w-4 h-4" />
+                        </button>
                       )}
-                    >
-                      {item.price.toLocaleString('ru-RU')} ₽
-                    </span>
+                    </div>
                   )}
                 </div>
               </div>
@@ -200,6 +227,13 @@ function ResultContent() {
           </Button>
         </Link>
       </div>
+
+      <PriceDetailsDrawer
+        partName={selectedPart?.name || ''}
+        price={selectedPart?.price || null}
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+      />
     </div>
   )
 }
