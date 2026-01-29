@@ -35,7 +35,7 @@ services:
     networks:
       - razbor-internal
 
-  Razzbor:
+  razzbor:
     build:
       context: .
       dockerfile: Dockerfile
