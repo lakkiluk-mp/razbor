@@ -27,7 +27,7 @@
     "docker:prod:build": "docker compose up -d --build",
     "docker:prod:down": "docker compose down",
     "docker:prod:logs": "docker compose logs -f",
-    "docker:prod:logs:web": "docker compose logs -f razzbor"
+    "docker:prod:logs:web": "docker compose logs -f Razzbor"
   },
   "devDependencies": {
     "turbo": "^2.3.0",
