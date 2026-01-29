@@ -45,11 +45,12 @@ COPY --from=builder /app/apps/web/public ./apps/web/public
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
 
-# Prisma schema для миграций
-COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
+# Prisma для seed и миграций
+COPY --from=builder /app/packages/db ./packages/db
+COPY --from=builder /app/node_modules ./node_modules
 
-# Установка Prisma CLI для миграций
-RUN npm install -g prisma@5
+# Установка Prisma CLI и tsx для seed
+RUN npm install -g prisma@5 tsx
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
