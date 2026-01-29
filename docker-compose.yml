@@ -39,6 +39,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_FREE_CALCULATIONS_LIMIT: ${NEXT_PUBLIC_FREE_CALCULATIONS_LIMIT:-10}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+        NEXT_PUBLIC_GRAPHQL_URL: ${NEXT_PUBLIC_GRAPHQL_URL}
     container_name: razbor-web
     restart: unless-stopped
     logging:
