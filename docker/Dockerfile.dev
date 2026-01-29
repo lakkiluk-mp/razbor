@@ -11,6 +11,8 @@ COPY apps/web/package.json ./apps/web/
 COPY packages/api/package.json ./packages/api/
 COPY packages/db/package.json ./packages/db/
 COPY packages/shared/package.json ./packages/shared/
+COPY packages/graphql-client/package.json ./packages/graphql-client/
+COPY packages/hooks/package.json ./packages/hooks/
 
 RUN pnpm install --frozen-lockfile
 

@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
     'graphql',
     'graphql-yoga',
   ],
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
 }
 
 export default nextConfig

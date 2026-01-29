@@ -4,6 +4,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "dev": {
@@ -11,14 +12,18 @@
       "persistent": true
     },
     "lint": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".eslintrc*", "eslint.config.*"]
     },
     "codegen": {
       "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "codegen.ts"],
       "outputs": ["src/generated/**"],
       "cache": false
     },
     "db:generate": {
+      "inputs": ["prisma/schema.prisma"],
+      "outputs": ["src/pothos-types.ts", "node_modules/.prisma/**"],
       "cache": false
     },
     "db:migrate:dev": {
