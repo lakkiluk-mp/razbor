@@ -29,7 +29,7 @@ COPY . .
 
 RUN pnpm db:generate
 
-# Build args для NEXT_PUBLIC переменных
+# Build args для NEXT_PUBLIC переменных (передаются из docker-compose build.args)
 ARG NEXT_PUBLIC_FREE_CALCULATIONS_LIMIT=10
 ARG NEXT_PUBLIC_APP_URL
 ARG NEXT_PUBLIC_GRAPHQL_URL
