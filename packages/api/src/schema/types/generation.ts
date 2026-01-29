@@ -43,6 +43,7 @@ builder.prismaObject('Generation', {
             name: mp.part.name,
             category: mp.part.category,
             schematicZone: mp.part.schematicZone,
+            configGroup: mp.part.configGroup,
             price: priceRecord
               ? {
                   median: priceRecord.median,
