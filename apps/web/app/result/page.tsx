@@ -88,6 +88,11 @@ function ResultContent() {
     [parts, excludedParts]
   )
 
+  const sortedParts = useMemo(
+    () => [...parts].sort((a, b) => b.price - a.price),
+    [parts]
+  )
+
   const displayPrice = parts.length > 0 ? totalPrice : initialTotalPrice
 
   const toggleExclude = (partId: string) => {
@@ -140,7 +145,7 @@ function ResultContent() {
           </div>
         ) : (
         <div className="space-y-2">
-          {parts.map((item) => {
+          {sortedParts.map((item) => {
             const isExcluded = excludedParts.has(item.part.id)
             const isActive = item.included && !item.isDamaged && !isExcluded
 
@@ -178,7 +183,7 @@ function ResultContent() {
                     <div className="flex items-center gap-2">
                       <span
                         className={cn(
-                          'text-sm',
+                          'text-sm whitespace-nowrap',
                           isExcluded ? 'text-zinc-600 line-through' : 'text-zinc-300'
                         )}
                       >

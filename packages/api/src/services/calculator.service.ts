@@ -6,11 +6,13 @@ interface CalculateInput {
   generationId: string
   damagedZones: string[]
   excludedParts: string[]
+  selectedEngine: string | null
+  selectedTransmission: string | null
   prisma: PrismaClient
 }
 
 export async function calculate(input: CalculateInput): Promise<CalculationResultData> {
-  const { generationId, damagedZones, excludedParts, prisma } = input
+  const { generationId, damagedZones, excludedParts, selectedEngine, selectedTransmission, prisma } = input
 
   const generation = await prisma.generation.findUnique({
     where: { id: generationId },
@@ -48,6 +50,24 @@ export async function calculate(input: CalculateInput): Promise<CalculationResul
     const { part } = modelPart
     const priceRecord = priceMap.get(part.id)
 
+    const isConfigPart = part.configGroup !== null
+
+    if (isConfigPart) {
+      const isEngine = part.configGroup?.startsWith('engine:')
+      const isTransmission = part.configGroup?.startsWith('transmission:')
+
+      let isConfigSelected = false
+      if (isEngine) {
+        isConfigSelected = part.configGroup === selectedEngine
+      } else if (isTransmission) {
+        isConfigSelected = part.configGroup === selectedTransmission
+      }
+
+      if (!isConfigSelected) {
+        continue
+      }
+    }
+
     const isDamaged = part.schematicZone
       ? damagedZones.includes(part.schematicZone.code)
       : false
@@ -67,6 +87,7 @@ export async function calculate(input: CalculateInput): Promise<CalculationResul
       name: part.name,
       category: part.category,
       schematicZone: part.schematicZone,
+      configGroup: part.configGroup,
       price: priceRecord
         ? {
             median: priceRecord.median,

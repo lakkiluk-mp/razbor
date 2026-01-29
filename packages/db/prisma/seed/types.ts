@@ -6,6 +6,7 @@ export interface PartData {
   category: PartCategory
   schematicZoneCode: string | null
   searchQueries: string[]
+  configGroup?: string | null
   price: {
     minPrice: number
     maxPrice: number
@@ -23,6 +24,7 @@ export interface GenerationData {
   bodyType: BodyType
   isActive: boolean
   priceMultiplier: number
+  availableConfigs?: string[]
 }
 
 export interface ModelSeed {

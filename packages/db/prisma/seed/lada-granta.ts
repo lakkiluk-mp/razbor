@@ -414,6 +414,7 @@ const baseParts: PartData[] = [
     category: 'engine' as PartCategory,
     schematicZoneCode: 'engine',
     searchQueries: ['двигатель granta 1.6 87', 'мотор granta 11186', 'двс гранта 1.6'],
+    configGroup: 'engine:1.6-87',
     price: {
       minPrice: 65000,
       maxPrice: 100000,
@@ -428,6 +429,7 @@ const baseParts: PartData[] = [
     category: 'engine' as PartCategory,
     schematicZoneCode: 'engine',
     searchQueries: ['двигатель granta 1.6 98', 'мотор granta 21127', 'двс гранта 98'],
+    configGroup: 'engine:1.6-98',
     price: {
       minPrice: 75000,
       maxPrice: 115000,
@@ -442,6 +444,7 @@ const baseParts: PartData[] = [
     category: 'engine' as PartCategory,
     schematicZoneCode: 'engine',
     searchQueries: ['двигатель granta 1.6 106', 'мотор granta 21126', 'двс гранта 106'],
+    configGroup: 'engine:1.6-106',
     price: {
       minPrice: 80000,
       maxPrice: 125000,
@@ -456,6 +459,7 @@ const baseParts: PartData[] = [
     category: 'transmission' as PartCategory,
     schematicZoneCode: 'transmission',
     searchQueries: ['коробка granta мкпп', 'кпп granta 2180', 'мкпп гранта'],
+    configGroup: 'transmission:mt',
     price: {
       minPrice: 25000,
       maxPrice: 40000,
@@ -470,6 +474,7 @@ const baseParts: PartData[] = [
     category: 'transmission' as PartCategory,
     schematicZoneCode: 'transmission',
     searchQueries: ['коробка granta акпп', 'акпп granta jatco', 'автомат гранта'],
+    configGroup: 'transmission:at',
     price: {
       minPrice: 50000,
       maxPrice: 75000,
@@ -484,6 +489,7 @@ const baseParts: PartData[] = [
     category: 'transmission' as PartCategory,
     schematicZoneCode: 'transmission',
     searchQueries: ['коробка granta амт', 'робот granta', 'амт гранта'],
+    configGroup: 'transmission:amt',
     price: {
       minPrice: 40000,
       maxPrice: 65000,
@@ -587,6 +593,7 @@ const generations: GenerationData[] = [
     bodyType: 'sedan' as BodyType,
     isActive: true,
     priceMultiplier: 0.9,
+    availableConfigs: ['engine:1.6-87', 'engine:1.6-98', 'transmission:mt', 'transmission:at'],
   },
   {
     name: 'I Рестайлинг (2018-н.в.)',
@@ -596,6 +603,7 @@ const generations: GenerationData[] = [
     bodyType: 'sedan' as BodyType,
     isActive: true,
     priceMultiplier: 1.0,
+    availableConfigs: ['engine:1.6-87', 'engine:1.6-98', 'engine:1.6-106', 'transmission:mt', 'transmission:at', 'transmission:amt'],
   },
   {
     name: 'Лифтбек (2014-н.в.)',
@@ -605,6 +613,7 @@ const generations: GenerationData[] = [
     bodyType: 'hatchback' as BodyType,
     isActive: true,
     priceMultiplier: 0.95,
+    availableConfigs: ['engine:1.6-87', 'engine:1.6-98', 'engine:1.6-106', 'transmission:mt', 'transmission:at', 'transmission:amt'],
   },
 ]
 
@@ -627,15 +636,21 @@ export const ladaGrantaSeed = {
 
   getPartsForGeneration(generation: GenerationData): PartData[] {
     const multiplier = generation.priceMultiplier
-    return baseParts.map((part) => ({
-      ...part,
-      price: {
-        minPrice: Math.round(part.price.minPrice * multiplier),
-        maxPrice: Math.round(part.price.maxPrice * multiplier),
-        median: Math.round(part.price.median * multiplier),
-        avgPrice: Math.round(part.price.avgPrice * multiplier),
-        sampleSize: part.price.sampleSize,
-      },
-    }))
+    return baseParts
+      .filter((part) => {
+        if (!part.configGroup) return true
+        if (!generation.availableConfigs) return true
+        return generation.availableConfigs.includes(part.configGroup)
+      })
+      .map((part) => ({
+        ...part,
+        price: {
+          minPrice: Math.round(part.price.minPrice * multiplier),
+          maxPrice: Math.round(part.price.maxPrice * multiplier),
+          median: Math.round(part.price.median * multiplier),
+          avgPrice: Math.round(part.price.avgPrice * multiplier),
+          sampleSize: part.price.sampleSize,
+        },
+      }))
   },
 }

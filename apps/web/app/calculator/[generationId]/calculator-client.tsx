@@ -14,9 +14,17 @@ import { CALCULATION_PARTS_KEY } from '@/lib/constants'
 
 interface CalculatorClientProps {
   generation: GenerationWithParts
+  generationSlug?: string
+  selectedEngine?: string
+  selectedTransmission?: string
 }
 
-export function CalculatorClient({ generation }: CalculatorClientProps) {
+export function CalculatorClient({
+  generation,
+  generationSlug,
+  selectedEngine,
+  selectedTransmission,
+}: CalculatorClientProps) {
   const router = useRouter()
   const [selectedDamages, setSelectedDamages] = useState<Set<string>>(new Set())
   const [isCalculating, setIsCalculating] = useState(false)
@@ -57,6 +65,8 @@ export function CalculatorClient({ generation }: CalculatorClientProps) {
             generationId: generation.id,
             damagedZones: Array.from(selectedDamages),
             excludedParts: [],
+            selectedEngine: selectedEngine || null,
+            selectedTransmission: selectedTransmission || null,
           },
         }
       )
@@ -67,7 +77,7 @@ export function CalculatorClient({ generation }: CalculatorClientProps) {
         totalPrice: result.calculate.totalPrice.toString(),
         brand: brandName,
         model: modelName,
-        generation: `${generation.name} (${generation.yearStart}${generation.yearEnd ? `-${generation.yearEnd}` : '-н.в.'})`,
+        generation: generation.name,
         damages: Array.from(selectedDamages).join(','),
       })
 
@@ -82,7 +92,11 @@ export function CalculatorClient({ generation }: CalculatorClientProps) {
     }
   }
 
-  const backHref = brandSlug && modelSlug ? `/${brandSlug}/${modelSlug}` : '/'
+  const generationSlugValue = generationSlug || generation.slug
+  const backHref =
+    brandSlug && modelSlug && generationSlugValue
+      ? `/${brandSlug}/${modelSlug}/${generationSlugValue}/config`
+      : '/'
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col">

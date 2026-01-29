@@ -1,5 +1,6 @@
 import './brands'
 import './models'
 import './generations'
+import './generation-configs'
 import './schematic-zones'
 import './usage'

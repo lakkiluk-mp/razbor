@@ -414,6 +414,7 @@ const baseParts: PartData[] = [
     category: 'engine' as PartCategory,
     schematicZoneCode: 'engine',
     searchQueries: ['двигатель vesta 1.6', 'мотор vesta 21129', 'двс веста 1.6'],
+    configGroup: 'engine:1.6-106',
     price: {
       minPrice: 95000,
       maxPrice: 150000,
@@ -428,6 +429,7 @@ const baseParts: PartData[] = [
     category: 'engine' as PartCategory,
     schematicZoneCode: 'engine',
     searchQueries: ['двигатель vesta 1.8', 'мотор vesta 21179', 'двс веста 1.8'],
+    configGroup: 'engine:1.8-122',
     price: {
       minPrice: 110000,
       maxPrice: 170000,
@@ -442,6 +444,7 @@ const baseParts: PartData[] = [
     category: 'transmission' as PartCategory,
     schematicZoneCode: 'transmission',
     searchQueries: ['коробка vesta мкпп', 'кпп vesta jh3', 'мкпп веста'],
+    configGroup: 'transmission:mt',
     price: {
       minPrice: 35000,
       maxPrice: 55000,
@@ -456,6 +459,7 @@ const baseParts: PartData[] = [
     category: 'transmission' as PartCategory,
     schematicZoneCode: 'transmission',
     searchQueries: ['коробка vesta акпп', 'вариатор vesta jatco', 'акпп веста'],
+    configGroup: 'transmission:at',
     price: {
       minPrice: 70000,
       maxPrice: 100000,
@@ -559,6 +563,7 @@ const generations: GenerationData[] = [
     bodyType: 'sedan' as BodyType,
     isActive: true,
     priceMultiplier: 1.0,
+    availableConfigs: ['engine:1.6-106', 'engine:1.8-122', 'transmission:mt', 'transmission:at'],
   },
   {
     name: 'I Рестайлинг (2023-н.в.)',
@@ -568,6 +573,7 @@ const generations: GenerationData[] = [
     bodyType: 'sedan' as BodyType,
     isActive: true,
     priceMultiplier: 1.1,
+    availableConfigs: ['engine:1.8-122', 'transmission:at'],
   },
   {
     name: 'SW Cross (2017-2023)',
@@ -577,6 +583,7 @@ const generations: GenerationData[] = [
     bodyType: 'wagon' as BodyType,
     isActive: true,
     priceMultiplier: 1.05,
+    availableConfigs: ['engine:1.6-106', 'engine:1.8-122', 'transmission:mt', 'transmission:at'],
   },
 ]
 
@@ -599,15 +606,21 @@ export const ladaVestaSeed = {
 
   getPartsForGeneration(generation: GenerationData): PartData[] {
     const multiplier = generation.priceMultiplier
-    return baseParts.map((part) => ({
-      ...part,
-      price: {
-        minPrice: Math.round(part.price.minPrice * multiplier),
-        maxPrice: Math.round(part.price.maxPrice * multiplier),
-        median: Math.round(part.price.median * multiplier),
-        avgPrice: Math.round(part.price.avgPrice * multiplier),
-        sampleSize: part.price.sampleSize,
-      },
-    }))
+    return baseParts
+      .filter((part) => {
+        if (!part.configGroup) return true
+        if (!generation.availableConfigs) return true
+        return generation.availableConfigs.includes(part.configGroup)
+      })
+      .map((part) => ({
+        ...part,
+        price: {
+          minPrice: Math.round(part.price.minPrice * multiplier),
+          maxPrice: Math.round(part.price.maxPrice * multiplier),
+          median: Math.round(part.price.median * multiplier),
+          avgPrice: Math.round(part.price.avgPrice * multiplier),
+          sampleSize: part.price.sampleSize,
+        },
+      }))
   },
 }

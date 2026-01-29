@@ -15,7 +15,12 @@ interface GenerationByIdResponse {
 
 interface Props {
   params: Promise<{ generationId: string }>
-  searchParams: Promise<{ brand?: string; model?: string }>
+  searchParams: Promise<{
+    brand?: string
+    model?: string
+    engine?: string
+    transmission?: string
+  }>
 }
 
 export default async function CalculatorPage({ params, searchParams }: Props) {
@@ -31,7 +36,12 @@ export default async function CalculatorPage({ params, searchParams }: Props) {
   }
 
   const { generationId } = parsedParams.data
-  const { brand: brandSlug, model: modelSlug } = await searchParams
+  const {
+    brand: brandSlug,
+    model: modelSlug,
+    engine: selectedEngine,
+    transmission: selectedTransmission,
+  } = await searchParams
 
   let generation: GenerationWithParts | null = null
 
@@ -67,5 +77,12 @@ export default async function CalculatorPage({ params, searchParams }: Props) {
     )
   }
 
-  return <CalculatorClient generation={generation} />
+  return (
+    <CalculatorClient
+      generation={generation}
+      generationSlug={generation.slug}
+      selectedEngine={selectedEngine}
+      selectedTransmission={selectedTransmission}
+    />
+  )
 }
