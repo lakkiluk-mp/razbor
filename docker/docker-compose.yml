@@ -1,0 +1,91 @@
+name: razbor
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: razbor-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - razbor-internal
+
+  redis:
+    image: redis:7-alpine
+    container_name: razbor-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - razbor-internal
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: razbor-web
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      REDIS_URL: redis://redis:6379
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      NEXT_PUBLIC_GRAPHQL_URL: ${NEXT_PUBLIC_GRAPHQL_URL}
+      NEXT_PUBLIC_FREE_CALCULATIONS_LIMIT: ${NEXT_PUBLIC_FREE_CALCULATIONS_LIMIT:-3}
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-true}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - razbor-internal
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.razbor.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.razbor.entrypoints=websecure"
+      - "traefik.http.routers.razbor.tls.certresolver=letsencrypt"
+      - "traefik.http.services.razbor.loadbalancer.server.port=3000"
+      - "traefik.http.routers.razbor-http.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.razbor-http.entrypoints=web"
+      - "traefik.http.routers.razbor-http.middlewares=razbor-redirect-https"
+      - "traefik.http.middlewares.razbor-redirect-https.redirectscheme.scheme=https"
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  razbor-internal:
+    driver: bridge
+    internal: true
+  dokploy-network:
+    external: true
