@@ -21,7 +21,7 @@ COPY .env.docker .env
 
 RUN pnpm db:generate
 
-COPY docker/entrypoint.dev.sh /entrypoint.sh
+COPY entrypoint.dev.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 3000

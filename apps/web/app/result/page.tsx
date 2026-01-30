@@ -1,11 +1,17 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
-import { Suspense, useMemo } from 'react'
+import { Suspense, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, X, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion'
 import { cn } from '@/lib/utils'
 import type { CalculationPart } from '@razbor/hooks'
 import { useState, useEffect } from 'react'
@@ -13,6 +19,7 @@ import { getRemainingEstimates } from '@/components/features/usage-counter'
 import { CALCULATION_PARTS_KEY } from '@/lib/constants'
 import { z } from 'zod'
 import { PriceDetailsDrawer } from '@/components/features/price-details-drawer'
+import { groupPartsByCategory } from '@/lib/category-groups'
 
 const CalculationPartSchema = z.array(
   z.object({
@@ -80,17 +87,27 @@ function ResultContent() {
   const model = searchParams.get('model') || ''
   const generation = searchParams.get('generation') || ''
 
+  const isPartActive = useCallback(
+    (p: CalculationPart) => p.included && !p.isDamaged && !excludedParts.has(p.part.id),
+    [excludedParts]
+  )
+
   const totalPrice = useMemo(
     () =>
       parts
-        .filter((p) => p.included && !p.isDamaged && !excludedParts.has(p.part.id))
+        .filter(isPartActive)
         .reduce((sum, p) => sum + p.price, 0),
-    [parts, excludedParts]
+    [parts, isPartActive]
   )
 
   const sortedParts = useMemo(
     () => [...parts].sort((a, b) => b.price - a.price),
     [parts]
+  )
+
+  const groupedParts = useMemo(
+    () => groupPartsByCategory(sortedParts),
+    [sortedParts]
   )
 
   const displayPrice = parts.length > 0 ? totalPrice : initialTotalPrice
@@ -143,76 +160,103 @@ function ResultContent() {
               Детализация недоступна. Выполните новый расчёт.
             </p>
           </div>
-        ) : (
-        <div className="space-y-2">
-          {sortedParts.map((item) => {
-            const isExcluded = excludedParts.has(item.part.id)
-            const isActive = item.included && !item.isDamaged && !isExcluded
+        ) : isLoaded ? (
+          <Accordion
+            type="multiple"
+            defaultValue={groupedParts.length > 0 ? [groupedParts[0].key] : []}
+          >
+            {groupedParts.map((group) => {
+              const activeCount = group.parts.filter(isPartActive).length
+              const groupSum = group.parts
+                .filter(isPartActive)
+                .reduce((sum, p) => sum + p.price, 0)
 
-            return (
-              <div
-                key={item.part.id}
-                className={cn(
-                  'bg-zinc-900 rounded-xl px-4 py-3 flex items-center justify-between',
-                  item.isDamaged && 'opacity-60'
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  {!item.isDamaged && (
-                    <Checkbox
-                      checked={isActive}
-                      onCheckedChange={() => toggleExclude(item.part.id)}
-                      className="border-zinc-600 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500"
-                    />
-                  )}
-                  <span
-                    className={cn(
-                      'text-sm',
-                      item.isDamaged ? 'text-zinc-500' : 'text-zinc-200'
-                    )}
-                  >
-                    {item.part.name}
-                  </span>
-                </div>
-                <div className="text-right">
-                  {item.isDamaged ? (
-                    <span className="text-amber-500 text-xs font-medium">
-                      повреждён
-                    </span>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={cn(
-                          'text-sm whitespace-nowrap',
-                          isExcluded ? 'text-zinc-600 line-through' : 'text-zinc-300'
-                        )}
-                      >
-                        {item.price.toLocaleString('ru-RU')} ₽
+              return (
+                <AccordionItem key={group.key} value={group.key}>
+                  <AccordionTrigger>
+                    <span className="flex-1 text-left">{group.label}</span>
+                    <span className="text-xs text-zinc-400 mr-2 whitespace-nowrap">
+                      {activeCount}/{group.parts.length}
+                      <span className="ml-2 text-zinc-300">
+                        {groupSum.toLocaleString('ru-RU')} ₽
                       </span>
-                      {item.part.price && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setSelectedPart({
-                              name: item.part.name,
-                              price: item.part.price ?? null,
-                            })
-                            setDrawerOpen(true)
-                          }}
-                          className="w-11 h-11 flex items-center justify-center text-zinc-500 hover:text-zinc-300 transition-colors"
-                          aria-label="Подробнее о цене"
-                        >
-                          <Info className="w-4 h-4" />
-                        </button>
-                      )}
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-2">
+                      {group.parts.map((item) => {
+                        const isExcluded = excludedParts.has(item.part.id)
+                        const isActive = isPartActive(item)
+
+                        return (
+                          <div
+                            key={item.part.id}
+                            className={cn(
+                              'bg-zinc-900 rounded-xl px-4 py-3 flex items-center justify-between',
+                              item.isDamaged && 'opacity-60'
+                            )}
+                          >
+                            <div className="flex items-center gap-3">
+                              {!item.isDamaged && (
+                                <Checkbox
+                                  checked={isActive}
+                                  onCheckedChange={() => toggleExclude(item.part.id)}
+                                  className="border-zinc-600 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500"
+                                />
+                              )}
+                              <span
+                                className={cn(
+                                  'text-sm',
+                                  item.isDamaged ? 'text-zinc-500' : 'text-zinc-200'
+                                )}
+                              >
+                                {item.part.name}
+                              </span>
+                            </div>
+                            <div className="text-right">
+                              {item.isDamaged ? (
+                                <span className="text-amber-500 text-xs font-medium">
+                                  повреждён
+                                </span>
+                              ) : (
+                                <div className="flex items-center gap-2">
+                                  <span
+                                    className={cn(
+                                      'text-sm whitespace-nowrap',
+                                      isExcluded ? 'text-zinc-600 line-through' : 'text-zinc-300'
+                                    )}
+                                  >
+                                    {item.price.toLocaleString('ru-RU')} ₽
+                                  </span>
+                                  {item.part.price && (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        setSelectedPart({
+                                          name: item.part.name,
+                                          price: item.part.price ?? null,
+                                        })
+                                        setDrawerOpen(true)
+                                      }}
+                                      className="w-11 h-11 flex items-center justify-center text-zinc-500 hover:text-zinc-300 transition-colors"
+                                      aria-label="Подробнее о цене"
+                                    >
+                                      <Info className="w-4 h-4" />
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )
+                      })}
                     </div>
-                  )}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-        )}
+                  </AccordionContent>
+                </AccordionItem>
+              )
+            })}
+          </Accordion>
+        ) : null}
       </div>
 
       <div className="px-4 pb-4">
