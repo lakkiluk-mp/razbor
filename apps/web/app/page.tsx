@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
 import type { Brand, BrandsResponse } from '@razbor/hooks'
 import { UsageCounter } from '@/components/features/usage-counter'
+import { BrandIcon } from '@/components/ui/brand-icon'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,9 +24,7 @@ export default async function HomePage() {
               href={`/${brand.slug}`}
               className="aspect-square bg-zinc-900 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-zinc-800 transition-colors active:scale-95"
             >
-              <div className="w-12 h-12 bg-zinc-800 rounded-full flex items-center justify-center text-lg font-bold text-zinc-300">
-                {brand.logo || brand.name.charAt(0)}
-              </div>
+              <BrandIcon slug={brand.slug} name={brand.name} />
               <span className="text-sm text-zinc-300">{brand.name}</span>
             </Link>
           ))}
