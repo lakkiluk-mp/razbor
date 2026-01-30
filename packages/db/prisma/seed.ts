@@ -1,12 +1,11 @@
 import { PrismaClient } from '@prisma/client'
 import { schematicZones } from './seed/schematic-zones'
-import { ladaVestaSeed } from './seed/lada-vesta'
-import { ladaGrantaSeed } from './seed/lada-granta'
+import { mazda6Seed } from './seed/mazda-6'
 import type { ModelSeed } from './seed/types'
 
 const prisma = new PrismaClient()
 
-const modelSeeds: ModelSeed[] = [ladaVestaSeed, ladaGrantaSeed] as ModelSeed[]
+const modelSeeds: ModelSeed[] = [mazda6Seed] as ModelSeed[]
 
 async function seedModel(seedData: ModelSeed) {
   console.log(`\n--- Seeding ${seedData.brand.name} ${seedData.model.name} ---`)
@@ -91,20 +90,6 @@ async function seedModel(seedData: ModelSeed) {
         },
       })
 
-      await prisma.price.upsert({
-        where: {
-          partId_generationId: { partId: part.id, generationId: generation.id }
-        },
-        update: partData.price,
-        create: {
-          partId: part.id,
-          generationId: generation.id,
-          ...partData.price,
-          source: 'seed',
-          fetchedAt: new Date(),
-        },
-      })
-
       totalParts++
     }
 
@@ -136,7 +121,7 @@ async function main() {
     totalParts += result.totalParts
   }
 
-  console.log(`\nSeeding completed! Created ${totalGenerations} generations, ${totalParts} parts with prices`)
+  console.log(`\nSeeding completed! Created ${totalGenerations} generations, ${totalParts} parts`)
 }
 
 main()

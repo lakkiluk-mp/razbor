@@ -137,9 +137,8 @@ export const queries = {
   usageInfo: `
     query GetUsageInfo {
       usageInfo {
-        freeEstimatesUsed
-        freeEstimatesLimit
-        nextResetAt
+        freeRemaining
+        freeResetAt
       }
     }
   `,
@@ -152,6 +151,11 @@ export const queries = {
           price
         }
         transmissions {
+          configGroup
+          name
+          price
+        }
+        drivetrains {
           configGroup
           name
           price

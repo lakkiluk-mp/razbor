@@ -5,6 +5,9 @@ export interface CalculateInput {
   generationId: string
   damagedZones: string[]
   excludedParts: string[]
+  selectedEngine?: string | null
+  selectedTransmission?: string | null
+  selectedDrivetrain?: string | null
 }
 
 export interface CalculationPart {

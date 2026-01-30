@@ -8,11 +8,12 @@ interface CalculateInput {
   excludedParts: string[]
   selectedEngine: string | null
   selectedTransmission: string | null
+  selectedDrivetrain: string | null
   prisma: PrismaClient
 }
 
 export async function calculate(input: CalculateInput): Promise<CalculationResultData> {
-  const { generationId, damagedZones, excludedParts, selectedEngine, selectedTransmission, prisma } = input
+  const { generationId, damagedZones, excludedParts, selectedEngine, selectedTransmission, selectedDrivetrain, prisma } = input
 
   const generation = await prisma.generation.findUnique({
     where: { id: generationId },
@@ -55,12 +56,15 @@ export async function calculate(input: CalculateInput): Promise<CalculationResul
     if (isConfigPart) {
       const isEngine = part.configGroup?.startsWith('engine:')
       const isTransmission = part.configGroup?.startsWith('transmission:')
+      const isDrivetrain = part.configGroup?.startsWith('drivetrain:')
 
       let isConfigSelected = false
       if (isEngine) {
         isConfigSelected = part.configGroup === selectedEngine
       } else if (isTransmission) {
         isConfigSelected = part.configGroup === selectedTransmission
+      } else if (isDrivetrain) {
+        isConfigSelected = part.configGroup === selectedDrivetrain
       }
 
       if (!isConfigSelected) {

@@ -28,6 +28,9 @@ export function ConfigClient({
   const [selectedTransmission, setSelectedTransmission] = useState<string | null>(
     configs.transmissions[0]?.configGroup ?? null
   )
+  const [selectedDrivetrain, setSelectedDrivetrain] = useState<string | null>(
+    configs.drivetrains[0]?.configGroup ?? null
+  )
 
   const handleNext = () => {
     NProgress.start()
@@ -40,6 +43,9 @@ export function ConfigClient({
     }
     if (selectedTransmission) {
       params.set('transmission', selectedTransmission)
+    }
+    if (selectedDrivetrain) {
+      params.set('drivetrain', selectedDrivetrain)
     }
     router.push(`/calculator/${generation.id}?${params.toString()}`)
   }
@@ -111,6 +117,33 @@ export function ConfigClient({
                     <span className="text-zinc-100 font-medium">{transmission.name}</span>
                   </div>
                   {selectedTransmission === transmission.configGroup && (
+                    <Check className="w-5 h-5 text-amber-500" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {configs.drivetrains.length > 0 && (
+          <section>
+            <h2 className="text-lg font-semibold mb-3 text-zinc-300">Привод</h2>
+            <div className="space-y-2">
+              {configs.drivetrains.map((drivetrain) => (
+                <button
+                  type="button"
+                  key={drivetrain.configGroup}
+                  onClick={() => setSelectedDrivetrain(drivetrain.configGroup)}
+                  className={`w-full rounded-xl px-4 py-4 flex items-center justify-between transition-colors ${
+                    selectedDrivetrain === drivetrain.configGroup
+                      ? 'bg-amber-500/10 border-2 border-amber-500'
+                      : 'bg-zinc-900 border-2 border-transparent hover:bg-zinc-800'
+                  }`}
+                >
+                  <div className="text-left">
+                    <span className="text-zinc-100 font-medium">{drivetrain.name}</span>
+                  </div>
+                  {selectedDrivetrain === drivetrain.configGroup && (
                     <Check className="w-5 h-5 text-amber-500" />
                   )}
                 </button>

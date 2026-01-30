@@ -96,6 +96,44 @@ query GetUsageInfo {
   }
 }
 
+query GetGenerationById($id: String!) {
+  generation: generationById(id: $id) {
+    id
+    name
+    slug
+    yearStart
+    yearEnd
+    bodyType
+    model {
+      id
+      name
+      slug
+      brand {
+        id
+        name
+        slug
+      }
+    }
+    parts {
+      id
+      name
+      category
+      schematicZone {
+        id
+        code
+        name
+        type
+      }
+      price {
+        median
+        min
+        max
+        count
+      }
+    }
+  }
+}
+
 query GetGenerationConfigs($generationId: ID!) {
   generationConfigs(generationId: $generationId) {
     engines {
@@ -104,6 +142,11 @@ query GetGenerationConfigs($generationId: ID!) {
       price
     }
     transmissions {
+      configGroup
+      name
+      price
+    }
+    drivetrains {
       configGroup
       name
       price

@@ -9,6 +9,7 @@ export interface ConfigOption {
 export interface GenerationConfigs {
   engines: ConfigOption[]
   transmissions: ConfigOption[]
+  drivetrains: ConfigOption[]
 }
 
 export { useBrands } from './use-brands'

@@ -2,9 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { queries } from '@razbor/graphql-client'
 
 export interface UsageInfo {
-  freeEstimatesUsed: number
-  freeEstimatesLimit: number
-  nextResetAt: string | null
+  freeRemaining: number
+  freeResetAt: string | null
 }
 
 export interface UsageInfoResponse {

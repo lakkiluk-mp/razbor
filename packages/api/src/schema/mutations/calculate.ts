@@ -9,6 +9,7 @@ const CalculateInput = builder.inputType('CalculateInput', {
     excludedParts: t.idList({ required: false }),
     selectedEngine: t.string({ required: false }),
     selectedTransmission: t.string({ required: false }),
+    selectedDrivetrain: t.string({ required: false }),
   }),
 })
 
@@ -25,6 +26,7 @@ builder.mutationField('calculate', (t) =>
         excludedParts: input.excludedParts ?? [],
         selectedEngine: input.selectedEngine ?? null,
         selectedTransmission: input.selectedTransmission ?? null,
+        selectedDrivetrain: input.selectedDrivetrain ?? null,
         prisma: ctx.prisma,
       })
     },

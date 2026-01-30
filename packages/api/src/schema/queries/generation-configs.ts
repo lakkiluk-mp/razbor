@@ -19,6 +19,7 @@ builder.objectType(ConfigOptionType, {
 interface GenerationConfigsData {
   engines: ConfigOptionData[]
   transmissions: ConfigOptionData[]
+  drivetrains: ConfigOptionData[]
 }
 
 const GenerationConfigsType = builder.objectRef<GenerationConfigsData>('GenerationConfigs')
@@ -32,6 +33,10 @@ builder.objectType(GenerationConfigsType, {
     transmissions: t.field({
       type: [ConfigOptionType],
       resolve: (data) => data.transmissions,
+    }),
+    drivetrains: t.field({
+      type: [ConfigOptionType],
+      resolve: (data) => data.drivetrains,
     }),
   }),
 })
@@ -66,6 +71,13 @@ builder.queryField('generationConfigs', (t) =>
 
       const engines: ConfigOptionData[] = []
       const transmissions: ConfigOptionData[] = []
+      const drivetrainMap = new Map<string, { name: string; totalPrice: number }>()
+
+      const drivetrainLabels: Record<string, string> = {
+        'drivetrain:fwd': 'Передний (FWD)',
+        'drivetrain:rwd': 'Задний (RWD)',
+        'drivetrain:awd': 'Полный (AWD)',
+      }
 
       for (const modelPart of modelParts) {
         const { part } = modelPart
@@ -73,23 +85,34 @@ builder.queryField('generationConfigs', (t) =>
 
         const price = part.prices[0]?.median ?? 0
 
-        const option: ConfigOptionData = {
-          configGroup: part.configGroup,
-          name: part.name,
-          price,
-        }
-
         if (part.configGroup.startsWith('engine:')) {
-          engines.push(option)
+          engines.push({ configGroup: part.configGroup, name: part.name, price })
         } else if (part.configGroup.startsWith('transmission:')) {
-          transmissions.push(option)
+          transmissions.push({ configGroup: part.configGroup, name: part.name, price })
+        } else if (part.configGroup.startsWith('drivetrain:')) {
+          const existing = drivetrainMap.get(part.configGroup)
+          if (existing) {
+            existing.totalPrice += price
+          } else {
+            drivetrainMap.set(part.configGroup, {
+              name: drivetrainLabels[part.configGroup] ?? part.configGroup,
+              totalPrice: price,
+            })
+          }
         }
       }
 
+      const drivetrains = Array.from(drivetrainMap.entries()).map(([configGroup, data]) => ({
+        configGroup,
+        name: data.name,
+        price: data.totalPrice,
+      }))
+
       engines.sort((a, b) => b.price - a.price)
       transmissions.sort((a, b) => b.price - a.price)
+      drivetrains.sort((a, b) => b.price - a.price)
 
-      return { engines, transmissions }
+      return { engines, transmissions, drivetrains }
     },
   })
 )

@@ -1,6 +1,6 @@
 import { CalculatorClient } from './calculator-client'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
-import type { GenerationWithParts, GenerationResponse } from '@razbor/hooks'
+import type { GenerationWithParts } from '@razbor/hooks'
 import { z } from 'zod'
 
 export const dynamic = 'force-dynamic'
@@ -16,10 +16,9 @@ interface GenerationByIdResponse {
 interface Props {
   params: Promise<{ generationId: string }>
   searchParams: Promise<{
-    brand?: string
-    model?: string
     engine?: string
     transmission?: string
+    drivetrain?: string
   }>
 }
 
@@ -37,36 +36,20 @@ export default async function CalculatorPage({ params, searchParams }: Props) {
 
   const { generationId } = parsedParams.data
   const {
-    brand: brandSlug,
-    model: modelSlug,
     engine: selectedEngine,
     transmission: selectedTransmission,
+    drivetrain: selectedDrivetrain,
   } = await searchParams
 
   let generation: GenerationWithParts | null = null
 
-  if (brandSlug && modelSlug) {
-    try {
-      const data = await fetchGraphQL<GenerationResponse>(queries.generation, {
-        brandSlug,
-        modelSlug,
-        generationSlug: generationId,
-      })
-      generation = data.generation
-    } catch {
-      generation = null
-    }
-  }
-
-  if (!generation) {
-    try {
-      const data = await fetchGraphQL<GenerationByIdResponse>(queries.generationById, {
-        id: generationId,
-      })
-      generation = data.generation
-    } catch {
-      generation = null
-    }
+  try {
+    const data = await fetchGraphQL<GenerationByIdResponse>(queries.generationById, {
+      id: generationId,
+    })
+    generation = data.generation
+  } catch {
+    generation = null
   }
 
   if (!generation) {
@@ -80,9 +63,9 @@ export default async function CalculatorPage({ params, searchParams }: Props) {
   return (
     <CalculatorClient
       generation={generation}
-      generationSlug={generation.slug}
       selectedEngine={selectedEngine}
       selectedTransmission={selectedTransmission}
+      selectedDrivetrain={selectedDrivetrain}
     />
   )
 }

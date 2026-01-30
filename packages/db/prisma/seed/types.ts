@@ -7,13 +7,6 @@ export interface PartData {
   schematicZoneCode: string | null
   searchQueries: string[]
   configGroup?: string | null
-  price: {
-    minPrice: number
-    maxPrice: number
-    median: number
-    avgPrice: number
-    sampleSize: number
-  }
 }
 
 export interface GenerationData {
@@ -23,7 +16,6 @@ export interface GenerationData {
   yearEnd: number | null
   bodyType: BodyType
   isActive: boolean
-  priceMultiplier: number
   availableConfigs?: string[]
 }
 

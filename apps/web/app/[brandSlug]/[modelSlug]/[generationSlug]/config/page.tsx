@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
 import type { GenerationResponse, GenerationConfigs } from '@razbor/hooks'
 import { ConfigClient } from './config-client'
@@ -35,15 +35,14 @@ export default async function ConfigPage({ params }: Props) {
   const configsData = await fetchGraphQL<GenerationConfigsResponse>(
     queries.generationConfigs,
     { generationId: generation.id }
-  ).catch(() => ({ generationConfigs: { engines: [], transmissions: [] } }))
+  ).catch(() => ({ generationConfigs: { engines: [], transmissions: [], drivetrains: [] } }))
 
   const { generationConfigs } = configsData
 
   const hasConfigs =
-    generationConfigs.engines.length > 0 || generationConfigs.transmissions.length > 0
+    generationConfigs.engines.length > 0 || generationConfigs.transmissions.length > 0 || generationConfigs.drivetrains.length > 0
 
   if (!hasConfigs) {
-    const { redirect } = await import('next/navigation')
     redirect(`/calculator/${generation.id}?brand=${brandSlug}&model=${modelSlug}`)
   }
 

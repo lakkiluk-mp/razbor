@@ -14,16 +14,16 @@ import { CALCULATION_PARTS_KEY } from '@/lib/constants'
 
 interface CalculatorClientProps {
   generation: GenerationWithParts
-  generationSlug?: string
   selectedEngine?: string
   selectedTransmission?: string
+  selectedDrivetrain?: string
 }
 
 export function CalculatorClient({
   generation,
-  generationSlug,
   selectedEngine,
   selectedTransmission,
+  selectedDrivetrain,
 }: CalculatorClientProps) {
   const router = useRouter()
   const [selectedDamages, setSelectedDamages] = useState<Set<string>>(new Set())
@@ -67,6 +67,7 @@ export function CalculatorClient({
             excludedParts: [],
             selectedEngine: selectedEngine || null,
             selectedTransmission: selectedTransmission || null,
+            selectedDrivetrain: selectedDrivetrain || null,
           },
         }
       )
@@ -92,10 +93,9 @@ export function CalculatorClient({
     }
   }
 
-  const generationSlugValue = generationSlug || generation.slug
   const backHref =
-    brandSlug && modelSlug && generationSlugValue
-      ? `/${brandSlug}/${modelSlug}/${generationSlugValue}/config`
+    brandSlug && modelSlug && generation.slug
+      ? `/${brandSlug}/${modelSlug}/${generation.slug}/config`
       : '/'
 
   return (
