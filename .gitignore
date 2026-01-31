@@ -7,3 +7,4 @@ dist
 .DS_Store
 .turbo
 .env.docker
+tools/price-updater/output/

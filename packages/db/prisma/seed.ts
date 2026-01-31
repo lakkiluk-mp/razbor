@@ -66,6 +66,7 @@ async function seedModel(seedData: ModelSeed) {
       const part = await prisma.part.upsert({
         where: { slug: partData.slug },
         update: {
+          searchQueries: partData.searchQueries || [],
           configGroup: partData.configGroup ?? null,
         },
         create: {

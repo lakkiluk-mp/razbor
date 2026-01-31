@@ -1,9 +1,8 @@
 import { PartCategory } from '@prisma/client'
 import type { PartData } from './types'
 
-function q(prefix: string, searchNames: string[], suffix: string): string[] {
+function q(searchNames: string[], suffix: string): string[] {
   return searchNames.map((n) => `${suffix} ${n}`)
-    .concat([`${suffix} ${prefix}`])
 }
 
 export function engine(
@@ -21,8 +20,10 @@ export function engine(
     category: 'engine' as PartCategory,
     schematicZoneCode: 'engine',
     searchQueries: [
-      ...q(prefix, searchNames, 'двигатель'),
-      ...q(prefix, searchNames, 'мотор'),
+      ...searchNames.map((n) => `двигатель ${vol} ${code} ${n}`),
+      ...searchNames.map((n) => `двигатель ${vol} ${n}`),
+      ...searchNames.map((n) => `мотор ${vol} ${n}`),
+      ...q(searchNames, 'двигатель'),
     ],
     configGroup: `engine:${config}`,
   }
@@ -34,14 +35,16 @@ export function transmission(
   config: string,
   name: string,
 ): PartData {
+  const isAuto = config.startsWith('at')
+  const specificType = isAuto ? 'акпп' : 'мкпп'
   return {
     name,
     slug: `${prefix}-transmission-${config}`,
     category: 'transmission' as PartCategory,
     schematicZoneCode: 'transmission',
     searchQueries: [
-      ...q(prefix, searchNames, 'коробка'),
-      ...q(prefix, searchNames, name.toLowerCase()),
+      ...q(searchNames, specificType),
+      ...q(searchNames, 'коробка'),
     ],
     configGroup: `transmission:${config}`,
   }

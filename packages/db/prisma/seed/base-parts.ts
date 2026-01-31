@@ -13,13 +13,14 @@ function part(
   category: PartCategory,
   schematicZoneCode: string | null,
   configGroup?: string | null,
+  customSearchName?: string,
 ): PartData {
   return {
     name,
     slug: `${slugPrefix}-${slug}`,
     category,
     schematicZoneCode,
-    searchQueries: q(name.toLowerCase(), searchNames),
+    searchQueries: q(customSearchName ?? name.toLowerCase(), searchNames),
     ...(configGroup ? { configGroup } : {}),
   }
 }
@@ -31,7 +32,8 @@ export function getBaseParts(slugPrefix: string, searchNames: string[]): PartDat
     category: PartCategory,
     schematicZoneCode: string | null,
     configGroup?: string | null,
-  ) => part(slugPrefix, searchNames, slug, name, category, schematicZoneCode, configGroup)
+    customSearchName?: string,
+  ) => part(slugPrefix, searchNames, slug, name, category, schematicZoneCode, configGroup, customSearchName)
 
   return [
     p('hood', 'Капот', 'body', 'hood'),
@@ -104,8 +106,9 @@ export function getBaseParts(slugPrefix: string, searchNames: string[]): PartDat
     p('subframe-f', 'Подрамник передний', 'suspension', null),
     p('subframe-r', 'Подрамник задний', 'suspension', null),
 
-    p('fuel-system', 'Топливная система', 'other', null),
-    p('exhaust-system', 'Выхлопная система', 'other', null),
+    p('fuel-pump-hp', 'ТНВД', 'other', null),
+    p('throttle-body', 'Дроссельная заслонка', 'other', null),
+    p('injectors', 'Форсунки', 'other', null, null, 'форсунка топливная'),
     p('fuel-tank', 'Бак топливный', 'other', null),
   ]
 }
