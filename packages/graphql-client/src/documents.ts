@@ -80,6 +80,8 @@ export const queries = {
             min
             max
             count
+            minPriceUrl
+            maxPriceUrl
           }
         }
       }
@@ -119,6 +121,8 @@ export const queries = {
             min
             max
             count
+            minPriceUrl
+            maxPriceUrl
           }
         }
       }
@@ -185,6 +189,8 @@ export const mutations = {
               min
               max
               count
+              minPriceUrl
+              maxPriceUrl
             }
           }
           included

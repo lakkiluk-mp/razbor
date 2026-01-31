@@ -39,6 +39,7 @@ export type CalculateInput = {
   damagedZones: Array<Scalars['String']['input']>;
   excludedParts?: InputMaybe<Array<Scalars['ID']['input']>>;
   generationId: Scalars['ID']['input'];
+  selectedDrivetrain?: InputMaybe<Scalars['String']['input']>;
   selectedEngine?: InputMaybe<Scalars['String']['input']>;
   selectedTransmission?: InputMaybe<Scalars['String']['input']>;
 };
@@ -78,6 +79,7 @@ export type Generation = {
 
 export type GenerationConfigs = {
   __typename?: 'GenerationConfigs';
+  drivetrains: Maybe<Array<ConfigOption>>;
   engines: Maybe<Array<ConfigOption>>;
   transmissions: Maybe<Array<ConfigOption>>;
 };
@@ -137,8 +139,10 @@ export type Price = {
   __typename?: 'Price';
   count: Maybe<Scalars['Int']['output']>;
   max: Maybe<Scalars['Int']['output']>;
+  maxPriceUrl: Maybe<Scalars['String']['output']>;
   median: Maybe<Scalars['Int']['output']>;
   min: Maybe<Scalars['Int']['output']>;
+  minPriceUrl: Maybe<Scalars['String']['output']>;
   updatedAt: Maybe<Scalars['DateTime']['output']>;
 };
 
@@ -254,9 +258,16 @@ export type GetUsageInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetUsageInfoQuery = { __typename?: 'Query', usageInfo: { __typename?: 'UsageInfo', freeRemaining: number | null, freeResetAt: string | null } | null };
 
+export type GetGenerationByIdQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type GetGenerationByIdQuery = { __typename?: 'Query', generation: { __typename?: 'Generation', id: string | null, name: string | null, slug: string | null, yearStart: number | null, yearEnd: number | null, bodyType: BodyType | null, model: { __typename?: 'Model', id: string | null, name: string | null, slug: string | null, brand: { __typename?: 'Brand', id: string | null, name: string | null, slug: string | null } | null } | null, parts: Array<{ __typename?: 'PartWithPrice', id: string | null, name: string | null, category: PartCategory | null, schematicZone: { __typename?: 'SchematicZone', id: string | null, code: string | null, name: string | null, type: ZoneType | null } | null, price: { __typename?: 'Price', median: number | null, min: number | null, max: number | null, count: number | null } | null }> | null } | null };
+
 export type GetGenerationConfigsQueryVariables = Exact<{
   generationId: Scalars['ID']['input'];
 }>;
 
 
-export type GetGenerationConfigsQuery = { __typename?: 'Query', generationConfigs: { __typename?: 'GenerationConfigs', engines: Array<{ __typename?: 'ConfigOption', configGroup: string | null, name: string | null, price: number | null }> | null, transmissions: Array<{ __typename?: 'ConfigOption', configGroup: string | null, name: string | null, price: number | null }> | null } | null };
+export type GetGenerationConfigsQuery = { __typename?: 'Query', generationConfigs: { __typename?: 'GenerationConfigs', engines: Array<{ __typename?: 'ConfigOption', configGroup: string | null, name: string | null, price: number | null }> | null, transmissions: Array<{ __typename?: 'ConfigOption', configGroup: string | null, name: string | null, price: number | null }> | null, drivetrains: Array<{ __typename?: 'ConfigOption', configGroup: string | null, name: string | null, price: number | null }> | null } | null };

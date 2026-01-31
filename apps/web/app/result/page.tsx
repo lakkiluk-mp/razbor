@@ -41,6 +41,8 @@ const CalculationPartSchema = z.array(
           min: z.number(),
           max: z.number(),
           count: z.number(),
+          minPriceUrl: z.string().nullable().optional(),
+          maxPriceUrl: z.string().nullable().optional(),
         })
         .nullable()
         .optional(),
@@ -59,7 +61,14 @@ function ResultContent() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [selectedPart, setSelectedPart] = useState<{
     name: string
-    price: { median: number; min: number; max: number; count: number } | null
+    price: {
+      median: number
+      min: number
+      max: number
+      count: number
+      minPriceUrl?: string | null
+      maxPriceUrl?: string | null
+    } | null
   } | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
 

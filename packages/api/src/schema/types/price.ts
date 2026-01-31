@@ -6,6 +6,8 @@ export interface PriceData {
   max: number
   count: number
   updatedAt: Date
+  minPriceUrl: string | null
+  maxPriceUrl: string | null
 }
 
 export const PriceType = builder.objectRef<PriceData>('Price')
@@ -20,5 +22,7 @@ builder.objectType(PriceType, {
       type: 'DateTime',
       resolve: (price) => price.updatedAt,
     }),
+    minPriceUrl: t.string({ nullable: true, resolve: (price) => price.minPriceUrl }),
+    maxPriceUrl: t.string({ nullable: true, resolve: (price) => price.maxPriceUrl }),
   }),
 })

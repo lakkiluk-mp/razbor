@@ -99,6 +99,8 @@ export async function calculate(input: CalculateInput): Promise<CalculationResul
             max: priceRecord.maxPrice,
             count: priceRecord.sampleSize,
             updatedAt: priceRecord.fetchedAt,
+            minPriceUrl: priceRecord.minPriceUrl ?? null,
+            maxPriceUrl: priceRecord.maxPriceUrl ?? null,
           }
         : null,
     }
