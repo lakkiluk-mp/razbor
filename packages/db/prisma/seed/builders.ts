@@ -64,13 +64,13 @@ export function drivetrainFWD(
       ...base,
       name: 'Привод левый (ШРУС)',
       slug: `${prefix}-driveshaft-l`,
-      searchQueries: q(prefix, searchNames, 'привод левый'),
+      searchQueries: q(searchNames, 'привод левый'),
     },
     {
       ...base,
       name: 'Привод правый (ШРУС)',
       slug: `${prefix}-driveshaft-r`,
-      searchQueries: q(prefix, searchNames, 'привод правый'),
+      searchQueries: q(searchNames, 'привод правый'),
     },
   ]
 }
@@ -85,7 +85,7 @@ export function drivetrainRWD(
       slug: `${prefix}-driveshaft-rwd`,
       category: 'suspension' as PartCategory,
       schematicZoneCode: null,
-      searchQueries: q(prefix, searchNames, 'кардан'),
+      searchQueries: q(searchNames, 'кардан'),
       configGroup: 'drivetrain:rwd',
     },
     {
@@ -93,7 +93,7 @@ export function drivetrainRWD(
       slug: `${prefix}-rear-diff-rwd`,
       category: 'suspension' as PartCategory,
       schematicZoneCode: null,
-      searchQueries: q(prefix, searchNames, 'редуктор задний'),
+      searchQueries: q(searchNames, 'редуктор задний'),
       configGroup: 'drivetrain:rwd',
     },
   ]
@@ -113,33 +113,33 @@ export function drivetrainAWD(
       ...base,
       name: 'Привод передний левый (ШРУС)',
       slug: `${prefix}-driveshaft-fl-awd`,
-      searchQueries: q(prefix, searchNames, 'привод передний левый'),
+      searchQueries: q(searchNames, 'привод передний левый'),
     },
     {
       ...base,
       name: 'Привод передний правый (ШРУС)',
       slug: `${prefix}-driveshaft-fr-awd`,
-      searchQueries: q(prefix, searchNames, 'привод передний правый'),
+      searchQueries: q(searchNames, 'привод передний правый'),
     },
     {
       name: 'Раздаточная коробка',
       slug: `${prefix}-transfer-case`,
       category: 'transmission' as PartCategory,
       schematicZoneCode: null,
-      searchQueries: q(prefix, searchNames, 'раздатка'),
+      searchQueries: q(searchNames, 'раздатка'),
       configGroup: 'drivetrain:awd',
     },
     {
       ...base,
       name: 'Кардан задний',
       slug: `${prefix}-rear-driveshaft-awd`,
-      searchQueries: q(prefix, searchNames, 'кардан задний'),
+      searchQueries: q(searchNames, 'кардан задний'),
     },
     {
       ...base,
       name: 'Редуктор задний',
       slug: `${prefix}-rear-diff-awd`,
-      searchQueries: q(prefix, searchNames, 'редуктор задний'),
+      searchQueries: q(searchNames, 'редуктор задний'),
     },
   ]
 }
