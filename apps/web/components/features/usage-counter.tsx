@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { FREE_ESTIMATES_LIMIT, STORAGE_KEY, WEEK_MS } from '@/lib/constants'
+import { FREE_ESTIMATES_LIMIT, STORAGE_KEY, DAY_MS } from '@/lib/constants'
 
 interface UsageData {
   count: number
@@ -10,12 +10,12 @@ interface UsageData {
 
 function getUsageData(): UsageData {
   if (typeof window === 'undefined') {
-    return { count: 0, resetAt: Date.now() + WEEK_MS }
+    return { count: 0, resetAt: Date.now() + DAY_MS }
   }
 
   const stored = localStorage.getItem(STORAGE_KEY)
   if (!stored) {
-    const data = { count: 0, resetAt: Date.now() + WEEK_MS }
+    const data = { count: 0, resetAt: Date.now() + DAY_MS }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
     return data
   }
@@ -24,7 +24,7 @@ function getUsageData(): UsageData {
     const data: UsageData = JSON.parse(stored)
 
     if (Date.now() > data.resetAt) {
-      const newData = { count: 0, resetAt: Date.now() + WEEK_MS }
+      const newData = { count: 0, resetAt: Date.now() + DAY_MS }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newData))
       return newData
     }
@@ -32,7 +32,7 @@ function getUsageData(): UsageData {
     return data
   } catch {
     localStorage.removeItem(STORAGE_KEY)
-    const data = { count: 0, resetAt: Date.now() + WEEK_MS }
+    const data = { count: 0, resetAt: Date.now() + DAY_MS }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
     return data
   }
@@ -48,12 +48,12 @@ export function incrementUsage(): boolean {
 
   let data: UsageData
   try {
-    data = stored ? JSON.parse(stored) : { count: 0, resetAt: now + WEEK_MS }
+    data = stored ? JSON.parse(stored) : { count: 0, resetAt: now + DAY_MS }
     if (now > data.resetAt) {
-      data = { count: 0, resetAt: now + WEEK_MS }
+      data = { count: 0, resetAt: now + DAY_MS }
     }
   } catch {
-    data = { count: 0, resetAt: now + WEEK_MS }
+    data = { count: 0, resetAt: now + DAY_MS }
   }
 
   if (data.count >= FREE_ESTIMATES_LIMIT) {
