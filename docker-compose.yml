@@ -92,6 +92,5 @@ volumes:
 networks:
   razbor-internal:
     driver: bridge
-    internal: true
   dokploy-network:
     external: true
