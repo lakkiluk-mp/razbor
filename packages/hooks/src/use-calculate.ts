@@ -27,6 +27,7 @@ export interface CalculationPart {
       count: number
       minPriceUrl?: string | null
       maxPriceUrl?: string | null
+      medianPriceUrl?: string | null
     } | null
   }
   included: boolean

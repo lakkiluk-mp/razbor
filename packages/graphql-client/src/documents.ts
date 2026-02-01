@@ -82,6 +82,7 @@ export const queries = {
             count
             minPriceUrl
             maxPriceUrl
+            medianPriceUrl
           }
         }
       }
@@ -123,6 +124,7 @@ export const queries = {
             count
             minPriceUrl
             maxPriceUrl
+            medianPriceUrl
           }
         }
       }
@@ -191,6 +193,7 @@ export const mutations = {
               count
               minPriceUrl
               maxPriceUrl
+              medianPriceUrl
             }
           }
           included

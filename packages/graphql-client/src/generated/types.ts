@@ -141,6 +141,7 @@ export type Price = {
   max: Maybe<Scalars['Int']['output']>;
   maxPriceUrl: Maybe<Scalars['String']['output']>;
   median: Maybe<Scalars['Int']['output']>;
+  medianPriceUrl: Maybe<Scalars['String']['output']>;
   min: Maybe<Scalars['Int']['output']>;
   minPriceUrl: Maybe<Scalars['String']['output']>;
   updatedAt: Maybe<Scalars['DateTime']['output']>;

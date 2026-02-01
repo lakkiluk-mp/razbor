@@ -101,6 +101,7 @@ export async function calculate(input: CalculateInput): Promise<CalculationResul
             updatedAt: priceRecord.fetchedAt,
             minPriceUrl: priceRecord.minPriceUrl ?? null,
             maxPriceUrl: priceRecord.maxPriceUrl ?? null,
+            medianPriceUrl: priceRecord.medianPriceUrl ?? null,
           }
         : null,
     }

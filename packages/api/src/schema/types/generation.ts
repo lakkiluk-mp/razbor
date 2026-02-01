@@ -53,6 +53,7 @@ builder.prismaObject('Generation', {
                   updatedAt: priceRecord.fetchedAt,
                   minPriceUrl: priceRecord.minPriceUrl ?? null,
                   maxPriceUrl: priceRecord.maxPriceUrl ?? null,
+                  medianPriceUrl: priceRecord.medianPriceUrl ?? null,
                 }
               : null,
           }

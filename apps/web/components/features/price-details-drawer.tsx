@@ -18,6 +18,7 @@ interface PriceDetailsDrawerProps {
     count: number
     minPriceUrl?: string | null
     maxPriceUrl?: string | null
+    medianPriceUrl?: string | null
   } | null
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -82,9 +83,22 @@ export function PriceDetailsDrawer({
                 <span className="text-base font-medium text-zinc-200">
                   Медиана
                 </span>
-                <span className="text-base font-semibold text-amber-400">
-                  {formatPrice(price.median)} ₽
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-base font-semibold text-amber-400">
+                    {formatPrice(price.median)} ₽
+                  </span>
+                  {price.medianPriceUrl && isValidUrl(price.medianPriceUrl) && (
+                    <a
+                      href={price.medianPriceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Открыть объявление с медианной ценой"
+                      className="w-11 h-11 flex items-center justify-center text-zinc-500 hover:text-amber-400 transition-colors"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
+                </div>
               </div>
               <div className="border-t border-zinc-800 my-2" />
               <div className="flex items-center justify-between py-3">

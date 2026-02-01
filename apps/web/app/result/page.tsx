@@ -43,6 +43,7 @@ const CalculationPartSchema = z.array(
           count: z.number(),
           minPriceUrl: z.string().nullable().optional(),
           maxPriceUrl: z.string().nullable().optional(),
+          medianPriceUrl: z.string().nullable().optional(),
         })
         .nullable()
         .optional(),
@@ -68,6 +69,7 @@ function ResultContent() {
       count: number
       minPriceUrl?: string | null
       maxPriceUrl?: string | null
+      medianPriceUrl?: string | null
     } | null
   } | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
