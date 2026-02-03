@@ -231,29 +231,35 @@ function ResultContent() {
                                 </span>
                               ) : (
                                 <div className="flex items-center gap-2">
-                                  <span
-                                    className={cn(
-                                      'text-sm whitespace-nowrap',
-                                      isExcluded ? 'text-zinc-600 line-through' : 'text-zinc-300'
-                                    )}
-                                  >
-                                    {item.price.toLocaleString('ru-RU')} ₽
-                                  </span>
-                                  {item.part.price && (
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        setSelectedPart({
-                                          name: item.part.name,
-                                          price: item.part.price ?? null,
-                                        })
-                                        setDrawerOpen(true)
-                                      }}
-                                      className="w-11 h-11 flex items-center justify-center text-zinc-500 hover:text-zinc-300 transition-colors"
-                                      aria-label="Подробнее о цене"
-                                    >
-                                      <Info className="w-4 h-4" />
-                                    </button>
+                                  {item.part.price ? (
+                                    <>
+                                      <span
+                                        className={cn(
+                                          'text-sm whitespace-nowrap',
+                                          isExcluded ? 'text-zinc-600 line-through' : 'text-zinc-300'
+                                        )}
+                                      >
+                                        {item.price.toLocaleString('ru-RU')} ₽
+                                      </span>
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          setSelectedPart({
+                                            name: item.part.name,
+                                            price: item.part.price ?? null,
+                                          })
+                                          setDrawerOpen(true)
+                                        }}
+                                        className="w-11 h-11 flex items-center justify-center text-zinc-500 hover:text-zinc-300 transition-colors"
+                                        aria-label="Подробнее о цене"
+                                      >
+                                        <Info className="w-4 h-4" />
+                                      </button>
+                                    </>
+                                  ) : (
+                                    <span className="text-sm whitespace-nowrap text-zinc-600 italic">
+                                      Нет данных
+                                    </span>
                                   )}
                                 </div>
                               )}
