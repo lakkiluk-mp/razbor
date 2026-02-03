@@ -3,7 +3,7 @@
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useCallback, useMemo } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, X, Info } from 'lucide-react'
+import { ArrowLeft, X, Info, HelpCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -257,9 +257,25 @@ function ResultContent() {
                                       </button>
                                     </>
                                   ) : (
-                                    <span className="text-sm whitespace-nowrap text-zinc-600 italic">
-                                      Нет данных
-                                    </span>
+                                    <div className="flex items-center gap-1">
+                                      <span className="text-sm whitespace-nowrap text-zinc-600">
+                                        —
+                                      </span>
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          setSelectedPart({
+                                            name: item.part.name,
+                                            price: null,
+                                          })
+                                          setDrawerOpen(true)
+                                        }}
+                                        className="w-11 h-11 flex items-center justify-center text-zinc-600 hover:text-zinc-400 transition-colors"
+                                        aria-label="Подробнее о цене"
+                                      >
+                                        <HelpCircle className="w-4 h-4" />
+                                      </button>
+                                    </div>
                                   )}
                                 </div>
                               )}

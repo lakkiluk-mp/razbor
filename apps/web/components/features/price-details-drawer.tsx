@@ -107,8 +107,12 @@ export function PriceDetailsDrawer({
               </div>
             </div>
           ) : (
-            <div className="py-6 text-center">
-              <p className="text-zinc-500 text-sm">Данные о ценах недоступны</p>
+            <div className="py-6 space-y-2 text-center">
+              <p className="text-zinc-300 text-sm">Не удалось найти цену</p>
+              <p className="text-zinc-500 text-xs">
+                На рынке б/у запчастей не нашлось подходящих объявлений.
+                Возможно, эта деталь редко продаётся отдельно.
+              </p>
             </div>
           )}
         </div>
