@@ -1,6 +1,7 @@
 export interface GraphQLClientConfig {
   url: string
   headers?: Record<string, string>
+  getHeaders?: () => Record<string, string>
   isProduction?: boolean
 }
 
@@ -21,13 +22,14 @@ export interface FetchOptions {
 }
 
 export function createGraphQLClient(config: GraphQLClientConfig) {
-  const { url, headers = {}, isProduction = false } = config
+  const { url, headers = {}, getHeaders, isProduction = false } = config
 
   async function fetchGraphQL<T>(
     query: string,
     variables?: Record<string, unknown>,
     options?: FetchOptions
   ): Promise<T> {
+    const dynamicHeaders = getHeaders ? getHeaders() : {}
     let res: Response
     try {
       res = await fetch(url, {
@@ -35,6 +37,7 @@ export function createGraphQLClient(config: GraphQLClientConfig) {
         headers: {
           'Content-Type': 'application/json',
           ...headers,
+          ...dynamicHeaders,
         },
         body: JSON.stringify({ query, variables }),
         cache: options?.cache ?? 'no-store',
@@ -57,10 +60,13 @@ export function createGraphQLClient(config: GraphQLClientConfig) {
     }
 
     if (json.errors && json.errors.length > 0) {
+      const originalMessage = json.errors[0]?.message || 'GraphQL Error'
       const errorMessage = isProduction
         ? 'Произошла ошибка при обработке запроса'
-        : json.errors[0]?.message || 'GraphQL Error'
-      throw new Error(errorMessage)
+        : originalMessage
+      const error = new Error(errorMessage)
+      ;(error as Error & { originalMessage: string }).originalMessage = originalMessage
+      throw error
     }
 
     if (!json.data) {

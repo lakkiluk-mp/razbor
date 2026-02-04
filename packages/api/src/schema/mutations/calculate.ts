@@ -2,7 +2,7 @@ import { GraphQLError } from 'graphql'
 import { builder } from '../builder'
 import { CalculationResultType } from '../types/calculation'
 import { calculatorService } from '../../services/calculator.service'
-import { getRemainingCredits } from '../../services/usage.service'
+import { getRemainingCredits, logUsage } from '../../services/usage.service'
 
 const CalculateInput = builder.inputType('CalculateInput', {
   fields: (t) => ({
@@ -22,6 +22,13 @@ builder.mutationField('calculate', (t) =>
       input: t.arg({ type: CalculateInput, required: true }),
     },
     resolve: async (_root, { input }, ctx) => {
+      if (ctx.user) {
+        const { remaining } = await getRemainingCredits(ctx.prisma, ctx.user.id)
+        if (remaining <= 0) {
+          throw new GraphQLError('Лимит расчётов исчерпан')
+        }
+      }
+
       const result = await calculatorService.calculate({
         generationId: input.generationId,
         damagedZones: input.damagedZones,
@@ -33,22 +40,20 @@ builder.mutationField('calculate', (t) =>
       })
 
       if (ctx.user) {
-        await ctx.prisma.$transaction(async (tx) => {
-          const { remaining } = await getRemainingCredits(tx, ctx.user!.id)
-
-          if (remaining <= 0) {
-            throw new GraphQLError('Лимит расчётов исчерпан')
-          }
-
-          await tx.calculation.create({
-            data: {
-              userId: ctx.user!.id,
-              generationId: input.generationId,
-              totalPrice: result.totalPrice,
-              damagedZones: input.damagedZones,
-            },
-          })
+        await ctx.prisma.calculation.create({
+          data: {
+            userId: ctx.user.id,
+            generationId: input.generationId,
+            totalPrice: result.totalPrice,
+            damagedZones: input.damagedZones,
+          },
         })
+
+        logUsage(ctx.prisma, ctx.user.id, 'CALCULATE', {
+          generationId: input.generationId,
+          totalPrice: result.totalPrice,
+          damagedZones: input.damagedZones,
+        }).catch((err) => console.error('[USAGE_LOG] Failed:', err))
       }
 
       return result

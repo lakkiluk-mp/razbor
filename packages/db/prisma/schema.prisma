@@ -218,9 +218,11 @@ model User {
   lastName   String?
   username   String?
   isPremium  Boolean  @default(false)
+  dailyLimit Int      @default(10)
 
   calculations Calculation[]
   payments     Payment[]
+  usageLogs    UsageLog[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -258,4 +260,19 @@ model Payment {
 
   @@index([userId])
   @@map("payments")
+}
+
+model UsageLog {
+  id       String @id @default(cuid())
+  userId   String
+  action   String
+  metadata Json?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([action])
+  @@map("usage_logs")
 }

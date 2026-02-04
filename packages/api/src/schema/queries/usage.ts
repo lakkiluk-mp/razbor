@@ -7,27 +7,20 @@ builder.queryField('usageInfo', (t) =>
   t.field({
     type: UsageInfoType,
     resolve: async (_root, _args, ctx): Promise<UsageInfoData> => {
-      const now = new Date()
-
       if (!ctx.user) {
         return {
           freeRemaining: FREE_CALCULATIONS_LIMIT,
-          freeResetAt: now,
+          freeResetAt: new Date(),
+          dailyLimit: FREE_CALCULATIONS_LIMIT,
         }
       }
 
-      const { remaining, oldestCalcAt } = await getRemainingCredits(ctx.prisma, ctx.user.id)
-
-      let freeResetAt: Date
-      if (oldestCalcAt) {
-        freeResetAt = new Date(oldestCalcAt.getTime() + 24 * 60 * 60 * 1000)
-      } else {
-        freeResetAt = now
-      }
+      const { remaining, nextReset, dailyLimit } = await getRemainingCredits(ctx.prisma, ctx.user.id)
 
       return {
         freeRemaining: remaining,
-        freeResetAt,
+        freeResetAt: nextReset,
+        dailyLimit,
       }
     },
   })

@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { DamageSelector } from '@/components/features/damage-selector'
-import { incrementUsage } from '@/components/features/usage-counter'
 import { fetchGraphQL, queries, mutations } from '@/lib/graphql-client'
 import type { GenerationWithParts, CalculationResult } from '@razbor/hooks'
 import { CALCULATION_PARTS_KEY } from '@/lib/constants'
@@ -21,6 +20,7 @@ export function CalculatorPage() {
   const selectedTransmission = searchParams.get('transmission') || undefined
   const selectedDrivetrain = searchParams.get('drivetrain') || undefined
 
+  const queryClient = useQueryClient()
   const [selectedDamages, setSelectedDamages] = useState<Set<string>>(new Set())
   const [isCalculating, setIsCalculating] = useState(false)
 
@@ -85,12 +85,6 @@ export function CalculatorPage() {
   }
 
   const handleCalculate = async () => {
-    const canUse = incrementUsage()
-    if (!canUse) {
-      navigate('/limit-reached')
-      return
-    }
-
     setIsCalculating(true)
 
     try {
@@ -108,6 +102,8 @@ export function CalculatorPage() {
         }
       )
 
+      queryClient.invalidateQueries({ queryKey: ['usageInfo'] })
+
       sessionStorage.setItem(CALCULATION_PARTS_KEY, JSON.stringify(result.calculate.parts))
 
       const resultParams = new URLSearchParams({
@@ -120,6 +116,12 @@ export function CalculatorPage() {
 
       navigate(`/result?${resultParams.toString()}`)
     } catch (error) {
+      const message = error instanceof Error ? error.message : ''
+      const originalMessage = (error as Error & { originalMessage?: string })?.originalMessage ?? message
+      if (originalMessage.includes('Лимит расчётов исчерпан')) {
+        navigate('/limit-reached')
+        return
+      }
       console.error('Calculation error:', error)
       alert('Ошибка при расчёте. Попробуйте ещё раз.')
     } finally {

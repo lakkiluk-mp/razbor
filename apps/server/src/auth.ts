@@ -29,13 +29,13 @@ export async function authenticateUser(
     where: { telegramId: BigInt(tgId) },
     create: {
       telegramId: BigInt(tgId),
-      firstName,
+      firstName: firstName ?? '',
       lastName: lastName ?? null,
       username: username ?? null,
       isPremium: isPremium ?? false,
     },
     update: {
-      firstName,
+      firstName: firstName ?? '',
       lastName: lastName ?? null,
       username: username ?? null,
       isPremium: isPremium ?? false,

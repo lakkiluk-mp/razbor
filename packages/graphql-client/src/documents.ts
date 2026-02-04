@@ -145,6 +145,7 @@ export const queries = {
       usageInfo {
         freeRemaining
         freeResetAt
+        dailyLimit
       }
     }
   `,

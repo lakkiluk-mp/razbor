@@ -1,36 +1,60 @@
-import type { PrismaClient, Prisma } from '@razbor/db'
+import type { PrismaClient } from '@razbor/db'
 import { FREE_CALCULATIONS_LIMIT } from '@razbor/shared'
 
-type PrismaTransactionClient = Prisma.TransactionClient | PrismaClient
+function getMoscowMidnight(): { todayStart: Date; nextReset: Date } {
+  const now = new Date()
+  const moscowOffset = 3 * 60
+  const utcMs = now.getTime() + now.getTimezoneOffset() * 60_000
+  const moscowMs = utcMs + moscowOffset * 60_000
+  const moscowDate = new Date(moscowMs)
+
+  const todayStartMoscow = new Date(moscowDate)
+  todayStartMoscow.setHours(0, 0, 0, 0)
+  const todayStartUtc = new Date(todayStartMoscow.getTime() - moscowOffset * 60_000)
+
+  const nextResetMoscow = new Date(todayStartMoscow)
+  nextResetMoscow.setDate(nextResetMoscow.getDate() + 1)
+  const nextResetUtc = new Date(nextResetMoscow.getTime() - moscowOffset * 60_000)
+
+  return { todayStart: todayStartUtc, nextReset: nextResetUtc }
+}
 
 export async function getRemainingCredits(
-  prisma: PrismaTransactionClient,
+  prisma: PrismaClient,
   userId: string,
-): Promise<{ remaining: number; oldestCalcAt: Date | null }> {
-  const now = new Date()
-  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+): Promise<{ remaining: number; nextReset: Date; dailyLimit: number }> {
+  const { todayStart, nextReset } = getMoscowMidnight()
 
-  const [calculationsIn24h, oldestCalc] = await Promise.all([
+  const [calculationsToday, user] = await Promise.all([
     prisma.calculation.count({
       where: {
         userId,
-        createdAt: { gte: oneDayAgo },
+        createdAt: { gte: todayStart },
       },
     }),
-    prisma.calculation.findFirst({
-      where: {
-        userId,
-        createdAt: { gte: oneDayAgo },
-      },
-      orderBy: { createdAt: 'asc' },
-      select: { createdAt: true },
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { dailyLimit: true },
     }),
   ])
 
-  const remaining = Math.max(0, FREE_CALCULATIONS_LIMIT - calculationsIn24h)
+  const dailyLimit = user?.dailyLimit ?? FREE_CALCULATIONS_LIMIT
+  const remaining = Math.max(0, dailyLimit - calculationsToday)
 
-  return {
-    remaining,
-    oldestCalcAt: oldestCalc?.createdAt ?? null,
-  }
+  return { remaining, nextReset, dailyLimit }
+}
+
+export async function logUsage(
+  prisma: PrismaClient,
+  userId: string,
+  action: string,
+  metadata?: Record<string, unknown>,
+): Promise<void> {
+  await prisma.usageLog.create({
+    data: {
+      userId,
+      action,
+      metadata,
+    },
+  })
 }
