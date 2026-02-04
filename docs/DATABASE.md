@@ -35,25 +35,26 @@
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### 1.2 Post-MVP (будущее)
+### 1.2 Telegram-интеграция (User, Calculation, Payment)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                      POST-MVP SCHEMA                            │
+│                   TELEGRAM INTEGRATION                           │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌─────────┐    ┌─────────────┐    ┌──────────────┐            │
 │  │  User   │───▶│  Calculation │───▶│ CalcPart     │            │
-│  └─────────┘    └─────────────┘    └──────────────┘            │
+│  │(Telegram)│    └─────────────┘    └──────────────┘            │
+│  └────┬────┘                                                    │
 │       │                                                         │
 │       ▼                                                         │
 │  ┌─────────────┐    ┌─────────────┐                            │
 │  │  Payment    │───▶│  Package    │                            │
-│  └─────────────┘    └─────────────┘                            │
+│  │  (Stars)    │    └─────────────┘                            │
+│  └─────────────┘                                                │
 │                                                                 │
-│  + PriceHistory (история изменения цен)                        │
-│  + Region (региональные цены)                                  │
-│  + Notification (уведомления о ценах)                          │
+│  + PriceHistory (история изменения цен, будущее)               │
+│  + Region (региональные цены, будущее)                         │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -636,26 +637,22 @@ model Price {
 
 ## 6. Post-MVP Schema (будущее)
 
-### 6.1 Пользователи и авторизация
+### 6.1 Пользователи (Telegram Auth)
 
 ```prisma
-// === ПОСЛЕ MVP ===
-
-/// Пользователь
+/// Пользователь Telegram
 model User {
   id            String    @id @default(cuid())
-  email         String?   @unique
-  phone         String?   @unique
-  name          String?
-
-  // OAuth провайдеры
-  yandexId      String?   @unique
-  vkId          String?   @unique
+  telegramId    BigInt    @unique    // Telegram user ID
+  firstName     String               // Из Telegram initData
+  lastName      String?
+  username      String?
+  languageCode  String?
 
   // Баланс оценок
-  freeUsed      Int       @default(0) // использовано бесплатных на этой неделе
+  freeUsed      Int       @default(0)  // использовано бесплатных на этой неделе
   freeResetAt   DateTime  @default(now()) // когда сбрасывать счётчик
-  paidBalance   Int       @default(0) // оплаченные оценки
+  paidBalance   Int       @default(0)  // оплаченные оценки (кредиты)
 
   calculations  Calculation[]
   payments      Payment[]
@@ -664,23 +661,6 @@ model User {
   updatedAt     DateTime  @updatedAt
 
   @@map("users")
-}
-
-/// Сессия (для JWT refresh tokens)
-model Session {
-  id           String   @id @default(cuid())
-  userId       String
-  refreshToken String   @unique
-  userAgent    String?
-  ip           String?
-  expiresAt    DateTime
-
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt    DateTime @default(now())
-
-  @@index([userId])
-  @@map("sessions")
 }
 ```
 
@@ -727,7 +707,7 @@ model CalcPart {
 }
 ```
 
-### 6.3 Платежи
+### 6.3 Платежи (Telegram Stars)
 
 ```prisma
 /// Пакет оценок
@@ -735,7 +715,7 @@ model Package {
   id          String    @id @default(cuid())
   name        String    // "10 оценок"
   credits     Int       // 10
-  price       Int       // 790 (в рублях)
+  price       Int       // Цена в Telegram Stars
   isActive    Boolean   @default(true)
   sortOrder   Int       @default(0)
 
@@ -744,19 +724,19 @@ model Package {
   @@map("packages")
 }
 
-/// Платёж
+/// Платёж через Telegram Stars
 model Payment {
-  id            String        @id @default(cuid())
-  userId        String
-  packageId     String
+  id                    String        @id @default(cuid())
+  userId                String
+  packageId             String
 
-  amount        Int           // Сумма в рублях
-  credits       Int           // Кол-во оценок
-  status        PaymentStatus @default(pending)
+  amount                Int           // Сумма в Stars
+  credits               Int           // Кол-во оценок
+  status                PaymentStatus @default(pending)
 
-  // ЮKassa данные
-  yookassaId    String?       @unique
-  yookassaUrl   String?       // URL для оплаты
+  // Telegram Payment данные
+  telegramPaymentChargeId String?    @unique  // charge_id от Telegram
+  invoicePayload        String?               // payload для идентификации
 
   user          User          @relation(fields: [userId], references: [id])
   package       Package       @relation(fields: [packageId], references: [id])
@@ -773,6 +753,7 @@ enum PaymentStatus {
   pending
   succeeded
   canceled
+  refunded
 }
 ```
 
@@ -870,16 +851,18 @@ model RegionalPrice {
 
 ```
 MVP:
-1. init — базовые таблицы (brands, models, generations)
-2. parts — запчасти и связи (parts, model_parts, schematic_zones)
-3. prices — цены (prices)
+1. init -- базовые таблицы (brands, models, generations)
+2. parts -- запчасти и связи (parts, model_parts, schematic_zones)
+3. prices -- цены (prices)
 
-Post-MVP:
-4. users — пользователи и сессии
-5. calculations — история оценок
-6. payments — платежи
-7. price_history — история цен
-8. regions — региональные цены
+Telegram Integration:
+4. users -- пользователи (Telegram auth)
+5. calculations -- история оценок
+6. payments -- платежи (Telegram Stars)
+
+Будущее:
+7. price_history -- история цен
+8. regions -- региональные цены
 ```
 
 ### 7.2 Команды

@@ -10,17 +10,31 @@
 
 | Среда | URL |
 |-------|-----|
-| Development | `http://localhost:3000/api/graphql` |
-| Production | `https://razbor.app/api/graphql` |
+| Development | `http://localhost:4000/graphql` |
+| Production | `https://razbor.ru/graphql` |
 
 ### 1.2 Технологии
 
 | Компонент | Технология |
 |-----------|------------|
-| Server | graphql-yoga |
+| Server | graphql-yoga (standalone HTTP) |
 | Schema | Pothos (code-first) |
 | Codegen | @graphql-codegen/cli |
 | Client | graphql-request + TanStack Query |
+| Auth | Telegram initData (X-Telegram-Init-Data header) |
+
+### 1.3 Аутентификация
+
+Все запросы из Telegram Mini App содержат заголовок `X-Telegram-Init-Data` с initData строкой от Telegram WebApp SDK. Сервер валидирует HMAC-подпись и извлекает пользователя.
+
+### 1.4 GraphQL Context
+
+```typescript
+type Context = {
+  prisma: PrismaClient
+  user: User | null  // Telegram-пользователь (null если initData невалиден)
+}
+```
 
 ---
 
@@ -460,50 +474,27 @@ query GetPartDetails($partId: ID!) {
 }
 ```
 
-### 4.2 Авторизация
+### 4.2 Авторизация (Telegram)
+
+Auth реализован через заголовок `X-Telegram-Init-Data`. Пользователь создается автоматически при первом запросе с валидным initData.
 
 ```graphql
 type Query {
+  """
+  Текущий пользователь (из Telegram initData)
+  """
   me: User
-}
-
-type Mutation {
-  """
-  Начать авторизацию через OAuth
-  """
-  authStart(provider: AuthProvider!): AuthStartResult!
-
-  """
-  Завершить авторизацию (callback)
-  """
-  authCallback(provider: AuthProvider!, code: String!): AuthResult!
-
-  """
-  Выйти
-  """
-  logout: Boolean!
-}
-
-enum AuthProvider {
-  yandex
-  vk
 }
 
 type User {
   id: ID!
-  email: String
-  name: String
+  telegramId: BigInt!
+  firstName: String!
+  lastName: String
+  username: String
   freeUsed: Int!
   paidBalance: Int!
-}
-
-type AuthStartResult {
-  redirectUrl: String!
-}
-
-type AuthResult {
-  user: User!
-  token: String!
+  createdAt: DateTime!
 }
 ```
 
@@ -540,7 +531,7 @@ input SaveCalculationInput {
 }
 ```
 
-### 4.4 Платежи
+### 4.4 Платежи (Telegram Stars)
 
 ```graphql
 type Query {
@@ -557,22 +548,23 @@ type Query {
 
 type Mutation {
   """
-  Создать платёж
+  Создать invoice для оплаты через Telegram Stars
+  Возвращает ссылку для открытия через Telegram.WebApp.openInvoice()
   """
-  createPayment(packageId: ID!): CreatePaymentResult!
+  createInvoiceLink(packageId: ID!): CreateInvoiceLinkResult!
 }
 
 type Package {
   id: ID!
   name: String!
   credits: Int!
-  price: Int!
+  price: Int!       # Цена в Telegram Stars
 }
 
 type Payment {
   id: ID!
   package: Package!
-  amount: Int!
+  amount: Int!       # Сумма в Stars
   status: PaymentStatus!
   createdAt: DateTime!
 }
@@ -581,11 +573,11 @@ enum PaymentStatus {
   pending
   succeeded
   canceled
+  refunded
 }
 
-type CreatePaymentResult {
-  paymentId: ID!
-  redirectUrl: String! # URL ЮKassa для оплаты
+type CreateInvoiceLinkResult {
+  invoiceLink: String!  # URL для Telegram.WebApp.openInvoice()
 }
 ```
 
@@ -634,7 +626,7 @@ export const builder = new SchemaBuilder<{
   PrismaTypes: PrismaTypes
   Context: {
     prisma: typeof prisma
-    // userId?: string (Post-MVP)
+    user: User | null  // Telegram user из initData
   }
   Scalars: {
     DateTime: {

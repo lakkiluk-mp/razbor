@@ -14,6 +14,8 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@razbor/api": "workspace:*",
     "@razbor/db": "workspace:*",
+    "graphql-yoga": "^5.10.0",
+    "graphql": "^16.9.0",
     "@razbor/graphql-client": "workspace:*",
     "@razbor/hooks": "workspace:*",
     "@razbor/shared": "workspace:*",

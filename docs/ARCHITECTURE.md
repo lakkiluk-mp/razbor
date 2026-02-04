@@ -9,8 +9,8 @@
 ### 1.1 Цель архитектуры
 
 Построить систему, которая:
-- Работает как PWA на мобильных устройствах (Mobile-first)
-- Легко мигрирует на React Native без переписывания бизнес-логики
+- Работает как Telegram Mini App (Mobile-first)
+- Использует Telegram для авторизации и оплаты (Stars)
 - Масштабируется от MVP до production с тысячами пользователей
 
 ### 1.2 Ключевые принципы
@@ -18,9 +18,9 @@
 | Принцип | Описание |
 |---------|----------|
 | **API First** | Бэкенд отдаёт только данные (GraphQL). UI полностью отделён |
-| **Shared Logic** | Бизнес-логика, валидация, типы — в общих пакетах |
-| **Mobile Ready** | Архитектура готова к React Native с первого дня |
-| **Docker Everything** | Разработка и продакшен — в контейнерах |
+| **Shared Logic** | Бизнес-логика, валидация, типы -- в общих пакетах |
+| **Telegram First** | Auth через initData, оплата через Stars, UI через Mini App |
+| **Docker Everything** | Разработка и продакшен -- в контейнерах |
 
 ---
 
@@ -32,30 +32,21 @@
 |------|------------|--------|----------------|
 | **Runtime** | Node.js | 20 LTS | Стабильность, поддержка до 2026 |
 | **Package Manager** | pnpm | 9.x | Быстрый, экономит место, нативные workspaces |
-| **Monorepo** | Turborepo | 2.x | Простой, быстрый, интеграция с Vercel/Docker |
-| **Frontend** | Next.js | 14+ | App Router, SSR, оптимизация |
+| **Monorepo** | Turborepo | 2.x | Простой, быстрый, интеграция с Docker |
+| **Frontend** | Vite 6 + React 19 | 6.x / 19.x | Telegram Mini App (SPA с HashRouter) |
 | **UI Kit** | shadcn/ui | latest | Кастомизируемый, Tailwind-based |
 | **Стили** | Tailwind CSS | 3.x | Utility-first, Mobile-first |
-| **API** | graphql-yoga | 5.x | Лёгкий, современный GraphQL сервер |
+| **API Server** | graphql-yoga | 5.x | Standalone HTTP сервер (GraphQL + webhook + static) |
 | **Schema** | Pothos | 4.x | Type-safe schema из TypeScript |
+| **Telegram Bot** | Telegraf | 4.x | Webhook-based бот для Mini App |
 | **Codegen** | GraphQL Codegen | 5.x | Генерация типов для клиента |
-| **State** | TanStack Query | 5.x | Кэширование, работает с React Native |
+| **State** | TanStack Query | 5.x | Кэширование API ответов |
 | **ORM** | Prisma | 5.x | Type-safe, отличные миграции |
 | **Database** | PostgreSQL | 16 | Надёжность, JSON поддержка |
 | **Cache** | Redis | 7.x | Кэш цен, очереди задач |
 | **Containers** | Docker | 24+ | Изоляция, воспроизводимость |
 
-### 2.2 Будущий стек (React Native)
-
-| Слой | Технология | Примечание |
-|------|------------|------------|
-| **Framework** | React Native | 0.73+ |
-| **Navigation** | React Navigation | 6.x |
-| **UI** | React Native Paper / Tamagui | Выберем при старте mobile |
-| **Min iOS** | 15+ | iPhone 6s и новее (~99%) |
-| **Min Android** | API 26 (Android 8+) | ~95% устройств |
-
-### 2.3 Инфраструктура
+### 2.2 Инфраструктура
 
 | Компонент | Технология | Примечание |
 |-----------|------------|------------|
@@ -74,28 +65,28 @@
 │
 ├── /apps
 │   │
-│   ├── /web                      # Next.js PWA (основное приложение)
-│   │   ├── /app                  # App Router pages
-│   │   │   ├── /(main)          # Основные страницы
-│   │   │   │   ├── page.tsx     # Главная (выбор авто)
-│   │   │   │   ├── /calculator  # Калькулятор
-│   │   │   │   └── /result      # Результат оценки
-│   │   │   ├── /api             # API routes (GraphQL endpoint)
-│   │   │   └── layout.tsx
-│   │   ├── /components           # UI компоненты (shadcn)
-│   │   │   ├── /ui              # Базовые (button, input, etc.)
-│   │   │   └── /features        # Фичевые (CarSelector, PartsList)
-│   │   ├── /lib                  # Web-specific утилиты
-│   │   ├── /styles               # Global styles
+│   ├── /server                    # Standalone Node.js HTTP сервер
+│   │   ├── /src
+│   │   │   ├── index.ts          # Точка входа (HTTP + GraphQL + Bot)
+│   │   │   ├── bot.ts            # Telegraf бот (webhook)
+│   │   │   └── auth.ts           # Валидация Telegram initData
 │   │   ├── Dockerfile
-│   │   ├── next.config.js
 │   │   └── package.json
 │   │
-│   └── /mobile                   # React Native (будущее)
-│       ├── /src
-│       │   ├── /screens         # Экраны
-│       │   ├── /components      # Native компоненты
-│       │   └── /navigation      # React Navigation
+│   ├── /mini-app                  # Vite + React SPA (Telegram Mini App)
+│   │   ├── /src
+│   │   │   ├── App.tsx           # HashRouter + TelegramProvider
+│   │   │   ├── /pages           # Страницы (Home, Models, Calculator, Result)
+│   │   │   ├── /components      # UI компоненты (shadcn)
+│   │   │   │   ├── /ui          # Базовые (button, input, etc.)
+│   │   │   │   └── /features    # Фичевые (CarSelector, PartsList)
+│   │   │   ├── /hooks           # React хуки
+│   │   │   └── /lib             # Утилиты, GraphQL клиент
+│   │   ├── vite.config.ts
+│   │   └── package.json
+│   │
+│   └── /web                      # [legacy] Next.js PWA (заменяется на mini-app)
+│       ├── /app
 │       └── package.json
 │
 ├── /packages
@@ -180,22 +171,17 @@
 
 ---
 
-## 4. Переиспользование кода (Web → Mobile)
+## 4. Архитектура сервера
 
-### 4.1 Матрица переиспользования
+Standalone Node.js HTTP сервер (`apps/server/`) обслуживает:
+- **GET /graphql** -- GraphQL Playground (dev)
+- **POST /graphql** -- GraphQL API endpoint
+- **POST /webhook** -- Telegram Bot webhook (Telegraf)
+- **GET /*** -- Static файлы mini-app (production)
 
-| Пакет | Web | Mobile | Переиспользование |
-|-------|-----|--------|-------------------|
-| `@razbor/api` | ✓ | ✓ | 100% — GraphQL сервер |
-| `@razbor/db` | ✓ | ✓ | 100% — Prisma Client |
-| `@razbor/shared` | ✓ | ✓ | 100% — валидация, утилиты, константы |
-| `@razbor/graphql-client` | ✓ | ✓ | 100% — GraphQL клиент, queries, mutations, codegen |
-| `@razbor/hooks` | ✓ | ✓ | 100% — React Query хуки (useBrands, useBrand, useModel, useGeneration, useCalculate) |
-| `apps/web/components` | ✓ | ✗ | 0% (переписываем для Native) |
+Auth реализован через заголовок `X-Telegram-Init-Data`. Сервер валидирует подпись HMAC с помощью BOT_TOKEN и извлекает данные пользователя в GraphQL context.
 
-**Итого: ~80% кода переиспользуется при переходе на React Native**
-
-### 4.2 Принципы написания переиспользуемого кода
+### 4.1 Принципы написания переиспользуемого кода
 
 #### Бизнес-логика отдельно от UI
 
@@ -271,19 +257,26 @@ export const ROUTES = {
 
 ## 5. Потоки данных
 
-### 5.1 Основной поток (выбор авто → расчёт)
+### 5.1 Основной поток (выбор авто -> расчёт)
 
 ```
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Клиент    │────▶│   GraphQL   │────▶│   Prisma    │
-│  (Web/App)  │◀────│    Yoga     │◀────│ PostgreSQL  │
-└─────────────┘     └─────────────┘     └─────────────┘
-                           │
-                           ▼
-                    ┌─────────────┐
-                    │    Redis    │
-                    │  (кэш цен)  │
-                    └─────────────┘
+│  Telegram   │────▶│   Server    │────▶│   Prisma    │
+│  Mini App   │◀────│  (GraphQL)  │◀────│ PostgreSQL  │
+└─────────────┘     └──────┬──────┘     └─────────────┘
+       │                   │
+       │                   ▼
+       │            ┌─────────────┐
+       │            │    Redis    │
+       │            │  (кэш цен)  │
+       │            └─────────────┘
+       │
+       ▼
+┌─────────────┐
+│  Telegram   │
+│  Bot API    │
+│ (webhook)   │
+└─────────────┘
 ```
 
 ### 5.2 Поток обновления цен (фоновый)
@@ -366,22 +359,23 @@ services:
       retries: 5
 
   # Приложение (dev режим с hot reload)
-  app:
+  server:
     build:
       context: .
-      dockerfile: ./apps/web/Dockerfile.dev
-    container_name: razbor-app
+      dockerfile: ./apps/server/Dockerfile.dev
+    container_name: razbor-server
     ports:
-      - "3000:3000"
+      - "4000:4000"
     volumes:
       - .:/app
       - /app/node_modules
-      - /app/apps/web/node_modules
-      - /app/apps/web/.next
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://razbor:razbor_dev@postgres:5432/razbor
       - REDIS_URL=redis://redis:6379
+      - BOT_TOKEN=${BOT_TOKEN}
+      - MINI_APP_URL=${MINI_APP_URL}
+      - PORT=4000
     depends_on:
       postgres:
         condition: service_healthy
@@ -422,15 +416,19 @@ services:
       - redis_data:/data
     restart: unless-stopped
 
-  app:
+  server:
     build:
       context: .
-      dockerfile: ./apps/web/Dockerfile
-    container_name: razbor-app
+      dockerfile: ./Dockerfile
+    container_name: razbor-server
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       - REDIS_URL=redis://redis:6379
+      - BOT_TOKEN=${BOT_TOKEN}
+      - MINI_APP_URL=${MINI_APP_URL}
+      - BOT_WEBHOOK_URL=${BOT_WEBHOOK_URL}
+      - PORT=4000
     depends_on:
       postgres:
         condition: service_healthy
@@ -441,6 +439,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.razbor.rule=Host(`razbor.example.com`)"
       - "traefik.http.routers.razbor.tls.certresolver=letsencrypt"
+      - "traefik.http.services.razbor.loadbalancer.server.port=4000"
 
 volumes:
   postgres_data:
@@ -450,7 +449,7 @@ volumes:
 ### 6.3 Dockerfile (Production)
 
 ```dockerfile
-# apps/web/Dockerfile
+# Dockerfile (корень проекта)
 
 # === Base ===
 FROM node:20-alpine AS base
@@ -460,7 +459,8 @@ WORKDIR /app
 # === Dependencies ===
 FROM base AS deps
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-COPY apps/web/package.json ./apps/web/
+COPY apps/server/package.json ./apps/server/
+COPY apps/mini-app/package.json ./apps/mini-app/
 COPY packages/api/package.json ./packages/api/
 COPY packages/db/package.json ./packages/db/
 COPY packages/shared/package.json ./packages/shared/
@@ -473,14 +473,8 @@ FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Генерация Prisma Client
 RUN pnpm --filter @razbor/db db:generate
-
-# Генерация GraphQL типов
-RUN pnpm --filter @razbor/graphql-client codegen
-
-# Сборка приложения
-RUN pnpm --filter @razbor/web build
+RUN pnpm build
 
 # === Runner ===
 FROM node:20-alpine AS runner
@@ -489,20 +483,17 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN adduser --system --uid 1001 appuser
 
-COPY --from=builder /app/apps/web/public ./apps/web/public
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=builder --chown=appuser:nodejs /app .
 
-USER nextjs
+USER appuser
 
-EXPOSE 3000
+EXPOSE 4000
 
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
+ENV PORT=4000
 
-CMD ["node", "apps/web/server.js"]
+CMD ["node", "apps/server/dist/index.js"]
 ```
 
 ---
@@ -521,16 +512,14 @@ POSTGRES_DB=razbor
 # === Redis ===
 REDIS_URL="redis://localhost:6379"
 
+# === Telegram Bot ===
+BOT_TOKEN="123456:ABC-DEF..."
+MINI_APP_URL="https://your-domain.ru"
+BOT_WEBHOOK_URL="https://your-domain.ru/webhook"
+
 # === App ===
 NODE_ENV=development
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
-NEXT_PUBLIC_GRAPHQL_URL="http://localhost:3000/api/graphql"
-
-# === Auth (будущее) ===
-# YANDEX_CLIENT_ID=
-# YANDEX_CLIENT_SECRET=
-# VK_CLIENT_ID=
-# VK_CLIENT_SECRET=
+PORT=4000
 
 # === Scraper (будущее) ===
 # PROXY_URL=
@@ -549,6 +538,8 @@ NEXT_PUBLIC_GRAPHQL_URL="http://localhost:3000/api/graphql"
   "private": true,
   "scripts": {
     "dev": "turbo run dev",
+    "dev:server": "pnpm --filter @razbor/server dev",
+    "dev:mini-app": "pnpm --filter @razbor/mini-app dev",
     "build": "turbo run build",
     "start": "turbo run start",
     "lint": "turbo run lint",
@@ -606,36 +597,40 @@ NEXT_PUBLIC_GRAPHQL_URL="http://localhost:3000/api/graphql"
 
 ---
 
-## 9. Чеклист миграции на React Native
+## 9. Telegram Mini App -- особенности
 
-Когда решим добавить мобильное приложение:
+### Auth flow
+1. Telegram открывает Mini App и передает `initData` через `Telegram.WebApp.initData`
+2. Mini App отправляет `initData` в каждом GraphQL запросе через заголовок `X-Telegram-Init-Data`
+3. Сервер валидирует HMAC-подпись с помощью `BOT_TOKEN`
+4. Из `initData` извлекается `user.id` и создается/находится User в БД
 
-### Подготовка (1 день)
-- [ ] Инициализация React Native проекта в `/apps/mobile`
-- [ ] Настройка Metro bundler для monorepo
-- [ ] Подключение `@razbor/shared`, `@razbor/hooks`, `@razbor/graphql-client`
+### Оплата через Telegram Stars
+1. Клиент вызывает mutation `createInvoiceLink`
+2. Сервер создает invoice через Telegram Bot API
+3. Клиент открывает ссылку через `Telegram.WebApp.openInvoice()`
+4. Telegram обрабатывает оплату и отправляет webhook `pre_checkout_query`
+5. Сервер подтверждает оплату и начисляет кредиты
 
-### Навигация (2-3 дня)
-- [ ] Установка React Navigation
-- [ ] Маппинг `ROUTES` на экраны
-- [ ] Настройка deep linking
+### HashRouter
+Telegram WebView не поддерживает History API, поэтому используется HashRouter.
+Все маршруты доступны через `#/path`.
 
-### UI компоненты (1-2 недели)
-- [ ] Выбор UI библиотеки (React Native Paper / Tamagui)
-- [ ] Создание базовых компонентов (Button, Input, Card)
-- [ ] Перенос фичевых компонентов (CarSelector, PartsList, Calculator)
+### Telegram WebApp SDK
+При инициализации вызывается:
+- `WebApp.ready()` — сообщает Telegram что приложение готово
+- `WebApp.expand()` — развернуть на весь экран
+- `WebApp.setHeaderColor('#09090b')` — цвет шапки совпадает с фоном приложения
+- `WebApp.setBackgroundColor('#09090b')` — цвет фона за границами приложения
 
-### Тестирование (3-5 дней)
-- [ ] Тестирование на iOS симуляторе
-- [ ] Тестирование на Android эмуляторе
-- [ ] Тестирование на реальных устройствах
+### Уведомления от бота (будущая фича)
+Бот может отправлять пуш-уведомления пользователям:
+- **Напоминания**: "Давно не заходили — проверьте новые цены на запчасти"
+- **Обновления цен**: "Цены на Lada Vesta обновлены"
+- **Лимиты**: "Ваши бесплатные расчёты обновились"
+- **Акции**: "Пакет 20 расчётов со скидкой 30%"
 
-### Публикация
-- [ ] Настройка Fastlane
-- [ ] Сборка для App Store
-- [ ] Сборка для Google Play
-
-**Оценка: 3-4 недели** при готовой архитектуре (которую закладываем сейчас).
+Реализация через `bot.telegram.sendMessage(chatId, text)` с хранением `chatId` в модели User (поле из initData). Рассылка через cron-задачу или event-driven (при обновлении цен).
 
 ---
 

@@ -31,28 +31,31 @@ services:
       timeout: 5s
       retries: 5
 
-  web:
+  app:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: razbor-web
+    container_name: razbor-dev
     ports:
+      - "4000:4000"
       - "3000:3000"
-    env_file:
-      - .env.docker
     volumes:
-      - .env.docker:/app/.env:ro
-      - .env.docker:/app/packages/db/.env:ro
-      - ./apps/web:/app/apps/web
-      - ./packages:/app/packages
-      - /app/node_modules
-      - /app/apps/web/node_modules
-      - /app/apps/web/.next
-      - /app/packages/db/node_modules
-      - /app/packages/api/node_modules
-      - /app/packages/shared/node_modules
-      - /app/packages/graphql-client/node_modules
-      - /app/packages/hooks/node_modules
+      - ./apps/server/src:/app/apps/server/src
+      - ./apps/mini-app/src:/app/apps/mini-app/src
+      - ./apps/mini-app/public:/app/apps/mini-app/public
+      - ./apps/mini-app/index.html:/app/apps/mini-app/index.html
+      - ./apps/mini-app/vite.config.ts:/app/apps/mini-app/vite.config.ts
+      - ./packages/api/src:/app/packages/api/src
+      - ./packages/shared/src:/app/packages/shared/src
+      - ./packages/hooks/src:/app/packages/hooks/src
+      - ./packages/graphql-client/src:/app/packages/graphql-client/src
+      - ./packages/db/prisma:/app/packages/db/prisma
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://razbor:razbor_dev@postgres:5432/razbor
+      REDIS_URL: redis://redis:6379
+      PORT: 4000
     depends_on:
       postgres:
         condition: service_healthy

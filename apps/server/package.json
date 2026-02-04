@@ -1,0 +1,25 @@
+{
+  "name": "@razbor/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsup src/index.ts --format esm --dts",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@razbor/api": "workspace:*",
+    "@razbor/db": "workspace:*",
+    "@telegram-apps/init-data-node": "^2.0.10",
+    "graphql": "^16.9.0",
+    "graphql-yoga": "^5.10.0",
+    "telegraf": "^4.16.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsup": "^8.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

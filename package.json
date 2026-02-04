@@ -27,8 +27,12 @@
     "docker:prod:build": "docker compose up -d --build",
     "docker:prod:down": "docker compose down",
     "docker:prod:logs": "docker compose logs -f",
-    "docker:prod:logs:web": "docker compose logs -f razzbor",
-    "price-update": "pnpm --filter @razbor/price-updater start"
+    "docker:prod:logs:server": "docker compose logs -f server",
+    "price-update": "pnpm --filter @razbor/price-updater start",
+    "dev:server": "pnpm --filter @razbor/server dev",
+    "dev:mini-app": "pnpm --filter @razbor/mini-app dev",
+    "build:server": "pnpm --filter @razbor/server build",
+    "build:mini-app": "pnpm --filter @razbor/mini-app build"
   },
   "devDependencies": {
     "turbo": "^2.3.0",

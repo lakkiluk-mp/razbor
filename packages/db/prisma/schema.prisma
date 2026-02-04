@@ -101,9 +101,10 @@ model Generation {
   bodyType  BodyType
   isActive  Boolean  @default(true)
 
-  model      Model       @relation(fields: [modelId], references: [id], onDelete: Cascade)
-  modelParts ModelPart[]
-  prices     Price[]
+  model        Model         @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  modelParts   ModelPart[]
+  prices       Price[]
+  calculations Calculation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -208,4 +209,53 @@ model Price {
   @@index([generationId])
   @@index([updatedAt])
   @@map("prices")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  telegramId BigInt   @unique
+  firstName  String
+  lastName   String?
+  username   String?
+  isPremium  Boolean  @default(false)
+
+  calculations Calculation[]
+  payments     Payment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Calculation {
+  id           String   @id @default(cuid())
+  userId       String
+  generationId String
+  totalPrice   Int
+  damagedZones String[]
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  generation Generation @relation(fields: [generationId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([generationId])
+  @@map("calculations")
+}
+
+model Payment {
+  id                String @id @default(cuid())
+  userId            String
+  telegramPaymentId String @unique
+  amount            Int
+  calculationsCount Int
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("payments")
 }

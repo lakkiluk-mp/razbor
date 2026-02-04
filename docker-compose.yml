@@ -17,8 +17,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-    ports:
-      - "5432:5432"
     networks:
       - razbor-internal
 
@@ -37,15 +35,11 @@ services:
     networks:
       - razbor-internal
 
-  razzbor:
+  server:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_FREE_CALCULATIONS_LIMIT: ${NEXT_PUBLIC_FREE_CALCULATIONS_LIMIT:-10}
-        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
-        NEXT_PUBLIC_GRAPHQL_URL: ${NEXT_PUBLIC_GRAPHQL_URL}
-    container_name: razbor-web
+    container_name: razbor-server
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -54,11 +48,12 @@ services:
         max-file: "3"
     environment:
       NODE_ENV: production
+      PORT: 4000
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379
-      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
-      NEXT_PUBLIC_GRAPHQL_URL: ${NEXT_PUBLIC_GRAPHQL_URL}
-      NEXT_PUBLIC_FREE_CALCULATIONS_LIMIT: ${NEXT_PUBLIC_FREE_CALCULATIONS_LIMIT:-10}
+      BOT_TOKEN: ${BOT_TOKEN}
+      MINI_APP_URL: ${MINI_APP_URL}
+      BOT_WEBHOOK_URL: ${BOT_WEBHOOK_URL}
       RUN_MIGRATIONS: ${RUN_MIGRATIONS:-true}
       RUN_SEED: ${RUN_SEED:-false}
     depends_on:
@@ -67,11 +62,11 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:4000/api/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 60s
     networks:
       - razbor-internal
       - dokploy-network
@@ -80,7 +75,7 @@ services:
       - "traefik.http.routers.razbor.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.razbor.entrypoints=websecure"
       - "traefik.http.routers.razbor.tls.certresolver=letsencrypt"
-      - "traefik.http.services.razbor.loadbalancer.server.port=3000"
+      - "traefik.http.services.razbor.loadbalancer.server.port=4000"
       - "traefik.http.routers.razbor-http.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.razbor-http.entrypoints=web"
       - "traefik.http.routers.razbor-http.middlewares=razbor-redirect-https"

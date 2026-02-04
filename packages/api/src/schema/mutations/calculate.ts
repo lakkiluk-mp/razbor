@@ -1,6 +1,8 @@
+import { GraphQLError } from 'graphql'
 import { builder } from '../builder'
 import { CalculationResultType } from '../types/calculation'
 import { calculatorService } from '../../services/calculator.service'
+import { getRemainingCredits } from '../../services/usage.service'
 
 const CalculateInput = builder.inputType('CalculateInput', {
   fields: (t) => ({
@@ -20,7 +22,7 @@ builder.mutationField('calculate', (t) =>
       input: t.arg({ type: CalculateInput, required: true }),
     },
     resolve: async (_root, { input }, ctx) => {
-      return calculatorService.calculate({
+      const result = await calculatorService.calculate({
         generationId: input.generationId,
         damagedZones: input.damagedZones,
         excludedParts: input.excludedParts ?? [],
@@ -29,6 +31,27 @@ builder.mutationField('calculate', (t) =>
         selectedDrivetrain: input.selectedDrivetrain ?? null,
         prisma: ctx.prisma,
       })
+
+      if (ctx.user) {
+        await ctx.prisma.$transaction(async (tx) => {
+          const { remaining } = await getRemainingCredits(tx, ctx.user!.id)
+
+          if (remaining <= 0) {
+            throw new GraphQLError('Лимит расчётов исчерпан')
+          }
+
+          await tx.calculation.create({
+            data: {
+              userId: ctx.user!.id,
+              generationId: input.generationId,
+              totalPrice: result.totalPrice,
+              damagedZones: input.damagedZones,
+            },
+          })
+        })
+      }
+
+      return result
     },
   })
 )
