@@ -1,34 +1,27 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { STORAGE_KEY, SUPPORT_EMAIL, FREE_ESTIMATES_LIMIT } from '@/lib/constants'
+import { SUPPORT_EMAIL } from '@/lib/constants'
+import { useUsageInfo } from '@/components/features/usage-counter'
 
-function getTimeUntilReset(): string {
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (!stored) return ''
+function formatTimeLeft(resetAt: string): string {
+  const msLeft = new Date(resetAt).getTime() - Date.now()
+  if (msLeft <= 0) return ''
 
-  try {
-    const data = JSON.parse(stored)
-    const msLeft = data.resetAt - Date.now()
+  const hours = Math.floor(msLeft / (60 * 60 * 1000))
+  const minutes = Math.floor((msLeft % (60 * 60 * 1000)) / (60 * 1000))
 
-    if (msLeft <= 0) return ''
-
-    const days = Math.floor(msLeft / (24 * 60 * 60 * 1000))
-    const hours = Math.floor((msLeft % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000))
-
-    if (days > 0) {
-      return `${days} дн. ${hours} ч.`
-    }
-    return `${hours} ч.`
-  } catch {
-    localStorage.removeItem(STORAGE_KEY)
-    return ''
+  if (hours > 0) {
+    return `${hours} ч. ${minutes} мин.`
   }
+  return `${minutes} мин.`
 }
 
 export function LimitReachedPage() {
-  const [timeLeft, setTimeLeft] = useState('')
   const navigate = useNavigate()
+  const { data } = useUsageInfo()
+
+  const timeLeft = data ? formatTimeLeft(data.usageInfo.freeResetAt) : ''
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp
@@ -42,22 +35,12 @@ export function LimitReachedPage() {
     }
   }, [navigate])
 
-  useEffect(() => {
-    setTimeLeft(getTimeUntilReset())
-
-    const interval = setInterval(() => {
-      setTimeLeft(getTimeUntilReset())
-    }, 60000)
-
-    return () => clearInterval(interval)
-  }, [])
-
   return (
     <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center p-4">
       <div className="text-center max-w-sm">
         <h1 className="text-2xl font-bold mb-4">Лимит исчерпан</h1>
         <p className="text-zinc-400 mb-2">
-          Вы использовали {FREE_ESTIMATES_LIMIT} бесплатных оценки за последние 24 часа.
+          Вы использовали все бесплатные оценки на сегодня.
         </p>
         {timeLeft && (
           <p className="text-zinc-500 mb-8">

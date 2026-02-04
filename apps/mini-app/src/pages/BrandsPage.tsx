@@ -5,6 +5,12 @@ import type { BrandsResponse } from '@razbor/hooks'
 import { UsageCounter } from '@/components/features/usage-counter'
 import { BrandIcon } from '@/components/ui/brand-icon'
 
+function getBrandNameClass(name: string) {
+  if (name.length > 10) return 'text-[10px]'
+  if (name.length > 6) return 'text-xs'
+  return 'text-sm'
+}
+
 export function BrandsPage() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['brands'],
@@ -43,7 +49,7 @@ export function BrandsPage() {
               className="aspect-square bg-zinc-900 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-zinc-800 transition-colors active:scale-95"
             >
               <BrandIcon slug={brand.slug} name={brand.name} />
-              <span className="text-sm text-zinc-300">{brand.name}</span>
+              <span className={`${getBrandNameClass(brand.name)} text-zinc-300 text-center leading-tight px-1`}>{brand.name}</span>
             </Link>
           ))}
         </div>
