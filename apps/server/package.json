@@ -9,6 +9,7 @@
     "start": "node dist/index.cjs"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "@razbor/api": "workspace:*",
     "@razbor/db": "workspace:*",
     "@telegram-apps/init-data-node": "^2.0.10",
