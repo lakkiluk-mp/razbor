@@ -26,7 +26,7 @@ FROM base AS prod-deps
 COPY --from=deps /app/ ./
 COPY . .
 RUN pnpm db:generate
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --frozen-lockfile
 
 FROM node:20-alpine AS runner
 WORKDIR /app
