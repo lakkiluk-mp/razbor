@@ -37,11 +37,11 @@ services:
     networks:
       - razbor-internal
 
-  server:
+  razzbor:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: razbor-server
+    container_name: razzbor
     restart: unless-stopped
     logging:
       driver: "json-file"
