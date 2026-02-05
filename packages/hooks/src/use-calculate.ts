@@ -28,6 +28,14 @@ export interface CalculationPart {
       minPriceUrl?: string | null
       maxPriceUrl?: string | null
       medianPriceUrl?: string | null
+      sources?: Array<{
+        source: string
+        min: number
+        max: number
+        minPriceUrl?: string | null
+        maxPriceUrl?: string | null
+        sampleSize: number
+      }> | null
     } | null
   }
   included: boolean

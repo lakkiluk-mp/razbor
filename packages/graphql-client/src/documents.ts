@@ -83,6 +83,14 @@ export const queries = {
             minPriceUrl
             maxPriceUrl
             medianPriceUrl
+            sources {
+              source
+              min
+              max
+              minPriceUrl
+              maxPriceUrl
+              sampleSize
+            }
           }
         }
       }
@@ -125,6 +133,14 @@ export const queries = {
             minPriceUrl
             maxPriceUrl
             medianPriceUrl
+            sources {
+              source
+              min
+              max
+              minPriceUrl
+              maxPriceUrl
+              sampleSize
+            }
           }
         }
       }
@@ -195,6 +211,14 @@ export const mutations = {
               minPriceUrl
               maxPriceUrl
               medianPriceUrl
+              sources {
+                source
+                min
+                max
+                minPriceUrl
+                maxPriceUrl
+                sampleSize
+              }
             }
           }
           included

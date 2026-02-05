@@ -7,6 +7,15 @@ import {
 import { formatPrice } from '@razbor/shared'
 import { ExternalLink } from 'lucide-react'
 
+interface PriceSource {
+  source: string
+  min: number
+  max: number
+  minPriceUrl?: string | null
+  maxPriceUrl?: string | null
+  sampleSize: number
+}
+
 interface PriceDetailsDrawerProps {
   partName: string
   price: {
@@ -17,12 +26,59 @@ interface PriceDetailsDrawerProps {
     minPriceUrl?: string | null
     maxPriceUrl?: string | null
     medianPriceUrl?: string | null
+    sources?: PriceSource[] | null
   } | null
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-const isValidUrl = (url: string) => /^https?:\/\//.test(url)
+const isValidUrl = (url: string | null | undefined): url is string =>
+  !!url && /^https?:\/\//.test(url)
+
+const getSourceLabel = (source: string): string => {
+  switch (source) {
+    case 'drom':
+      return 'Drom'
+    case 'avito':
+      return 'Avito'
+    default:
+      return source.charAt(0).toUpperCase() + source.slice(1)
+  }
+}
+
+function SourceLinks({
+  sources,
+  type,
+}: {
+  sources: PriceSource[] | null | undefined
+  type: 'min' | 'max'
+}) {
+  if (!sources || sources.length === 0) return null
+
+  const urlField = type === 'min' ? 'minPriceUrl' : 'maxPriceUrl'
+  const priceField = type
+
+  return (
+    <div className="flex flex-col items-end gap-0.5 mt-1">
+      {sources.map((s) => (
+        <div key={s.source} className="flex items-center text-xs text-zinc-500">
+          <span>{getSourceLabel(s.source)}: {formatPrice(s[priceField])} ₽</span>
+          {isValidUrl(s[urlField]) && (
+            <a
+              href={s[urlField]}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-500 hover:text-amber-400 transition-colors ml-1"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
 
 export function PriceDetailsDrawer({
   partName,
@@ -39,64 +95,31 @@ export function PriceDetailsDrawer({
         <div className="px-4 pb-8">
           {price ? (
             <div className="space-y-3">
-              <div className="flex items-center justify-between py-3">
+              <div className="flex items-start justify-between py-3">
                 <span className="text-sm text-zinc-400">Минимальная</span>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col items-end">
                   <span className="text-sm text-zinc-300">
                     {formatPrice(price.min)} ₽
                   </span>
-                  {price.minPriceUrl && isValidUrl(price.minPriceUrl) && (
-                    <a
-                      href={price.minPriceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Открыть объявление с минимальной ценой"
-                      className="w-11 h-11 flex items-center justify-center text-zinc-500 hover:text-amber-400 transition-colors"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  )}
+                  <SourceLinks sources={price.sources} type="min" />
                 </div>
               </div>
-              <div className="flex items-center justify-between py-3">
+              <div className="flex items-start justify-between py-3">
                 <span className="text-sm text-zinc-400">Максимальная</span>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col items-end">
                   <span className="text-sm text-zinc-300">
                     {formatPrice(price.max)} ₽
                   </span>
-                  {price.maxPriceUrl && isValidUrl(price.maxPriceUrl) && (
-                    <a
-                      href={price.maxPriceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Открыть объявление с максимальной ценой"
-                      className="w-11 h-11 flex items-center justify-center text-zinc-500 hover:text-amber-400 transition-colors"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  )}
+                  <SourceLinks sources={price.sources} type="max" />
                 </div>
               </div>
               <div className="flex items-center justify-between py-3 bg-zinc-800/50 rounded-xl px-4 -mx-4">
                 <span className="text-base font-medium text-zinc-200">
                   Медиана
                 </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-base font-semibold text-amber-400">
-                    {formatPrice(price.median)} ₽
-                  </span>
-                  {price.medianPriceUrl && isValidUrl(price.medianPriceUrl) && (
-                    <a
-                      href={price.medianPriceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Открыть объявление с медианной ценой"
-                      className="w-11 h-11 flex items-center justify-center text-zinc-500 hover:text-amber-400 transition-colors"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  )}
-                </div>
+                <span className="text-base font-semibold text-amber-400">
+                  {formatPrice(price.median)} ₽
+                </span>
               </div>
               <div className="border-t border-zinc-800 my-2" />
               <div className="flex items-center justify-between py-3">

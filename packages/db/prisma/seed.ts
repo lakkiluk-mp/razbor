@@ -2,11 +2,12 @@ import { PrismaClient } from '@prisma/client'
 import { schematicZones } from './seed/schematic-zones'
 import { mazda6Seed } from './seed/mazda-6'
 import { mercedesCClassSeed } from './seed/mercedes-c-class'
+import { renaultLoganSeed } from './seed/renault-logan'
 import type { ModelSeed } from './seed/types'
 
 const prisma = new PrismaClient()
 
-const modelSeeds: ModelSeed[] = [mazda6Seed, mercedesCClassSeed] as ModelSeed[]
+const modelSeeds: ModelSeed[] = [mazda6Seed, mercedesCClassSeed, renaultLoganSeed] as ModelSeed[]
 
 async function seedModel(seedData: ModelSeed) {
   console.log(`\n--- Seeding ${seedData.brand.name} ${seedData.model.name} ---`)

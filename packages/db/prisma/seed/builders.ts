@@ -35,8 +35,12 @@ export function transmission(
   config: string,
   name: string,
 ): PartData {
-  const isAuto = config.startsWith('at')
-  const specificType = isAuto ? 'акпп' : 'мкпп'
+  const getTransmissionSearchType = (c: string): string => {
+    if (c === 'at') return 'акпп'
+    if (c === 'amt') return 'ркпп'
+    return 'мкпп'
+  }
+  const specificType = getTransmissionSearchType(config)
   return {
     name,
     slug: `${prefix}-transmission-${config}`,
@@ -97,6 +101,25 @@ export function drivetrainRWD(
       configGroup: 'drivetrain:rwd',
     },
   ]
+}
+
+export function fuelPumpHP(
+  prefix: string,
+  searchNames: string[],
+  engineConfig: string,
+): PartData {
+  const slugConfig = engineConfig.replace(/\./g, '-')
+  return {
+    name: 'ТНВД',
+    slug: `${prefix}-fuel-pump-hp-${slugConfig}`,
+    category: 'other' as PartCategory,
+    schematicZoneCode: null,
+    searchQueries: [
+      ...searchNames.map((n) => `тнвд ${n}`),
+      ...searchNames.map((n) => `топливный насос высокого давления ${n}`),
+    ],
+    configGroup: `engine:${engineConfig}`,
+  }
 }
 
 export function drivetrainAWD(

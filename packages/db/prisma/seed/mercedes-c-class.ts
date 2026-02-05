@@ -1,23 +1,33 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, drivetrainRWD, drivetrainAWD } from './builders'
+import { engine, transmission, drivetrainRWD, drivetrainAWD, fuelPumpHP } from './builders'
 
 const P = 'mercedes-c-class'
 const S = ['c class', 'с класс', 'c-class']
 
 const modelSpecificParts: PartData[] = [
   engine(P, S, '1.5-204', 'M254', 204),
+  fuelPumpHP(P, S, '1.5-204'),
   engine(P, S, '2.0-258', 'M254', 258),
+  fuelPumpHP(P, S, '2.0-258'),
   engine(P, S, '1.6-156', 'M274', 156),
+  fuelPumpHP(P, S, '1.6-156'),
   engine(P, S, '2.0-184', 'M274', 184),
+  fuelPumpHP(P, S, '2.0-184'),
   engine(P, S, '2.0-204', 'M264', 204),
+  fuelPumpHP(P, S, '2.0-204'),
   engine(P, S, '2.0-249', 'M264', 249),
+  fuelPumpHP(P, S, '2.0-249'),
   engine(P, S, '3.0-367', 'M276', 367),
+  fuelPumpHP(P, S, '3.0-367'),
   engine(P, S, '4.0-510', 'M177', 510),
+  fuelPumpHP(P, S, '4.0-510'),
   engine(P, S, '1.8-156', 'M271', 156),
   engine(P, S, '1.8-184', 'M271', 184),
+  fuelPumpHP(P, S, '1.8-184'),
   engine(P, S, '1.8-204', 'M271', 204),
+  fuelPumpHP(P, S, '1.8-204'),
   engine(P, S, '2.5-204', 'M272', 204),
   engine(P, S, '3.0-231', 'M272', 231),
   engine(P, S, '3.5-272', 'M272', 272),

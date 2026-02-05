@@ -144,6 +144,7 @@ export type Price = {
   medianPriceUrl: Maybe<Scalars['String']['output']>;
   min: Maybe<Scalars['Int']['output']>;
   minPriceUrl: Maybe<Scalars['String']['output']>;
+  sources: Maybe<Array<SourcePrice>>;
   updatedAt: Maybe<Scalars['DateTime']['output']>;
 };
 
@@ -200,8 +201,19 @@ export type SchematicZone = {
   type: Maybe<ZoneType>;
 };
 
+export type SourcePrice = {
+  __typename?: 'SourcePrice';
+  max: Maybe<Scalars['Int']['output']>;
+  maxPriceUrl: Maybe<Scalars['String']['output']>;
+  min: Maybe<Scalars['Int']['output']>;
+  minPriceUrl: Maybe<Scalars['String']['output']>;
+  sampleSize: Maybe<Scalars['Int']['output']>;
+  source: Maybe<Scalars['String']['output']>;
+};
+
 export type UsageInfo = {
   __typename?: 'UsageInfo';
+  dailyLimit: Maybe<Scalars['Int']['output']>;
   freeRemaining: Maybe<Scalars['Int']['output']>;
   freeResetAt: Maybe<Scalars['DateTime']['output']>;
 };

@@ -18,12 +18,24 @@ function useTelegramApp() {
     if (!tg) return
     tg.ready()
     tg.expand()
-    tg.setHeaderColor('#09090b')
-    tg.setBackgroundColor('#09090b')
+    try {
+      tg.setHeaderColor('#09090b')
+    } catch {
+      // Not supported in version 6.0
+    }
+    try {
+      tg.setBackgroundColor('#09090b')
+    } catch {
+      // Not supported in version 6.0
+    }
     tg.disableVerticalSwipes?.()
     const platform = (tg as unknown as Record<string, unknown>).platform as string | undefined
     if (platform && platform !== 'tdesktop' && platform !== 'macos' && platform !== 'web') {
-      tg.requestFullscreen?.()
+      try {
+        tg.requestFullscreen?.()
+      } catch {
+        // Not supported in version 6.0
+      }
     }
   }, [])
 }

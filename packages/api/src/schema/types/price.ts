@@ -1,5 +1,14 @@
 import { builder } from '../builder'
 
+export interface SourcePriceData {
+  source: string
+  min: number
+  max: number
+  minPriceUrl: string | null
+  maxPriceUrl: string | null
+  sampleSize: number
+}
+
 export interface PriceData {
   median: number
   min: number
@@ -9,7 +18,21 @@ export interface PriceData {
   minPriceUrl: string | null
   maxPriceUrl: string | null
   medianPriceUrl: string | null
+  sources: SourcePriceData[]
 }
+
+export const SourcePriceType = builder.objectRef<SourcePriceData>('SourcePrice')
+
+builder.objectType(SourcePriceType, {
+  fields: (t) => ({
+    source: t.exposeString('source'),
+    min: t.exposeInt('min'),
+    max: t.exposeInt('max'),
+    minPriceUrl: t.string({ nullable: true, resolve: (sp) => sp.minPriceUrl }),
+    maxPriceUrl: t.string({ nullable: true, resolve: (sp) => sp.maxPriceUrl }),
+    sampleSize: t.exposeInt('sampleSize'),
+  }),
+})
 
 export const PriceType = builder.objectRef<PriceData>('Price')
 
@@ -26,5 +49,9 @@ builder.objectType(PriceType, {
     minPriceUrl: t.string({ nullable: true, resolve: (price) => price.minPriceUrl }),
     maxPriceUrl: t.string({ nullable: true, resolve: (price) => price.maxPriceUrl }),
     medianPriceUrl: t.string({ nullable: true, resolve: (price) => price.medianPriceUrl }),
+    sources: t.field({
+      type: [SourcePriceType],
+      resolve: (price) => price.sources,
+    }),
   }),
 })
