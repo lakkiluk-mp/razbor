@@ -231,10 +231,12 @@ enum ZoneType {
 // ЦЕНЫ
 // ============================================
 
-/// Текущая цена на запчасть
+/// Цена на запчасть от конкретного источника
+/// Multi-source: каждый провайдер (drom, avito) хранит свою строку
 model Price {
-  id          String   @id @default(cuid())
-  partId      String
+  id           String   @id @default(cuid())
+  partId       String
+  generationId String
 
   // Агрегированные данные
   median      Int      // Медианная цена в рублях
@@ -246,11 +248,16 @@ model Price {
   source      String   @default("avito") // avito, drom, manual
   updatedAt   DateTime @updatedAt
 
-  part        Part     @relation(fields: [partId], references: [id], onDelete: Cascade)
+  part        Part       @relation(fields: [partId], references: [id], onDelete: Cascade)
+  generation  Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
 
-  @@unique([partId]) // одна актуальная цена на запчасть
+  @@unique([partId, generationId, source]) // цена per part + generation + source
   @@map("prices")
 }
+
+// Агрегация при чтении: packages/api/src/utils/aggregate-prices.ts
+// - 1 источник → данные as-is
+// - 2+ источников → weighted median по sampleSize
 ```
 
 ---
@@ -978,17 +985,17 @@ async function getPrice(partId: string): Promise<CachedPrice | null> {
 │  └──────────────┘                                │                         │
 │                                                  │ 1                       │
 │                                                  │                         │
-│                                                  ▼ 1                       │
+│                                                  ▼ M (per source)          │
 │                                           ┌──────────────┐                 │
 │                                           │    Price     │                 │
 │                                           ├──────────────┤                 │
 │                                           │ id           │                 │
 │                                           │ partId       │                 │
+│                                           │ generationId │                 │
 │                                           │ median       │                 │
-│                                           │ min          │                 │
-│                                           │ max          │                 │
+│                                           │ min/max      │                 │
 │                                           │ count        │                 │
-│                                           │ source       │                 │
+│                                           │ source       │ ← drom/avito    │
 │                                           └──────────────┘                 │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘

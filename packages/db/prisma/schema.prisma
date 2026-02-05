@@ -204,7 +204,7 @@ model Price {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([partId, generationId])
+  @@unique([partId, generationId, source])
   @@index([partId])
   @@index([generationId])
   @@index([updatedAt])

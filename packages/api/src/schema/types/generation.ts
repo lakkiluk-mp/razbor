@@ -2,6 +2,7 @@ import { builder } from '../builder'
 import { BodyTypeEnum } from './enums'
 import type { PartWithPriceData } from './part'
 import { PartWithPriceType } from './part'
+import { aggregatePrices } from '../../utils/aggregate-prices'
 
 builder.prismaObject('Generation', {
   fields: (t) => ({
@@ -34,28 +35,17 @@ builder.prismaObject('Generation', {
           where: { generationId: generation.id },
         })
 
-        const priceMap = new Map(prices.map((p) => [p.partId, p]))
+        const priceMap = aggregatePrices(prices)
 
         const partsWithPrice: PartWithPriceData[] = modelParts.map((mp) => {
-          const priceRecord = priceMap.get(mp.partId)
+          const aggregated = priceMap.get(mp.partId)
           return {
             id: mp.part.id,
             name: mp.part.name,
             category: mp.part.category,
             schematicZone: mp.part.schematicZone,
             configGroup: mp.part.configGroup,
-            price: priceRecord
-              ? {
-                  median: priceRecord.median,
-                  min: priceRecord.minPrice,
-                  max: priceRecord.maxPrice,
-                  count: priceRecord.sampleSize,
-                  updatedAt: priceRecord.fetchedAt,
-                  minPriceUrl: priceRecord.minPriceUrl ?? null,
-                  maxPriceUrl: priceRecord.maxPriceUrl ?? null,
-                  medianPriceUrl: priceRecord.medianPriceUrl ?? null,
-                }
-              : null,
+            price: aggregated ?? null,
           }
         })
 

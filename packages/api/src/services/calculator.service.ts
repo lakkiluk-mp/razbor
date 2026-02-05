@@ -1,6 +1,7 @@
 import type { PrismaClient } from '@razbor/db'
 import type { CalculationResultData, CalculationPartData } from '../schema/types/calculation'
 import type { PartWithPriceData } from '../schema/types/part'
+import { aggregatePrices } from '../utils/aggregate-prices'
 
 interface CalculateInput {
   generationId: string
@@ -42,14 +43,14 @@ export async function calculate(input: CalculateInput): Promise<CalculationResul
     where: { generationId },
   })
 
-  const priceMap = new Map(prices.map((p) => [p.partId, p]))
+  const priceMap = aggregatePrices(prices)
 
   const parts: CalculationPartData[] = []
   let totalPrice = 0
 
   for (const modelPart of modelParts) {
     const { part } = modelPart
-    const priceRecord = priceMap.get(part.id)
+    const aggregated = priceMap.get(part.id)
 
     const isConfigPart = part.configGroup !== null
 
@@ -80,7 +81,7 @@ export async function calculate(input: CalculateInput): Promise<CalculationResul
 
     const included = !isDamaged && !isExcluded
 
-    const partPrice = included && priceRecord ? priceRecord.median : 0
+    const partPrice = included && aggregated ? aggregated.median : 0
 
     if (included) {
       totalPrice += partPrice
@@ -92,18 +93,7 @@ export async function calculate(input: CalculateInput): Promise<CalculationResul
       category: part.category,
       schematicZone: part.schematicZone,
       configGroup: part.configGroup,
-      price: priceRecord
-        ? {
-            median: priceRecord.median,
-            min: priceRecord.minPrice,
-            max: priceRecord.maxPrice,
-            count: priceRecord.sampleSize,
-            updatedAt: priceRecord.fetchedAt,
-            minPriceUrl: priceRecord.minPriceUrl ?? null,
-            maxPriceUrl: priceRecord.maxPriceUrl ?? null,
-            medianPriceUrl: priceRecord.medianPriceUrl ?? null,
-          }
-        : null,
+      price: aggregated ?? null,
     }
 
     parts.push({
