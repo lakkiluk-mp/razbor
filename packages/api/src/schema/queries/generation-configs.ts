@@ -62,6 +62,7 @@ builder.queryField('generationConfigs', (t) =>
             include: {
               prices: {
                 where: { generationId: args.generationId },
+                orderBy: { sampleSize: 'desc' },
                 take: 1,
               },
             },
@@ -85,9 +86,9 @@ builder.queryField('generationConfigs', (t) =>
 
         const price = part.prices[0]?.median ?? 0
 
-        if (part.configGroup.startsWith('engine:')) {
+        if (part.configGroup.startsWith('engine:') && part.category === 'engine') {
           engines.push({ configGroup: part.configGroup, name: part.name, price })
-        } else if (part.configGroup.startsWith('transmission:')) {
+        } else if (part.configGroup.startsWith('transmission:') && part.category === 'transmission') {
           transmissions.push({ configGroup: part.configGroup, name: part.name, price })
         } else if (part.configGroup.startsWith('drivetrain:')) {
           const existing = drivetrainMap.get(part.configGroup)

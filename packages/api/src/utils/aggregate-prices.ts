@@ -1,5 +1,16 @@
 import type { Price } from '@prisma/client'
-import type { PriceData } from '../schema/types/price'
+import type { PriceData, SourcePriceData } from '../schema/types/price'
+
+function buildSourcePriceData(p: Price): SourcePriceData {
+  return {
+    source: p.source,
+    min: p.minPrice,
+    max: p.maxPrice,
+    minPriceUrl: p.minPriceUrl,
+    maxPriceUrl: p.maxPriceUrl,
+    sampleSize: p.sampleSize,
+  }
+}
 
 /**
  * Агрегирует цены из разных источников (drom, avito) в единую цену для каждой запчасти.
@@ -24,6 +35,12 @@ export function aggregatePrices(prices: Price[]): Map<string, PriceData> {
   const result = new Map<string, PriceData>()
 
   for (const [partId, sourcePrices] of grouped) {
+    if (sourcePrices.length === 0) continue
+
+    const sources = sourcePrices
+      .map(buildSourcePriceData)
+      .sort((a, b) => b.sampleSize - a.sampleSize)
+
     if (sourcePrices.length === 1) {
       const p = sourcePrices[0]
       result.set(partId, {
@@ -35,6 +52,7 @@ export function aggregatePrices(prices: Price[]): Map<string, PriceData> {
         minPriceUrl: p.minPriceUrl,
         maxPriceUrl: p.maxPriceUrl,
         medianPriceUrl: p.medianPriceUrl,
+        sources,
       })
       continue
     }
@@ -69,6 +87,7 @@ export function aggregatePrices(prices: Price[]): Map<string, PriceData> {
       minPriceUrl: bestSource.minPriceUrl,
       maxPriceUrl: bestSource.maxPriceUrl,
       medianPriceUrl: bestSource.medianPriceUrl,
+      sources,
     })
   }
 
