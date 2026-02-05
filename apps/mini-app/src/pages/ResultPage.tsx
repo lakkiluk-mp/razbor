@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils'
 import type { CalculationPart } from '@razbor/hooks'
 import { CALCULATION_PARTS_KEY } from '@/lib/constants'
 import { PriceDetailsDrawer } from '@/components/features/price-details-drawer'
+import { PartsSearch } from '@/components/features/parts-search'
 import { groupPartsByCategory } from '@/lib/category-groups'
 
 export function ResultPage() {
@@ -21,6 +22,7 @@ export function ResultPage() {
   const [excludedParts, setExcludedParts] = useState<Set<string>>(new Set())
   const [parts, setParts] = useState<CalculationPart[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const [selectedPart, setSelectedPart] = useState<{
     name: string
     price: {
@@ -34,6 +36,7 @@ export function ResultPage() {
     } | null
   } | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [openAccordions, setOpenAccordions] = useState<string[]>([])
 
   useEffect(() => {
     try {
@@ -91,6 +94,32 @@ export function ResultPage() {
     [sortedParts]
   )
 
+  const filteredGroupedParts = useMemo(() => {
+    if (!searchQuery.trim()) return groupedParts
+
+    const query = searchQuery.toLowerCase().trim()
+    return groupedParts
+      .map((group) => ({
+        ...group,
+        parts: group.parts.filter((item) =>
+          item.part.name.toLowerCase().includes(query)
+        ),
+      }))
+      .filter((group) => group.parts.length > 0)
+  }, [groupedParts, searchQuery])
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      setOpenAccordions(filteredGroupedParts.map((g) => g.key))
+    }
+  }, [searchQuery, filteredGroupedParts])
+
+  useEffect(() => {
+    if (groupedParts.length > 0 && openAccordions.length === 0 && !searchQuery.trim()) {
+      setOpenAccordions([groupedParts[0]!.key])
+    }
+  }, [groupedParts, openAccordions.length, searchQuery])
+
   const displayPrice = parts.length > 0 ? totalPrice : initialTotalPrice
 
   const toggleExclude = (partId: string) => {
@@ -119,18 +148,30 @@ export function ResultPage() {
 
       <div className="flex-1 px-4 pb-4">
         <p className="text-zinc-400 text-sm mb-3">Детализация</p>
+        {isLoaded && parts.length > 0 && (
+          <PartsSearch
+            value={searchQuery}
+            onChange={setSearchQuery}
+            className="mb-3"
+          />
+        )}
         {isLoaded && parts.length === 0 ? (
           <div className="bg-zinc-900 rounded-xl px-4 py-6 text-center">
             <p className="text-zinc-500 text-sm">
               Детализация недоступна. Выполните новый расчёт.
             </p>
           </div>
+        ) : isLoaded && filteredGroupedParts.length === 0 && searchQuery ? (
+          <div className="bg-zinc-900 rounded-xl px-4 py-6 text-center">
+            <p className="text-zinc-500 text-sm">Ничего не найдено</p>
+          </div>
         ) : isLoaded ? (
           <Accordion
             type="multiple"
-            defaultValue={groupedParts.length > 0 ? [groupedParts[0]!.key] : []}
+            value={openAccordions}
+            onValueChange={setOpenAccordions}
           >
-            {groupedParts.map((group) => {
+            {filteredGroupedParts.map((group) => {
               const activeCount = group.parts.filter(isPartActive).length
               const groupSum = group.parts
                 .filter(isPartActive)

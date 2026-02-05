@@ -56,25 +56,28 @@ function SourceLinks({
   if (!sources || sources.length === 0) return null
 
   const urlField = type === 'min' ? 'minPriceUrl' : 'maxPriceUrl'
-  const priceField = type
 
   return (
     <div className="flex flex-col items-end gap-0.5 mt-1">
       {sources.map((s) => (
-        <div key={s.source} className="flex items-center text-xs text-zinc-500">
-          <span>{getSourceLabel(s.source)}: {formatPrice(s[priceField])} ₽</span>
-          {isValidUrl(s[urlField]) && (
-            <a
-              href={s[urlField]}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-zinc-500 hover:text-amber-400 transition-colors ml-1"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <ExternalLink className="w-3 h-3" />
-            </a>
-          )}
-        </div>
+        <a
+          key={s.source}
+          href={isValidUrl(s[urlField]) ? s[urlField] : undefined}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`flex items-center gap-1.5 text-sm min-h-[44px] px-2 -mr-2 ${
+            isValidUrl(s[urlField])
+              ? 'text-zinc-400 active:text-amber-400'
+              : 'text-zinc-500 pointer-events-none'
+          }`}
+          onClick={(e) => {
+            e.stopPropagation()
+            if (!isValidUrl(s[urlField])) e.preventDefault()
+          }}
+        >
+          <span>{getSourceLabel(s.source)}: {formatPrice(type === 'min' ? s.min : s.max)} ₽</span>
+          {isValidUrl(s[urlField]) && <ExternalLink className="w-4 h-4" />}
+        </a>
       ))}
     </div>
   )
@@ -96,7 +99,7 @@ export function PriceDetailsDrawer({
           {price ? (
             <div className="space-y-3">
               <div className="flex items-start justify-between py-3">
-                <span className="text-sm text-zinc-400">Минимальная</span>
+                <span className="text-sm font-medium text-zinc-400">Минимальная</span>
                 <div className="flex flex-col items-end">
                   <span className="text-sm text-zinc-300">
                     {formatPrice(price.min)} ₽
@@ -105,7 +108,7 @@ export function PriceDetailsDrawer({
                 </div>
               </div>
               <div className="flex items-start justify-between py-3">
-                <span className="text-sm text-zinc-400">Максимальная</span>
+                <span className="text-sm font-medium text-zinc-400">Максимальная</span>
                 <div className="flex flex-col items-end">
                   <span className="text-sm text-zinc-300">
                     {formatPrice(price.max)} ₽
