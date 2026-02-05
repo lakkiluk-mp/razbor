@@ -39,6 +39,8 @@ RUN adduser --system --uid 1001 appuser
 
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=prod-deps /app/packages/db/node_modules ./packages/db/node_modules
+COPY --from=prod-deps /app/packages/api/node_modules ./packages/api/node_modules
+COPY --from=prod-deps /app/apps/server/node_modules ./apps/server/node_modules
 COPY --from=builder /app/apps/server/dist ./dist
 COPY --from=builder /app/apps/mini-app/dist ./public
 COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
