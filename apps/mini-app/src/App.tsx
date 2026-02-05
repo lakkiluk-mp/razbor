@@ -9,8 +9,10 @@ import { ConfigPage } from '@/pages/ConfigPage'
 import { CalculatorPage } from '@/pages/CalculatorPage'
 import { ResultPage } from '@/pages/ResultPage'
 import { LimitReachedPage } from '@/pages/LimitReachedPage'
+import { TelegramRequired } from '@/components/TelegramRequired'
 
 const queryClient = getQueryClient()
+const isDev = import.meta.env.DEV
 
 function useTelegramApp() {
   useEffect(() => {
@@ -42,6 +44,12 @@ function useTelegramApp() {
 
 export function App() {
   useTelegramApp()
+
+  const isTelegram = Boolean(window.Telegram?.WebApp?.initData)
+
+  if (!isDev && !isTelegram) {
+    return <TelegramRequired />
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
