@@ -5,7 +5,6 @@ WORKDIR /app
 
 FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-COPY .npmrc ./
 COPY apps/server/package.json ./apps/server/
 COPY apps/mini-app/package.json ./apps/mini-app/
 COPY packages/api/package.json ./packages/api/
@@ -13,7 +12,6 @@ COPY packages/db/package.json ./packages/db/
 COPY packages/shared/package.json ./packages/shared/
 COPY packages/graphql-client/package.json ./packages/graphql-client/
 COPY packages/hooks/package.json ./packages/hooks/
-COPY tools/price-updater/package.json ./tools/price-updater/
 RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
