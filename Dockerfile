@@ -42,4 +42,4 @@ ENV PORT=4000
 EXPOSE 4000
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["node", "apps/server/dist/index.cjs"]
+CMD ["pnpm", "--filter", "@razbor/server", "start"]

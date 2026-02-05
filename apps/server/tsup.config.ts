@@ -7,6 +7,7 @@ export default defineConfig({
   target: 'node20',
   clean: true,
   noExternal: ['@razbor/api', '@razbor/shared', '@razbor/db'],
+  external: ['@prisma/client', '.prisma/client'],
   esbuildOptions(options) {
     options.alias = {
       '@razbor/api': resolve(__dirname, '../../packages/api/src'),
