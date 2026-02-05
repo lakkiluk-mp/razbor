@@ -31,6 +31,8 @@ pnpm-debug.log*
 docker/
 !docker/entrypoint.dev.sh
 
+tools/
+
 coverage
 .nyc_output
 

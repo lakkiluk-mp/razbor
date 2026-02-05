@@ -42,7 +42,6 @@ COPY --from=prod-deps /app/packages/db/node_modules ./packages/db/node_modules
 COPY --from=builder /app/apps/server/dist ./dist
 COPY --from=builder /app/apps/mini-app/dist ./public
 COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
-COPY --from=builder /app/packages/api/src/generated ./packages/api/src/generated
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
