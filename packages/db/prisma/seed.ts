@@ -99,6 +99,22 @@ async function seedModel(seedData: ModelSeed) {
           continue
         }
 
+        if (partOrRef.configGroup) {
+          if (sharedPart.configGroup && sharedPart.configGroup !== partOrRef.configGroup) {
+            console.warn(
+              `WARNING: Shared part "${sharedPart.name}" (OEM: ${partOrRef.oemCode}) ` +
+              `has conflicting configGroup: existing="${sharedPart.configGroup}", ` +
+              `new="${partOrRef.configGroup}". Last write wins!`
+            )
+          }
+          if (sharedPart.configGroup !== partOrRef.configGroup) {
+            await prisma.part.update({
+              where: { id: sharedPart.id },
+              data: { configGroup: partOrRef.configGroup },
+            })
+          }
+        }
+
         await prisma.modelPart.upsert({
           where: {
             generationId_partId: { generationId: generation.id, partId: sharedPart.id },
