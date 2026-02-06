@@ -46,6 +46,15 @@ const getSourceLabel = (source: string): string => {
   }
 }
 
+const openExternalLink = (url: string) => {
+  const tg = window.Telegram?.WebApp
+  if (tg?.openLink) {
+    tg.openLink(url, { try_instant_view: false })
+  } else {
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
+}
+
 function SourceLinks({
   sources,
   type,
@@ -59,26 +68,30 @@ function SourceLinks({
 
   return (
     <div className="flex flex-col items-end gap-0.5 mt-1">
-      {sources.map((s) => (
-        <a
-          key={s.source}
-          href={isValidUrl(s[urlField]) ? s[urlField] : undefined}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`flex items-center gap-1.5 text-sm min-h-[44px] px-2 -mr-2 ${
-            isValidUrl(s[urlField])
-              ? 'text-zinc-400 active:text-amber-400'
-              : 'text-zinc-500 pointer-events-none'
-          }`}
-          onClick={(e) => {
-            e.stopPropagation()
-            if (!isValidUrl(s[urlField])) e.preventDefault()
-          }}
-        >
-          <span>{getSourceLabel(s.source)}: {formatPrice(type === 'min' ? s.min : s.max)} ₽</span>
-          {isValidUrl(s[urlField]) && <ExternalLink className="w-4 h-4" />}
-        </a>
-      ))}
+      {sources.map((s) => {
+        const url = s[urlField]
+        const hasUrl = isValidUrl(url)
+
+        return (
+          <button
+            key={s.source}
+            type="button"
+            disabled={!hasUrl}
+            className={`flex items-center gap-1.5 text-sm min-h-[44px] px-2 -mr-2 ${
+              hasUrl
+                ? 'text-zinc-400 active:text-amber-400'
+                : 'text-zinc-500'
+            }`}
+            onClick={(e) => {
+              e.stopPropagation()
+              if (hasUrl) openExternalLink(url)
+            }}
+          >
+            <span>{getSourceLabel(s.source)}: {formatPrice(type === 'min' ? s.min : s.max)} ₽</span>
+            {hasUrl && <ExternalLink className="w-4 h-4" />}
+          </button>
+        )
+      })}
     </div>
   )
 }

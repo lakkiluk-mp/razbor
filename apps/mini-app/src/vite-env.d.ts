@@ -22,6 +22,7 @@ interface TelegramWebApp {
     onClick(callback: () => void): void
     offClick(callback: () => void): void
   }
+  openLink(url: string, options?: { try_instant_view?: boolean }): void
   openInvoice(url: string, callback?: (status: string) => void): void
   requestFullscreen?(): void
   isFullscreen?: boolean
