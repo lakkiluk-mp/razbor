@@ -7,16 +7,12 @@ const P = 'renault-logan'
 const S = ['renault logan', 'рено логан', 'логан']
 
 const modelSpecificParts: PartData[] = [
-  // K7J — только 1 поколение (1.4)
-  engine(P, S, '1.4-75', 'K7J', 75),
-  // K7M и K4M — общие для обоих поколений
-  engine(P, S, '1.6-k7m', 'K7M', 82),
-  engine(P, S, '1.6-k4m', 'K4M', 102),
-  // H4M — только 2 поколение
-  engine(P, S, '1.6-113', 'H4M', 113),
-  // КПП
-  transmission(P, S, 'mt', 'МКПП 5-ступ'),
-  transmission(P, S, 'at', 'АКПП 4-ступ'),
+  engine(P, S, '1.4-75', 'K7J', 75, ['6001549085']),
+  engine(P, S, '1.6-k7m', 'K7M', 82, ['8201109282', '100015193R']),
+  engine(P, S, '1.6-k4m', 'K4M', 102, ['8201315743', '6001549002']),
+  engine(P, S, '1.6-113', 'H4M', 113, ['8201583992']),
+  transmission(P, S, 'mt', 'МКПП 5-ступ', ['320100676R', '320103500R', '320103334R']),
+  transmission(P, S, 'at', 'АКПП 4-ступ', ['8201114873']),
   transmission(P, S, 'amt', 'АМТ (робот)'),
   // Привод — только FWD
   ...drivetrainFWD(P, S),

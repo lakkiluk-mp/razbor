@@ -1,5 +1,5 @@
 import { useSearchParams, Link, useNavigate } from 'react-router-dom'
-import { useCallback, useMemo, useState, useEffect } from 'react'
+import { useCallback, useMemo, useState, useEffect, useRef } from 'react'
 import { Info, HelpCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -37,6 +37,7 @@ export function ResultPage() {
   } | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [openAccordions, setOpenAccordions] = useState<string[]>([])
+  const isInitializedRef = useRef(false)
 
   useEffect(() => {
     try {
@@ -109,16 +110,11 @@ export function ResultPage() {
   }, [groupedParts, searchQuery])
 
   useEffect(() => {
-    if (searchQuery.trim()) {
-      setOpenAccordions(filteredGroupedParts.map((g) => g.key))
-    }
-  }, [searchQuery, filteredGroupedParts])
-
-  useEffect(() => {
-    if (groupedParts.length > 0 && openAccordions.length === 0 && !searchQuery.trim()) {
+    if (!isInitializedRef.current && groupedParts.length > 0 && !searchQuery.trim()) {
+      isInitializedRef.current = true
       setOpenAccordions([groupedParts[0]!.key])
     }
-  }, [groupedParts, openAccordions.length, searchQuery])
+  }, [groupedParts, searchQuery])
 
   const displayPrice = parts.length > 0 ? totalPrice : initialTotalPrice
 
@@ -207,7 +203,7 @@ export function ResultPage() {
                                 <Checkbox
                                   checked={isActive}
                                   onCheckedChange={() => toggleExclude(item.part.id)}
-                                  className="border-zinc-600 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500"
+                                  className="border-zinc-600 data-[state=checked]:bg-amber-500/20 data-[state=checked]:border-amber-500 data-[state=checked]:text-amber-400"
                                 />
                               )}
                               <span

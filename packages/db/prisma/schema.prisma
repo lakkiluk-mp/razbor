@@ -195,6 +195,7 @@ model Price {
   minPriceUrl    String?
   maxPriceUrl    String?
   medianPriceUrl String?
+  searchUrl      String?
   source       String   @default("avito")
   fetchedAt    DateTime @default(now())
 
