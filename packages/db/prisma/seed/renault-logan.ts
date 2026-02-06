@@ -1,12 +1,12 @@
 import { BodyType } from '@prisma/client'
-import type { PartData, GenerationData } from './types'
+import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
 import { engine, transmission, drivetrainFWD } from './builders'
 
 const P = 'renault-logan'
 const S = ['renault logan', 'рено логан', 'логан']
 
-const modelSpecificParts: PartData[] = [
+const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.4-75', 'K7J', 75, ['6001549085']),
   engine(P, S, '1.6-k7m', 'K7M', 82, ['8201109282', '100015193R']),
   engine(P, S, '1.6-k4m', 'K4M', 102, ['8201315743', '6001549002']),
@@ -71,7 +71,7 @@ export const renaultLoganSeed = {
 
   generations,
 
-  getPartsForGeneration(generation: GenerationData): PartData[] {
+  getPartsForGeneration(generation: GenerationData): (PartData | SharedPartRef)[] {
     const allParts = [...getBaseParts(P, S), ...modelSpecificParts]
 
     return allParts.filter((part) => {

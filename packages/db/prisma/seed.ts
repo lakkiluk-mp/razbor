@@ -3,11 +3,46 @@ import { schematicZones } from './seed/schematic-zones'
 import { mazda6Seed } from './seed/mazda-6'
 import { mercedesCClassSeed } from './seed/mercedes-c-class'
 import { renaultLoganSeed } from './seed/renault-logan'
+import { SHARED_PARTS_REGISTRY, generateSharedPartSlug } from './seed/shared-parts'
 import type { ModelSeed } from './seed/types'
+import { isSharedPartRef } from './seed/types'
 
 const prisma = new PrismaClient()
 
 const modelSeeds: ModelSeed[] = [mazda6Seed, mercedesCClassSeed, renaultLoganSeed] as ModelSeed[]
+
+async function seedSharedParts() {
+  console.log('\n--- Seeding shared parts ---')
+  let count = 0
+
+  for (const def of SHARED_PARTS_REGISTRY) {
+    const zoneCode = def.category === 'engine' ? 'engine' : 'transmission'
+    const zone = await prisma.schematicZone.findUnique({
+      where: { code: zoneCode },
+    })
+
+    await prisma.part.upsert({
+      where: { oemCode: def.oemCode },
+      update: {
+        searchQueries: def.searchQueries,
+        name: def.name,
+      },
+      create: {
+        name: def.name,
+        slug: generateSharedPartSlug(def),
+        category: def.category,
+        isShared: true,
+        oemCode: def.oemCode,
+        schematicZoneId: zone?.id || null,
+        searchQueries: def.searchQueries,
+        configGroup: null,
+      },
+    })
+    count++
+  }
+
+  console.log(`Created ${count} shared parts`)
+}
 
 async function seedModel(seedData: ModelSeed) {
   console.log(`\n--- Seeding ${seedData.brand.name} ${seedData.model.name} ---`)
@@ -53,47 +88,69 @@ async function seedModel(seedData: ModelSeed) {
 
     const parts = seedData.getPartsForGeneration(genData)
 
-    for (const partData of parts) {
-      let schematicZoneId = null
-      if (partData.schematicZoneCode) {
-        const zone = await prisma.schematicZone.findUnique({
-          where: { code: partData.schematicZoneCode }
+    for (const partOrRef of parts) {
+      if (isSharedPartRef(partOrRef)) {
+        const sharedPart = await prisma.part.findUnique({
+          where: { oemCode: partOrRef.oemCode },
         })
-        if (!zone) {
-          console.warn(`Warning: SchematicZone not found for code "${partData.schematicZoneCode}" (part: ${partData.name})`)
+        if (!sharedPart) {
+          console.warn(`Warning: Shared part not found for OEM "${partOrRef.oemCode}"`)
+          continue
         }
-        schematicZoneId = zone?.id || null
+
+        await prisma.modelPart.upsert({
+          where: {
+            generationId_partId: { generationId: generation.id, partId: sharedPart.id },
+          },
+          update: {},
+          create: {
+            generationId: generation.id,
+            partId: sharedPart.id,
+            isDefault: true,
+          },
+        })
+        totalParts++
+      } else {
+        let schematicZoneId = null
+        if (partOrRef.schematicZoneCode) {
+          const zone = await prisma.schematicZone.findUnique({
+            where: { code: partOrRef.schematicZoneCode }
+          })
+          if (!zone) {
+            console.warn(`Warning: SchematicZone not found for code "${partOrRef.schematicZoneCode}" (part: ${partOrRef.name})`)
+          }
+          schematicZoneId = zone?.id || null
+        }
+
+        const part = await prisma.part.upsert({
+          where: { slug: partOrRef.slug },
+          update: {
+            searchQueries: partOrRef.searchQueries || [],
+            configGroup: partOrRef.configGroup ?? null,
+          },
+          create: {
+            name: partOrRef.name,
+            slug: partOrRef.slug,
+            category: partOrRef.category as 'body' | 'optics' | 'glass' | 'engine' | 'transmission' | 'suspension' | 'interior' | 'electrical' | 'cooling' | 'other',
+            schematicZoneId,
+            searchQueries: partOrRef.searchQueries || [],
+            configGroup: partOrRef.configGroup ?? null,
+          },
+        })
+
+        await prisma.modelPart.upsert({
+          where: {
+            generationId_partId: { generationId: generation.id, partId: part.id }
+          },
+          update: {},
+          create: {
+            generationId: generation.id,
+            partId: part.id,
+            isDefault: true,
+          },
+        })
+        totalParts++
       }
-
-      const part = await prisma.part.upsert({
-        where: { slug: partData.slug },
-        update: {
-          searchQueries: partData.searchQueries || [],
-          configGroup: partData.configGroup ?? null,
-        },
-        create: {
-          name: partData.name,
-          slug: partData.slug,
-          category: partData.category as 'body' | 'optics' | 'glass' | 'engine' | 'transmission' | 'suspension' | 'interior' | 'electrical' | 'cooling' | 'other',
-          schematicZoneId,
-          searchQueries: partData.searchQueries || [],
-          configGroup: partData.configGroup ?? null,
-        },
-      })
-
-      await prisma.modelPart.upsert({
-        where: {
-          generationId_partId: { generationId: generation.id, partId: part.id }
-        },
-        update: {},
-        create: {
-          generationId: generation.id,
-          partId: part.id,
-          isDefault: true,
-        },
-      })
-
-      totalParts++
     }
 
     console.log(`Created generation: ${generation.name} with ${parts.length} parts`)
@@ -114,6 +171,8 @@ async function main() {
     })
   }
   console.log(`Created ${schematicZones.length} schematic zones`)
+
+  await seedSharedParts()
 
   let totalGenerations = 0
   let totalParts = 0

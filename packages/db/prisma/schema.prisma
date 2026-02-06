@@ -128,6 +128,8 @@ model Part {
   schematicZoneId String?
   searchQueries   String[]     @default([])
   configGroup     String?
+  isShared        Boolean      @default(false)
+  oemCode         String?      @unique
 
   schematicZone SchematicZone? @relation(fields: [schematicZoneId], references: [id])
   modelParts    ModelPart[]
@@ -139,6 +141,8 @@ model Part {
   @@index([category])
   @@index([schematicZoneId])
   @@index([configGroup])
+  @@index([isShared])
+  @@index([oemCode])
   @@map("parts")
 }
 
@@ -186,7 +190,7 @@ model SchematicZone {
 model Price {
   id           String   @id @default(cuid())
   partId       String
-  generationId String
+  generationId String?
   minPrice     Int
   maxPrice     Int
   median       Int
@@ -199,8 +203,8 @@ model Price {
   source       String   @default("avito")
   fetchedAt    DateTime @default(now())
 
-  part       Part       @relation(fields: [partId], references: [id], onDelete: Cascade)
-  generation Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  part       Part        @relation(fields: [partId], references: [id], onDelete: Cascade)
+  generation Generation? @relation(fields: [generationId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

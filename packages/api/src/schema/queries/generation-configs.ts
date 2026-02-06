@@ -1,3 +1,4 @@
+import { aggregatePrices } from '../../utils/aggregate-prices'
 import { builder } from '../builder'
 
 interface ConfigOptionData {
@@ -58,17 +59,28 @@ builder.queryField('generationConfigs', (t) =>
           },
         },
         include: {
-          part: {
-            include: {
-              prices: {
-                where: { generationId: args.generationId },
-                orderBy: { sampleSize: 'desc' },
-                take: 1,
-              },
-            },
-          },
+          part: true,
         },
       })
+
+      const sharedPartIds = modelParts.filter((mp) => mp.part.isShared).map((mp) => mp.partId)
+      const regularPartIds = modelParts.filter((mp) => !mp.part.isShared).map((mp) => mp.partId)
+
+      const [regularPrices, sharedPrices] = await Promise.all([
+        regularPartIds.length > 0
+          ? ctx.prisma.price.findMany({
+              where: { generationId: args.generationId, partId: { in: regularPartIds } },
+            })
+          : Promise.resolve([]),
+        sharedPartIds.length > 0
+          ? ctx.prisma.price.findMany({
+              where: { partId: { in: sharedPartIds }, generationId: null },
+            })
+          : Promise.resolve([]),
+      ])
+
+      const regularPriceMap = aggregatePrices(regularPrices)
+      const sharedPriceMap = aggregatePrices(sharedPrices)
 
       const engines: ConfigOptionData[] = []
       const transmissions: ConfigOptionData[] = []
@@ -84,7 +96,8 @@ builder.queryField('generationConfigs', (t) =>
         const { part } = modelPart
         if (!part.configGroup) continue
 
-        const price = part.prices[0]?.median ?? 0
+        const partPriceMap = part.isShared ? sharedPriceMap : regularPriceMap
+        const price = partPriceMap.get(part.id)?.median ?? 0
 
         if (part.configGroup.startsWith('engine:') && part.category === 'engine') {
           engines.push({ configGroup: part.configGroup, name: part.name, price })

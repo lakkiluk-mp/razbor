@@ -31,13 +31,23 @@ builder.prismaObject('Generation', {
           orderBy: { part: { category: 'asc' } },
         })
 
-        const prices = await ctx.prisma.price.findMany({
-          where: { generationId: generation.id },
-        })
+        const sharedPartIds = modelParts.filter((mp) => mp.part.isShared).map((mp) => mp.partId)
+        const regularPartIds = modelParts.filter((mp) => !mp.part.isShared).map((mp) => mp.partId)
 
-        const priceMap = aggregatePrices(prices)
+        const [regularPrices, sharedPrices] = await Promise.all([
+          regularPartIds.length > 0
+            ? ctx.prisma.price.findMany({ where: { generationId: generation.id, partId: { in: regularPartIds } } })
+            : Promise.resolve([]),
+          sharedPartIds.length > 0
+            ? ctx.prisma.price.findMany({ where: { partId: { in: sharedPartIds }, generationId: null } })
+            : Promise.resolve([]),
+        ])
+
+        const regularPriceMap = aggregatePrices(regularPrices)
+        const sharedPriceMap = aggregatePrices(sharedPrices)
 
         const partsWithPrice: PartWithPriceData[] = modelParts.map((mp) => {
+          const priceMap = mp.part.isShared ? sharedPriceMap : regularPriceMap
           const aggregated = priceMap.get(mp.partId)
           return {
             id: mp.part.id,
@@ -45,6 +55,7 @@ builder.prismaObject('Generation', {
             category: mp.part.category,
             schematicZone: mp.part.schematicZone,
             configGroup: mp.part.configGroup,
+            isShared: mp.part.isShared,
             price: aggregated ?? null,
           }
         })

@@ -26,6 +26,7 @@ export interface PartWithPriceData {
   schematicZone: SchematicZone | null
   price: PriceData | null
   configGroup: string | null
+  isShared: boolean
 }
 
 export const PartWithPriceType = builder.objectRef<PartWithPriceData>('PartWithPrice')
@@ -49,5 +50,6 @@ builder.objectType(PartWithPriceType, {
       resolve: (part) => part.price,
     }),
     configGroup: t.exposeString('configGroup', { nullable: true }),
+    isShared: t.exposeBoolean('isShared'),
   }),
 })

@@ -152,6 +152,8 @@ model Part {
   slug            String        @unique // "headlight-front-left"
   category        PartCategory  // body, optics, engine...
   schematicZoneId String?       // связь с зоной трафарета
+  isShared        Boolean       @default(false) // Shared между моделями (OEM)
+  oemCode         String?       @unique         // OEM код агрегата
 
   // Поисковые запросы для парсинга (JSON массив)
   // ["фара левая", "фара передняя левая", "headlight left"]
@@ -236,7 +238,7 @@ enum ZoneType {
 model Price {
   id           String   @id @default(cuid())
   partId       String
-  generationId String
+  generationId String?         // null для shared parts (OEM)
 
   // Агрегированные данные
   median      Int      // Медианная цена в рублях
@@ -259,6 +261,18 @@ model Price {
 // - 1 источник → данные as-is
 // - 2+ источников → weighted median по sampleSize
 ```
+
+### Shared Parts (OEM Price Sharing)
+
+Запчасти с `isShared: true` — агрегатные детали (двигатели, КПП), которые устанавливаются на несколько моделей. Их цены хранятся один раз с `generationId: null`.
+
+**Как работает:**
+- `Part.isShared = true` + `Part.oemCode` — маркер shared-запчасти
+- `Price.generationId = null` — цена не привязана к конкретному поколению
+- `ModelPart` — связывает shared Part с поколениями через стандартный механизм
+- При чтении API делает два параллельных запроса: regular prices (by generationId) + shared prices (generationId = null)
+
+**Реестр shared-запчастей:** `packages/db/prisma/seed/shared-parts.ts`
 
 ---
 

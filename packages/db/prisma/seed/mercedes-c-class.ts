@@ -1,12 +1,12 @@
 import { BodyType } from '@prisma/client'
-import type { PartData, GenerationData } from './types'
+import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
 import { engine, transmission, drivetrainRWD, drivetrainAWD, fuelPumpHP } from './builders'
 
 const P = 'mercedes-c-class'
 const S = ['c class', 'с класс', 'c-class']
 
-const modelSpecificParts: PartData[] = [
+const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.5-204', 'M254', 204),
   fuelPumpHP(P, S, '1.5-204'),
   engine(P, S, '2.0-258', 'M254', 258),
@@ -158,7 +158,7 @@ export const mercedesCClassSeed = {
 
   generations,
 
-  getPartsForGeneration(generation: GenerationData): PartData[] {
+  getPartsForGeneration(generation: GenerationData): (PartData | SharedPartRef)[] {
     const allParts = [...getBaseParts(P, S), ...modelSpecificParts]
 
     return allParts.filter((part) => {

@@ -33,5 +33,15 @@ export interface ModelSeed {
     sortOrder: number
   }
   generations: GenerationData[]
-  getPartsForGeneration: (generation: GenerationData) => PartData[]
+  getPartsForGeneration: (generation: GenerationData) => (PartData | SharedPartRef)[]
+}
+
+export interface SharedPartRef {
+  type: 'shared'
+  oemCode: string
+  configGroup?: string | null
+}
+
+export function isSharedPartRef(part: PartData | SharedPartRef): part is SharedPartRef {
+  return (part as SharedPartRef).type === 'shared'
 }

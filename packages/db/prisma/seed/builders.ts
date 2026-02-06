@@ -1,5 +1,6 @@
 import { PartCategory } from '@prisma/client'
-import type { PartData } from './types'
+import type { PartData, SharedPartRef } from './types'
+import { findSharedPart } from './shared-parts'
 
 function q(searchNames: string[], suffix: string): string[] {
   return searchNames.map((n) => `${suffix} ${n}`)
@@ -12,7 +13,13 @@ export function engine(
   code: string,
   hp: number,
   oemQueries?: string[],
-): PartData {
+): PartData | SharedPartRef {
+  if (oemQueries && oemQueries.length > 0) {
+    const sharedDef = findSharedPart(oemQueries[0])
+    if (sharedDef) {
+      return { type: 'shared', oemCode: oemQueries[0], configGroup: `engine:${config}` }
+    }
+  }
   const vol = config.replace(/-\d+$/, '')
   const slugConfig = config.replace(/\./g, '-')
   const oem = oemQueries?.map((q) => `oem:${q}`) ?? []
@@ -38,7 +45,13 @@ export function transmission(
   config: string,
   name: string,
   oemQueries?: string[],
-): PartData {
+): PartData | SharedPartRef {
+  if (oemQueries && oemQueries.length > 0) {
+    const sharedDef = findSharedPart(oemQueries[0])
+    if (sharedDef) {
+      return { type: 'shared', oemCode: oemQueries[0], configGroup: `transmission:${config}` }
+    }
+  }
   const getTransmissionSearchType = (c: string): string => {
     if (c.startsWith('at')) return 'акпп'
     if (c.startsWith('amt')) return 'ркпп'
