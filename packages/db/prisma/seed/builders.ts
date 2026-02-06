@@ -11,15 +11,18 @@ export function engine(
   config: string,
   code: string,
   hp: number,
+  oemQueries?: string[],
 ): PartData {
   const vol = config.replace(/-\d+$/, '')
   const slugConfig = config.replace(/\./g, '-')
+  const oem = oemQueries?.map((q) => `oem:${q}`) ?? []
   return {
     name: `Двигатель ${vol} ${code} (${hp} л.с.)`,
     slug: `${prefix}-engine-${slugConfig}`,
     category: 'engine' as PartCategory,
     schematicZoneCode: 'engine',
     searchQueries: [
+      ...oem,
       ...searchNames.map((n) => `двигатель ${vol} ${code} ${n}`),
       ...searchNames.map((n) => `двигатель ${vol} ${n}`),
       ...searchNames.map((n) => `мотор ${vol} ${n}`),
@@ -34,19 +37,22 @@ export function transmission(
   searchNames: string[],
   config: string,
   name: string,
+  oemQueries?: string[],
 ): PartData {
   const getTransmissionSearchType = (c: string): string => {
-    if (c === 'at') return 'акпп'
-    if (c === 'amt') return 'ркпп'
+    if (c.startsWith('at')) return 'акпп'
+    if (c.startsWith('amt')) return 'ркпп'
     return 'мкпп'
   }
   const specificType = getTransmissionSearchType(config)
+  const oem = oemQueries?.map((q) => `oem:${q}`) ?? []
   return {
     name,
     slug: `${prefix}-transmission-${config}`,
     category: 'transmission' as PartCategory,
     schematicZoneCode: 'transmission',
     searchQueries: [
+      ...oem,
       ...q(searchNames, specificType),
       ...q(searchNames, 'коробка'),
     ],
