@@ -269,7 +269,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 3.5 M272 V6 (272 л.с.)',
     category: 'engine',
     searchQueries: ['oem:272948', 'oem:M272948', 'двигатель 3.5 M272', 'мотор M272 V6'],
-    usedBy: ['mercedes-c-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-s-class'],
   },
   {
     oemCode: '274910',
@@ -329,6 +329,94 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
   },
 
   // ========================================
+  // MERCEDES S-CLASS ENGINES
+  // ========================================
+  {
+    oemCode: '104944',
+    name: 'Двигатель 2.8 M104 (193 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:104944', 'oem:M104944', 'двигатель 2.8 M104', 'мотор M104 2.8'],
+    usedBy: ['mercedes-s-class'],
+  },
+  {
+    oemCode: '104994',
+    name: 'Двигатель 3.2 M104 (231 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:104994', 'oem:M104994', 'двигатель 3.2 M104', 'мотор M104 3.2'],
+    usedBy: ['mercedes-s-class'],
+  },
+  {
+    oemCode: '119971',
+    name: 'Двигатель 4.2 M119 V8 (279 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:119971', 'oem:M119971', 'двигатель 4.2 M119', 'мотор M119 V8'],
+    usedBy: ['mercedes-s-class'],
+  },
+  {
+    oemCode: '119980',
+    name: 'Двигатель 5.0 M119 V8 (320 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:119980', 'oem:M119980', 'двигатель 5.0 M119', 'мотор M119 V8'],
+    usedBy: ['mercedes-s-class'],
+  },
+  {
+    oemCode: '112944',
+    name: 'Двигатель 3.2 M112 V6 (224 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:112944', 'oem:M112944', 'двигатель 3.2 M112', 'мотор M112 V6'],
+    usedBy: ['mercedes-s-class'],
+  },
+  {
+    oemCode: '112973',
+    name: 'Двигатель 3.7 M112 V6 (245 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:112973', 'oem:M112973', 'двигатель 3.7 M112', 'мотор M112 V6 3.7'],
+    usedBy: ['mercedes-s-class'],
+  },
+  {
+    oemCode: '113941',
+    name: 'Двигатель 4.3 M113 V8 (279 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:113941', 'oem:M113941', 'двигатель 4.3 M113', 'мотор M113 V8'],
+    usedBy: ['mercedes-s-class'],
+  },
+  {
+    oemCode: '113960',
+    name: 'Двигатель 5.0 M113 V8 (306 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:113960', 'oem:M113960', 'двигатель 5.0 M113', 'мотор M113 V8'],
+    usedBy: ['mercedes-s-class'],
+  },
+  {
+    oemCode: '273923',
+    name: 'Двигатель 4.7 M273 V8 (340 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:273923', 'oem:M273923', 'двигатель 4.7 M273', 'мотор M273 V8'],
+    usedBy: ['mercedes-s-class'],
+  },
+  {
+    oemCode: '273961',
+    name: 'Двигатель 5.5 M273 V8 (388 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:273961', 'oem:M273961', 'двигатель 5.5 M273', 'мотор M273 V8'],
+    usedBy: ['mercedes-s-class'],
+  },
+  {
+    oemCode: '276957',
+    name: 'Двигатель 3.5 M276 V6 (306 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:276957', 'oem:M276957', 'двигатель 3.5 M276', 'мотор M276 V6'],
+    usedBy: ['mercedes-s-class'],
+  },
+  {
+    oemCode: '278929',
+    name: 'Двигатель 4.7 M278 V8 (435 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:278929', 'oem:M278929', 'двигатель 4.7 M278', 'мотор M278 V8 турбо'],
+    usedBy: ['mercedes-s-class'],
+  },
+
+  // ========================================
   // MERCEDES TRANSMISSIONS
   // ========================================
   {
@@ -336,14 +424,14 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'АКПП 5-ступ Mercedes 722.6',
     category: 'transmission',
     searchQueries: ['oem:722.6', 'акпп 722.6 мерседес', 'акпп 5 ступ мерседес'],
-    usedBy: ['mercedes-c-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-s-class'],
   },
   {
     oemCode: '722.9',
     name: 'АКПП 7-ступ Mercedes 722.9',
     category: 'transmission',
     searchQueries: ['oem:722.9', 'акпп 722.9 мерседес', 'акпп 7 ступ мерседес 7G-Tronic'],
-    usedBy: ['mercedes-c-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-s-class'],
   },
   {
     oemCode: '725.0',
