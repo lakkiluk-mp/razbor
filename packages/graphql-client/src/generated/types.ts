@@ -130,7 +130,9 @@ export type PartWithPrice = {
   category: Maybe<PartCategory>;
   configGroup: Maybe<Scalars['String']['output']>;
   id: Maybe<Scalars['ID']['output']>;
+  isShared: Maybe<Scalars['Boolean']['output']>;
   name: Maybe<Scalars['String']['output']>;
+  oemCode: Maybe<Scalars['String']['output']>;
   price: Maybe<Price>;
   schematicZone: Maybe<SchematicZone>;
 };

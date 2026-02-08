@@ -18,6 +18,7 @@ interface PriceSource {
 
 interface PriceDetailsDrawerProps {
   partName: string
+  oemCode?: string | null
   price: {
     median: number
     min: number
@@ -98,6 +99,7 @@ function SourceLinks({
 
 export function PriceDetailsDrawer({
   partName,
+  oemCode,
   price,
   open,
   onOpenChange,
@@ -107,6 +109,9 @@ export function PriceDetailsDrawer({
       <DrawerContent aria-describedby={undefined}>
         <DrawerHeader className="text-left">
           <DrawerTitle>{partName}</DrawerTitle>
+          {oemCode && (
+            <p className="text-xs text-zinc-500 mt-1">Артикул: {oemCode}</p>
+          )}
         </DrawerHeader>
         <div className="px-4 pb-8">
           {price ? (

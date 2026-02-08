@@ -15,6 +15,7 @@ export interface CalculationPart {
     id: string
     name: string
     category: string
+    oemCode?: string | null
     schematicZone: {
       id: string
       code: string

@@ -27,6 +27,7 @@ export interface PartWithPriceData {
   price: PriceData | null
   configGroup: string | null
   isShared: boolean
+  oemCode: string | null
 }
 
 export const PartWithPriceType = builder.objectRef<PartWithPriceData>('PartWithPrice')
@@ -51,5 +52,6 @@ builder.objectType(PartWithPriceType, {
     }),
     configGroup: t.exposeString('configGroup', { nullable: true }),
     isShared: t.exposeBoolean('isShared'),
+    oemCode: t.exposeString('oemCode', { nullable: true }),
   }),
 })

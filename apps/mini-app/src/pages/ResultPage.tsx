@@ -25,6 +25,7 @@ export function ResultPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedPart, setSelectedPart] = useState<{
     name: string
+    oemCode?: string | null
     price: {
       median: number
       min: number
@@ -237,6 +238,7 @@ export function ResultPage() {
                                           e.stopPropagation()
                                           setSelectedPart({
                                             name: item.part.name,
+                                            oemCode: item.part.oemCode,
                                             price: item.part.price ?? null,
                                           })
                                           setDrawerOpen(true)
@@ -257,6 +259,7 @@ export function ResultPage() {
                                           e.stopPropagation()
                                           setSelectedPart({
                                             name: item.part.name,
+                                            oemCode: item.part.oemCode,
                                             price: null,
                                           })
                                           setDrawerOpen(true)
@@ -293,6 +296,7 @@ export function ResultPage() {
 
       <PriceDetailsDrawer
         partName={selectedPart?.name || ''}
+        oemCode={selectedPart?.oemCode}
         price={selectedPart?.price || null}
         open={drawerOpen}
         onOpenChange={setDrawerOpen}

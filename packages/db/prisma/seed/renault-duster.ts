@@ -48,7 +48,7 @@ const generations: GenerationData[] = [
     yearStart: 2020,
     yearEnd: 2022,
     bodyType: 'crossover' as BodyType,
-    isActive: false,
+    isActive: true,
     availableConfigs: [
       'engine:1.3-149',
       'engine:1.5-109',

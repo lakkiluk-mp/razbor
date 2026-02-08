@@ -104,6 +104,7 @@ export async function calculate(input: CalculateInput): Promise<CalculationResul
       schematicZone: part.schematicZone,
       configGroup: part.configGroup,
       isShared: part.isShared,
+      oemCode: part.oemCode ?? null,
       price: aggregated ?? null,
     }
 

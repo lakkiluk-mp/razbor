@@ -19,6 +19,7 @@ export interface Part {
   id: string
   name: string
   category: string
+  oemCode?: string | null
   schematicZone: SchematicZone | null
   price: Price | null
 }

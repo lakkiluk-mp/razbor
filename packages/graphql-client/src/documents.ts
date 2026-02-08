@@ -69,6 +69,7 @@ export const queries = {
           id
           name
           category
+          oemCode
           schematicZone {
             id
             code
@@ -119,6 +120,7 @@ export const queries = {
           id
           name
           category
+          oemCode
           schematicZone {
             id
             code
@@ -198,6 +200,7 @@ export const mutations = {
             id
             name
             category
+            oemCode
             schematicZone {
               id
               code

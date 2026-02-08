@@ -56,6 +56,7 @@ builder.prismaObject('Generation', {
             schematicZone: mp.part.schematicZone,
             configGroup: mp.part.configGroup,
             isShared: mp.part.isShared,
+            oemCode: mp.part.oemCode ?? null,
             price: aggregated ?? null,
           }
         })
