@@ -203,10 +203,17 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     usedBy: ['mercedes-c-class'],
   },
   {
-    oemCode: '112912',
-    name: 'Двигатель M112 V6 (170 л.с.)',
+    oemCode: '112910',
+    name: 'Двигатель 2.4 M112 V6 (170 л.с.)',
     category: 'engine',
-    searchQueries: ['oem:112912', 'oem:M112912', 'двигатель M112', 'мотор M112 V6'],
+    searchQueries: ['oem:112910', 'oem:M112910', 'двигатель 2.4 M112', 'мотор M112 V6 2.4'],
+    usedBy: ['mercedes-c-class'],
+  },
+  {
+    oemCode: '112912',
+    name: 'Двигатель 2.6 M112 V6 (170 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:112912', 'oem:M112912', 'двигатель 2.6 M112', 'мотор M112 V6 2.6'],
     usedBy: ['mercedes-c-class'],
   },
   {

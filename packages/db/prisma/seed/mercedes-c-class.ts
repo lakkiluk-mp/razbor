@@ -38,7 +38,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '3.2-218', 'M112', 218, ['112946']),
   engine(P, S, '1.8-129', 'M111', 129, ['111920']),
   engine(P, S, '2.0-136', 'M111', 136, ['111945']),
-  engine(P, S, '2.4-170', 'M112', 170, ['112912']),
+  engine(P, S, '2.4-170', 'M112', 170, ['112910']),
   transmission(P, S, 'mt5', 'МКПП 5-ступ', ['716.5']),
   transmission(P, S, 'mt6', 'МКПП 6-ступ', ['716.6']),
   transmission(P, S, 'at5', 'АКПП 5-ступ', ['722.6']),
