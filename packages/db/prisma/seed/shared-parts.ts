@@ -166,11 +166,12 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'oem:320100676R',
       'oem:320103500R',
       'oem:320103334R',
+      'oem:320109037R',
       'мкпп 5 ступ рено',
       'коробка механика рено логан',
       'мкпп JH3 рено',
     ],
-    usedBy: ['renault-logan', 'renault-sandero'],
+    usedBy: ['renault-logan', 'renault-sandero', 'renault-duster'],
   },
   {
     oemCode: '8201114873',
@@ -182,7 +183,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'коробка автомат рено логан',
       'акпп DP2 рено',
     ],
-    usedBy: ['renault-logan'],
+    usedBy: ['renault-logan', 'renault-duster'],
   },
   // ========================================
   // MERCEDES ENGINES
