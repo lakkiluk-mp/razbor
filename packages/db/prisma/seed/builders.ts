@@ -20,7 +20,7 @@ export function engine(
       return { type: 'shared', oemCode: oemQueries[0], configGroup: `engine:${config}` }
     }
   }
-  const vol = config.replace(/-\d+$/, '')
+  const vol = config.replace(/-\d+\w*$/, '')
   const slugConfig = config.replace(/\./g, '-')
   const oem = oemQueries?.map((q) => `oem:${q}`) ?? []
   return {
