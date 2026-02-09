@@ -7,7 +7,7 @@ builder.prismaObject('Model', {
     slug: t.exposeString('slug'),
     brand: t.relation('brand'),
     generations: t.relation('generations', {
-      query: { orderBy: { yearStart: 'desc' } },
+      query: { where: { isActive: true }, orderBy: { yearStart: 'desc' } },
     }),
   }),
 })

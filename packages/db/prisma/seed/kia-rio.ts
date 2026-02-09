@@ -12,16 +12,18 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.5-95', 'A5E', 95),
   engine(P, S, '1.5-108', 'A5D', 108),
 
-  // JB engine (2 поколение, 2005-2011)
+  // JB engines (2 поколение, 2005-2011)
   engine(P, S, '1.4-97', 'G4EE', 97),
+  engine(P, S, '1.6-112', 'G4ED', 112),
 
   // QB engines (3 поколение, 2011-2017)
   engine(P, S, '1.4-107', 'G4FA', 107),
   engine(P, S, '1.6-123', 'G4FC', 123),
+  engine(P, S, '1.6-138', 'G4FD', 138),
 
   // FB engines (4 поколение, 2016-2022)
   engine(P, S, '1.4-100', 'G4LC', 100),
-  engine(P, S, '1.6-1230', 'G4FG', 123),
+  engine(P, S, '1.6-123g', 'G4FG', 123),
 
   // КПП
   transmission(P, S, 'mt5', 'МКПП 5-ступ'),
@@ -43,7 +45,7 @@ const generations: GenerationData[] = [
     isActive: true,
     availableConfigs: [
       'engine:1.4-100',
-      'engine:1.6-1230',
+      'engine:1.6-123g',
       'transmission:mt6',
       'transmission:at6',
       'drivetrain:fwd',
@@ -59,6 +61,7 @@ const generations: GenerationData[] = [
     availableConfigs: [
       'engine:1.4-107',
       'engine:1.6-123',
+      'engine:1.6-138',
       'transmission:mt5',
       'transmission:mt6',
       'transmission:at4',
@@ -75,6 +78,7 @@ const generations: GenerationData[] = [
     isActive: true,
     availableConfigs: [
       'engine:1.4-97',
+      'engine:1.6-112',
       'transmission:mt5',
       'transmission:at4',
       'drivetrain:fwd',
