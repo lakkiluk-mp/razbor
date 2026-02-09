@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, fuelPumpHP, transmission, drivetrainFWD, drivetrainAWD } from './builders'
+import { engine, fuelPumpHP, injectorsDiesel, transmission, drivetrainFWD, drivetrainAWD } from './builders'
 
 const P = 'renault-duster'
 const S = ['renault duster', 'рено дастер', 'дастер']
@@ -10,6 +10,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.6-k4m', 'K4M', 102, ['8201315743', '6001549002']),
   engine(P, S, '1.5-109', 'K9K', 109, ['100015299R']),
   fuelPumpHP(P, S, '1.5-109'),
+  injectorsDiesel(P, S, '1.5-109'),
   engine(P, S, '1.6-113', 'H4M', 113, ['8201583992']),
   engine(P, S, '2.0-143', 'F4R', 143, ['100017527R']),
   engine(P, S, '1.3-149', 'H5Ht', 149, ['100011218R']),

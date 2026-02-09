@@ -141,6 +141,26 @@ export function fuelPumpHP(
   }
 }
 
+export function injectorsDiesel(
+  prefix: string,
+  searchNames: string[],
+  engineConfig: string,
+): PartData {
+  const slugConfig = engineConfig.replace(/\./g, '-')
+  return {
+    name: 'Форсунки дизельные (Common Rail)',
+    slug: `${prefix}-injectors-diesel-${slugConfig}`,
+    category: 'other' as PartCategory,
+    schematicZoneCode: null,
+    searchQueries: [
+      ...searchNames.map((n) => `форсунка дизель ${n}`),
+      ...searchNames.map((n) => `форсунка common rail ${n}`),
+      ...searchNames.map((n) => `инжектор дизель ${n}`),
+    ],
+    configGroup: `engine:${engineConfig}`,
+  }
+}
+
 export function drivetrainAWD(
   prefix: string,
   searchNames: string[],
