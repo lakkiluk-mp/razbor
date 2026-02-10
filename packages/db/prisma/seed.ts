@@ -6,13 +6,14 @@ import { mercedesSClassSeed } from './seed/mercedes-s-class'
 import { renaultLoganSeed } from './seed/renault-logan'
 import { renaultDusterSeed } from './seed/renault-duster'
 import { kiaRioSeed } from './seed/kia-rio'
+import { fordFocusSeed } from './seed/ford-focus'
 import { SHARED_PARTS_REGISTRY, generateSharedPartSlug } from './seed/shared-parts'
 import type { ModelSeed } from './seed/types'
 import { isSharedPartRef } from './seed/types'
 
 const prisma = new PrismaClient()
 
-const modelSeeds: ModelSeed[] = [mazda6Seed, mercedesCClassSeed, mercedesSClassSeed, renaultLoganSeed, renaultDusterSeed, kiaRioSeed] as ModelSeed[]
+const modelSeeds: ModelSeed[] = [mazda6Seed, mercedesCClassSeed, mercedesSClassSeed, renaultLoganSeed, renaultDusterSeed, kiaRioSeed, fordFocusSeed] as ModelSeed[]
 
 async function seedSharedParts() {
   console.log('\n--- Seeding shared parts ---')
@@ -144,6 +145,7 @@ async function seedModel(seedData: ModelSeed) {
         const part = await prisma.part.upsert({
           where: { slug: partOrRef.slug },
           update: {
+            name: partOrRef.name,
             searchQueries: partOrRef.searchQueries || [],
             configGroup: partOrRef.configGroup ?? null,
           },
