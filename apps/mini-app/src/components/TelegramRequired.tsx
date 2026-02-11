@@ -1,6 +1,5 @@
 const BOT_URL = "https://t.me/razbor_s_bot";
-import Image from "../../public/IMG_5784.PNG";
-("use client");
+import Image from "../assets/IMG_5784.PNG";
 import React, { useRef } from "react";
 import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
 
