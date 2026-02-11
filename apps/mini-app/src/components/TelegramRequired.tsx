@@ -1,4 +1,4 @@
-const BOT_URL = "https://t.me/razbor_s_bot";
+const BOT_URL = "https://t.me/vrazbore_bot";
 import Image from "../assets/IMG_5784.PNG";
 import React, { useRef } from "react";
 import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
