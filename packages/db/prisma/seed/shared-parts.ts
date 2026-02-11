@@ -152,7 +152,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель H4M рено',
       'двигатель HR16DE',
     ],
-    usedBy: ['renault-logan', 'renault-sandero', 'renault-duster'],
+    usedBy: ['renault-logan', 'renault-sandero', 'renault-duster', 'lada-vesta'],
   },
 
   // ========================================
