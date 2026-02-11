@@ -105,9 +105,12 @@ export function TelegramRequired() {
       <ContainerScroll
         titleComponent={
           <div className="flex flex-col items-center justify-center px-6 text-center mb-10">
-            <h1 className="mb-3 text-3xl md:text-5xl font-bold text-white">
-              Откройте в Telegram
+            <h1 className="mb-3 text-3xl md:text-5xl text-white font-rimma">
+              В разборе
             </h1>
+            <h2 className="mb-3 text-3xl md:text-5xl font-bold text-white">
+              Откройте в Telegram
+            </h2>
             <p className="text-base md:text-lg text-zinc-400 max-w-md">
               Это приложение доступно только через официальный бот Razbor
             </p>
