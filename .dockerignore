@@ -32,6 +32,9 @@ docker/
 !docker/entrypoint.dev.sh
 
 tools/
+!tools/price-updater/package.json
+!tools/price-updater/src/
+!tools/price-updater/tsconfig.json
 
 coverage
 .nyc_output
