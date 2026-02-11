@@ -37,6 +37,7 @@ export function getBaseParts(slugPrefix: string, searchNames: string[]): PartDat
 
   return [
     p('hood', 'Капот', 'body', 'hood'),
+    p('roof', 'Крыша', 'body', 'roof'),
     p('fender-fl', 'Крыло переднее левое', 'body', 'fender_fl'),
     p('fender-fr', 'Крыло переднее правое', 'body', 'fender_fr'),
     p('fender-rl', 'Крыло заднее левое', 'body', 'quarter_panel_l'),
