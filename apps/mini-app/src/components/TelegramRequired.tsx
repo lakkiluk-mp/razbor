@@ -1,6 +1,6 @@
-const BOT_URL = "https://t.me/razbor_s_bot";
-import Image from "../../public/IMG_5786.PNG";
-("use client");
+const BOT_URL = "https://t.me/vrazbore_bot";
+import Image from "../assets/IMG_5784.PNG";
+
 import React, { useRef } from "react";
 import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
 import { LampContainer } from "./ui/lamp";
