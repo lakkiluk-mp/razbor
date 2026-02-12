@@ -1,7 +1,9 @@
 const BOT_URL = "https://t.me/vrazbore_bot";
 import Image from "../assets/IMG_5784.PNG";
+
 import React, { useRef } from "react";
 import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
+import { LampContainer } from "./ui/lamp";
 
 export const ContainerScroll = ({
   titleComponent,
@@ -100,39 +102,58 @@ export const Card = ({
 
 export function TelegramRequired() {
   return (
-    <div className="flex flex-col bg-zinc-950">
-      <ContainerScroll
-        titleComponent={
-          <div className="flex flex-col items-center justify-center px-6 text-center mb-10">
-            <h1 className="mb-3 text-3xl md:text-5xl text-white font-rimma">
-              В разборе
-            </h1>
-            <h2 className="mb-3 text-3xl md:text-5xl font-bold text-white">
-              Откройте в Telegram
-            </h2>
-            <p className="text-base md:text-lg text-zinc-400 max-w-md">
-              Это приложение доступно только через официальный бот Razbor
-            </p>
-          </div>
-        }
+    <div className="bg-zinc-950">
+      <LampContainer
+        className="justify-start pt-50"
+        contentClassName="translate-y-[-10rem] md:translate-y-[-15rem]"
       >
-        <div className="relative h-full w-full">
-          <img
-            src={Image}
-            alt="hero"
-            className="mx-auto rounded-none object-cover h-full w-full object-top blur-[6px]"
-            draggable={false}
-          />
-          <div className="absolute inset-0 flex items-center justify-center bg-black/10">
-            <a
-              href={BOT_URL}
-              className="rounded-xl bg-[#2AABEE] px-8 py-4 font-bold text-white transition-all hover:bg-[#229ED9] active:scale-95 shadow-2xl shadow-black/50 z-30"
-            >
-              Открыть в Telegram
-            </a>
-          </div>
-        </div>
-      </ContainerScroll>
+        <motion.div
+          initial={{ opacity: 0.5, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: 0.3,
+            duration: 0.8,
+            ease: "easeInOut",
+          }}
+          className="w-full"
+        >
+          <ContainerScroll
+            titleComponent={
+              <div className="flex flex-col items-center justify-center px-6 text-center mb-10">
+                <h1 className="mb-10 text-4xl md:text-6xl text-white font-rimma">
+                  В разборе
+                </h1>
+                <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tighter mb-4">
+                  Твой калькулятор маржинальности
+                </h2>
+                <h3 className="text-xl md:text-3xl font-bold text-zinc-200 mb-8">
+                  Откройте в Telegram
+                </h3>
+                <p className="text-base md:text-lg text-zinc-400 max-w-md leading-relaxed">
+                  Это приложение доступно только через официальный бот Razbor
+                </p>
+              </div>
+            }
+          >
+            <div className="relative h-full w-full">
+              <img
+                src={Image}
+                alt="hero"
+                className="mx-auto rounded-none object-cover h-full w-full object-top blur-[6px]"
+                draggable={false}
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/10">
+                <a
+                  href={BOT_URL}
+                  className="rounded-xl bg-[#2AABEE] px-8 py-4 font-bold text-white transition-all hover:bg-[#229ED9] active:scale-95 shadow-2xl shadow-black/50 z-30"
+                >
+                  Открыть в Telegram
+                </a>
+              </div>
+            </div>
+          </ContainerScroll>
+        </motion.div>
+      </LampContainer>
     </div>
   );
 }
