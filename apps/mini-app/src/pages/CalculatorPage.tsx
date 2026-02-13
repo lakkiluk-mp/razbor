@@ -132,9 +132,11 @@ export function CalculatorPage() {
   return (
     <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col overflow-auto">
       <div className="px-4 pt-6 pb-4">
-        <h1 className="text-2xl font-bold text-zinc-100 mb-1">Состояние кузова и основных элементов</h1>
+        <h1 className="text-2xl font-bold text-zinc-100 mb-1">
+          Отметьте повреждения на автомобиле
+           </h1>
         <p className="text-zinc-500 text-sm">
-          Укажите что было повреждено
+          {brandName} {modelName} ({generation.name})
         </p>
       </div>
 

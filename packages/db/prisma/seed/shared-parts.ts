@@ -462,6 +462,77 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     searchQueries: ['oem:716.5', 'мкпп 716.5 мерседес', 'мкпп 5 ступ мерседес'],
     usedBy: ['mercedes-c-class'],
   },
+
+  // ========================================
+  // TOYOTA ENGINES
+  // ========================================
+  {
+    oemCode: '1900028D00',
+    name: 'Двигатель 2.4 2AZ-FE (167 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:1900028D00', 'двигатель 2.4 2AZ-FE', 'мотор 2AZ-FE', 'двигатель 2AZ'],
+    usedBy: ['toyota-camry'],
+  },
+  {
+    oemCode: '190000P090',
+    name: 'Двигатель 3.5 2GR-FE V6 (277 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:190000P090', 'двигатель 3.5 2GR-FE', 'мотор 2GR-FE', 'двигатель 2GR V6'],
+    usedBy: ['toyota-camry'],
+  },
+  {
+    oemCode: '190000V010',
+    name: 'Двигатель 2.5 2AR-FE (181 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:190000V010', 'двигатель 2.5 2AR-FE', 'мотор 2AR-FE', 'двигатель 2AR'],
+    usedBy: ['toyota-camry'],
+  },
+  {
+    oemCode: '190003Y280',
+    name: 'Двигатель 2.0 M20A-FKS (150 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:190003Y280', 'двигатель 2.0 M20A-FKS', 'мотор M20A', 'двигатель M20A'],
+    usedBy: ['toyota-camry'],
+  },
+  {
+    oemCode: '19000F0010',
+    name: 'Двигатель 2.5 A25A-FKS (200 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:19000F0010', 'двигатель 2.5 A25A-FKS', 'мотор A25A', 'двигатель A25A'],
+    usedBy: ['toyota-camry'],
+  },
+  {
+    oemCode: '190000P440',
+    name: 'Двигатель 3.5 2GR-FKS V6 (249 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:190000P440', 'двигатель 3.5 2GR-FKS', 'мотор 2GR-FKS', 'двигатель 2GR-FKS V6'],
+    usedBy: ['toyota-camry'],
+  },
+
+  // ========================================
+  // TOYOTA TRANSMISSIONS
+  // ========================================
+  {
+    oemCode: '3050033460',
+    name: 'АКПП 5-ступ U250E',
+    category: 'transmission',
+    searchQueries: ['oem:3050033460', 'акпп U250E тойота', 'акпп 5 ступ тойота камри'],
+    usedBy: ['toyota-camry'],
+  },
+  {
+    oemCode: '3050033770',
+    name: 'АКПП 6-ступ U760E',
+    category: 'transmission',
+    searchQueries: ['oem:3050033770', 'акпп U760E тойота', 'акпп 6 ступ тойота камри'],
+    usedBy: ['toyota-camry'],
+  },
+  {
+    oemCode: '3040012760',
+    name: 'Direct Shift-CVT K120',
+    category: 'transmission',
+    searchQueries: ['oem:3040012760', 'вариатор K120 тойота', 'cvt K120 камри', 'Direct Shift CVT'],
+    usedBy: ['toyota-camry'],
+  },
 ]
 
 export function findSharedPart(oemCode: string): SharedPartDefinition | undefined {
