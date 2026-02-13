@@ -1,5 +1,5 @@
 const BOT_URL = "https://t.me/vrazbore_bot";
-import Image from "../assets/IMG_5784.PNG";
+import Image from "../assets/IMG_5786.PNG";
 
 import React, { useRef } from "react";
 import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
@@ -102,7 +102,7 @@ export const Card = ({
 
 export function TelegramRequired() {
   return (
-    <div className="bg-zinc-950">
+    <div className="bg-neutral-950">
       <LampContainer
         className="justify-start pt-50"
         contentClassName="translate-y-[-10rem] md:translate-y-[-15rem]"
@@ -110,6 +110,7 @@ export function TelegramRequired() {
         <motion.div
           initial={{ opacity: 0.5, y: 100 }}
           whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{
             delay: 0.3,
             duration: 0.8,
@@ -120,16 +121,16 @@ export function TelegramRequired() {
           <ContainerScroll
             titleComponent={
               <div className="flex flex-col items-center justify-center px-6 text-center mb-10">
-                <h1 className="mb-10 text-4xl md:text-6xl text-white font-rimma">
+                <h1 className="mb-10 text-4xl md:text-6xl bg-gradient-to-br from-white to-slate-300 bg-clip-text text-transparent font-rimma">
                   В разборе
                 </h1>
-                <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tighter mb-4">
+                <h2 className="text-3xl md:text-5xl font-bold bg-gradient-to-br from-slate-300 to-slate-500 bg-clip-text text-transparent tracking-tight mb-4">
                   Твой калькулятор маржинальности
                 </h2>
-                <h3 className="text-xl md:text-3xl font-bold text-zinc-200 mb-8">
+                <h3 className="text-xl md:text-3xl font-medium bg-gradient-to-br from-slate-400 to-slate-600 bg-clip-text text-transparent mb-8">
                   Откройте в Telegram
                 </h3>
-                <p className="text-base md:text-lg text-zinc-400 max-w-md leading-relaxed">
+                <p className="text-base md:text-lg text-slate-500 max-w-md leading-relaxed">
                   Это приложение доступно только через официальный бот Razbor
                 </p>
               </div>

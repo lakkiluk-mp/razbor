@@ -22,6 +22,18 @@ export function LampDemo() {
   );
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = React.useState(
+    () => window.innerWidth <= 768,
+  );
+  React.useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
+
 export const LampContainer = ({
   children,
   className,
@@ -31,76 +43,88 @@ export const LampContainer = ({
   className?: string;
   contentClassName?: string;
 }) => {
+  const isMobile = useIsMobile();
+
+  const conicWidth = isMobile ? "20rem" : "30rem";
+  const conicInitialWidth = isMobile ? "10rem" : "15rem";
+  const lineWidth = isMobile ? "20rem" : "30rem";
+  const lineInitialWidth = isMobile ? "10rem" : "15rem";
+  const glowWidth = isMobile ? "12rem" : "16rem";
+  const glowInitialWidth = isMobile ? "6rem" : "8rem";
+
   return (
     <div
       className={cn(
-        "relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-slate-950 w-full rounded-md z-0",
+        "relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-neutral-950 w-full z-0",
         className,
       )}
     >
-      <div className="relative flex w-full flex-1 scale-y-125 items-center justify-center isolate z-0 ">
+      <div className="relative flex w-full flex-1 scale-y-125 items-center justify-center isolate z-0">
         <motion.div
-          initial={{ opacity: 0.5, width: "15rem" }}
-          whileInView={{ opacity: 1, width: "30rem" }}
+          initial={{ opacity: 0.5, width: conicInitialWidth }}
+          whileInView={{ opacity: 1, width: conicWidth }}
+          viewport={{ once: true }}
           transition={{
             delay: 0.3,
             duration: 0.8,
             ease: "easeInOut",
           }}
           style={{
-            backgroundImage: `conic-gradient(var(--conic-position), var(--tw-gradient-stops))`,
+            backgroundImage: `conic-gradient(from 70deg at center top, #f59e0b, transparent, transparent)`,
           }}
-          className="absolute inset-auto right-1/2 h-56 overflow-visible w-[30rem] bg-gradient-conic from-amber-500 via-transparent to-transparent text-white [--conic-position:from_70deg_at_center_top]"
+          className="absolute inset-auto right-1/2 h-56 overflow-visible text-white"
         >
-          <div className="absolute  w-[100%] left-0 bg-slate-950 h-40 bottom-0 z-20 [mask-image:linear-gradient(to_top,white,transparent)]" />
-          <div className="absolute  w-40 h-[100%] left-0 bg-slate-950  bottom-0 z-20 [mask-image:linear-gradient(to_right,white,transparent)]" />
+          <div className="absolute w-[100%] left-0 bg-neutral-950 h-40 bottom-0 z-20 [mask-image:linear-gradient(to_top,white,transparent)]" />
+          <div className="absolute w-40 h-[100%] left-0 bg-neutral-950 bottom-0 z-20 [mask-image:linear-gradient(to_right,white,transparent)]" />
         </motion.div>
         <motion.div
-          initial={{ opacity: 0.5, width: "15rem" }}
-          whileInView={{ opacity: 1, width: "30rem" }}
+          initial={{ opacity: 0.5, width: conicInitialWidth }}
+          whileInView={{ opacity: 1, width: conicWidth }}
+          viewport={{ once: true }}
           transition={{
             delay: 0.3,
             duration: 0.8,
             ease: "easeInOut",
           }}
           style={{
-            backgroundImage: `conic-gradient(var(--conic-position), var(--tw-gradient-stops))`,
+            backgroundImage: `conic-gradient(from 290deg at center top, transparent, transparent, #f59e0b)`,
           }}
-          className="absolute inset-auto left-1/2 h-56 w-[30rem] bg-gradient-conic from-transparent via-transparent to-amber-500 text-white [--conic-position:from_290deg_at_center_top]"
+          className="absolute inset-auto left-1/2 h-56 text-white"
         >
-          <div className="absolute  w-40 h-[100%] right-0 bg-slate-950  bottom-0 z-20 [mask-image:linear-gradient(to_left,white,transparent)]" />
-          <div className="absolute  w-[100%] right-0 bg-slate-950 h-40 bottom-0 z-20 [mask-image:linear-gradient(to_top,white,transparent)]" />
+          <div className="absolute w-40 h-[100%] right-0 bg-neutral-950 bottom-0 z-20 [mask-image:linear-gradient(to_left,white,transparent)]" />
+          <div className="absolute w-[100%] right-0 bg-neutral-950 h-40 bottom-0 z-20 [mask-image:linear-gradient(to_top,white,transparent)]" />
         </motion.div>
-        <div className="absolute top-1/2 h-48 w-full translate-y-12 scale-x-150 bg-slate-950 blur-2xl"></div>
+        <div className="absolute top-1/2 h-48 w-full translate-y-12 scale-x-150 bg-neutral-950 blur-2xl"></div>
         <div className="absolute top-1/2 z-50 h-48 w-full bg-transparent opacity-10 backdrop-blur-md"></div>
-        <div className="absolute inset-auto z-50 h-36 w-[28rem] -translate-y-1/2 rounded-full bg-amber-500 opacity-50 blur-3xl"></div>
+        <div className="absolute inset-auto z-50 h-36 w-[28rem] max-w-[80vw] -translate-y-1/2 rounded-full bg-amber-500 opacity-50 blur-3xl"></div>
         <motion.div
-          initial={{ width: "8rem" }}
-          whileInView={{ width: "16rem" }}
+          initial={{ width: glowInitialWidth }}
+          whileInView={{ width: glowWidth }}
+          viewport={{ once: true }}
           transition={{
             delay: 0.3,
             duration: 0.8,
             ease: "easeInOut",
           }}
-          className="absolute inset-auto z-30 h-36 w-64 -translate-y-[6rem] rounded-full bg-amber-400 blur-2xl"
+          className="absolute inset-auto z-30 h-36 -translate-y-[6rem] rounded-full bg-amber-400 blur-2xl"
         ></motion.div>
         <motion.div
-          initial={{ width: "15rem" }}
-          whileInView={{ width: "30rem" }}
+          initial={{ width: lineInitialWidth }}
+          whileInView={{ width: lineWidth }}
+          viewport={{ once: true }}
           transition={{
             delay: 0.3,
             duration: 0.8,
             ease: "easeInOut",
           }}
-          className="absolute inset-auto z-50 h-0.5 w-[30rem] -translate-y-[7rem] bg-amber-400 "
+          className="absolute inset-auto z-50 h-0.5 -translate-y-[7rem] bg-amber-400"
         ></motion.div>
 
-        <div className="absolute inset-auto z-40 h-44 w-full -translate-y-[12.5rem] bg-slate-950 "></div>
+        <div className="absolute inset-auto z-40 h-44 w-full -translate-y-[12.5rem] bg-neutral-950"></div>
       </div>
 
       <div
         className={cn(
-          // "relative z-50 flex -translate-y-80 flex-col items-center px-5",
           contentClassName,
         )}
       >
