@@ -134,9 +134,9 @@ export function ResultPage() {
   return (
     <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col overflow-auto">
       <div className="px-4 pt-6 pb-4">
-        <p className="text-zinc-400 text-sm">
+        <h1 className="text-zinc-100 text-2xl font-bold">
           {brand} {model} {generation}
-        </p>
+        </h1>
       </div>
 
       <div className="flex-1 px-4 pb-4">
