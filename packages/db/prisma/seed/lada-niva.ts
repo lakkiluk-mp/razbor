@@ -1,5 +1,6 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
+import { isSharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
 import { engine, transmission, drivetrainAWD } from './builders'
 
@@ -11,6 +12,13 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.7-79', 'ВАЗ-21213', 79, ['21213']),
   transmission(P, S, 'mt', 'МКПП 5-ступ'),
   ...drivetrainAWD(P, S),
+]
+
+const EXCLUDE_PARTS = [
+  'Подрамник задний',
+  'Блок комфорта',
+  'Дверная карта задняя левая',
+  'Дверная карта задняя правая',
 ]
 
 const generations: GenerationData[] = [
@@ -51,6 +59,7 @@ export const ladaNivaSeed = {
     const allParts = [...getBaseParts(P, S), ...modelSpecificParts]
 
     return allParts.filter((part) => {
+      if (!isSharedPartRef(part) && EXCLUDE_PARTS.includes(part.name)) return false
       if (!part.configGroup) return true
       if (!generation.availableConfigs) return true
       return generation.availableConfigs.includes(part.configGroup)
