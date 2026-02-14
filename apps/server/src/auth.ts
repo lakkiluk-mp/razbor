@@ -23,7 +23,7 @@ export async function authenticateUser(
     return null
   }
 
-  const { id: tgId, firstName, lastName, username, isPremium } = parsed.user
+  const { id: tgId, firstName, lastName, username } = parsed.user
 
   const user = await prisma.user.upsert({
     where: { telegramId: BigInt(tgId) },
@@ -32,13 +32,12 @@ export async function authenticateUser(
       firstName: firstName ?? '',
       lastName: lastName ?? null,
       username: username ?? null,
-      isPremium: isPremium ?? false,
+      isPremium: false,
     },
     update: {
       firstName: firstName ?? '',
       lastName: lastName ?? null,
       username: username ?? null,
-      isPremium: isPremium ?? false,
     },
     select: { id: true, telegramId: true },
   })
