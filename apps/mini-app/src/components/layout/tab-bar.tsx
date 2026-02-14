@@ -32,7 +32,7 @@ export function TabBar() {
               to={tab.to}
               className={cn(
                 'flex flex-col items-center justify-center gap-0.5 min-w-[64px] min-h-[44px] transition-colors',
-                isActive ? 'text-amber-400' : 'text-zinc-500'
+                isActive ? 'text-amber-500' : 'text-zinc-500'
               )}
             >
               <tab.icon className="w-6 h-6" strokeWidth={isActive ? 2.2 : 1.8} />

@@ -48,7 +48,7 @@ export function ProfilePage() {
     <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col px-4 pt-8 pb-6">
       <div className="flex flex-col items-center">
         <div className="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center">
-          <span className="text-2xl font-bold text-amber-400">{initial}</span>
+          <span className="text-2xl font-bold text-amber-500">{initial}</span>
         </div>
         <h1 className="text-xl font-bold text-zinc-100 mt-3">{fullName}</h1>
         {user.username && (
@@ -58,11 +58,11 @@ export function ProfilePage() {
 
       <div className="grid grid-cols-2 gap-3 mt-6">
         <div className="bg-zinc-900 rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-amber-400">{user.totalCalculations}</p>
+          <p className="text-2xl font-bold text-amber-500">{user.totalCalculations}</p>
           <p className="text-xs text-zinc-500 mt-1">Расчётов</p>
         </div>
         <div className="bg-zinc-900 rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-amber-400">
+          <p className="text-2xl font-bold text-amber-500">
             {user.freeRemaining}/{user.dailyLimit}
           </p>
           <p className="text-xs text-zinc-500 mt-1">Осталось сегодня</p>
@@ -73,15 +73,15 @@ export function ProfilePage() {
         {user.isPremium ? (
           <div className="bg-amber-500/20 rounded-xl p-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Crown className="w-5 h-5 text-amber-400" />
-              <span className="font-semibold text-amber-400">Premium</span>
+              <Crown className="w-5 h-5 text-amber-500" />
+              <span className="font-semibold text-amber-500">Premium</span>
             </div>
-            <span className="text-amber-400 text-sm">Активен</span>
+            <span className="text-amber-500 text-sm">Активен</span>
           </div>
         ) : (
           <div className="bg-gradient-to-r from-amber-500/10 to-amber-600/10 border border-amber-500/20 rounded-xl p-4">
             <div className="flex items-center gap-2">
-              <Star className="w-5 h-5 text-amber-400" />
+              <Star className="w-5 h-5 text-amber-500" />
               <span className="font-semibold text-zinc-100">Получите Premium</span>
             </div>
             <p className="text-sm text-zinc-400 mt-1">
@@ -89,7 +89,7 @@ export function ProfilePage() {
             </p>
             <button
               type="button"
-              className="text-amber-400 text-sm font-medium mt-2 py-2"
+              className="text-amber-500 text-sm font-medium mt-2 py-2"
               onClick={() => alert('Скоро')}
             >
               Подробнее
