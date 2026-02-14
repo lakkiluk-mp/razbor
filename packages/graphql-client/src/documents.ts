@@ -188,6 +188,34 @@ export const queries = {
       }
     }
   `,
+  me: `
+    query GetMe {
+      me {
+        id
+        firstName
+        lastName
+        username
+        isPremium
+        dailyLimit
+        totalCalculations
+        freeRemaining
+        freeResetAt
+      }
+    }
+  `,
+  myCalculations: `
+    query GetMyCalculations($limit: Int, $offset: Int) {
+      myCalculations(limit: $limit, offset: $offset) {
+        id
+        totalPrice
+        damagedZonesCount
+        createdAt
+        brandName
+        modelName
+        generationName
+      }
+    }
+  `,
 }
 
 export const mutations = {

@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
 import type { BrandsResponse } from '@razbor/hooks'
-import { UsageCounter } from '@/components/features/usage-counter'
 import { BrandIcon } from '@/components/ui/brand-icon'
 
 function getBrandNameClass(name: string) {
@@ -54,8 +53,6 @@ export function BrandsPage() {
           ))}
         </div>
       </div>
-
-      <UsageCounter />
     </div>
   )
 }
