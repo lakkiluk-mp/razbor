@@ -213,6 +213,15 @@ export const queries = {
         brandName
         modelName
         generationName
+        details {
+          parts {
+            name
+            category
+            included
+            isDamaged
+            price
+          }
+        }
       }
     }
   `,

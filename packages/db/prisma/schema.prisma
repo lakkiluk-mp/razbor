@@ -241,6 +241,7 @@ model Calculation {
   generationId String
   totalPrice   Int
   damagedZones String[]
+  details      Json?
 
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   generation Generation @relation(fields: [generationId], references: [id])

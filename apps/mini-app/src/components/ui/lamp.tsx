@@ -106,7 +106,7 @@ export const LampContainer = ({
             duration: 0.8,
             ease: "easeInOut",
           }}
-          className="absolute inset-auto z-30 h-36 -translate-y-[6rem] rounded-full bg-amber-400 blur-2xl"
+          className="absolute inset-auto z-30 h-36 -translate-y-[6rem] rounded-full bg-amber-500 blur-2xl"
         ></motion.div>
         <motion.div
           initial={{ width: lineInitialWidth }}
@@ -117,7 +117,7 @@ export const LampContainer = ({
             duration: 0.8,
             ease: "easeInOut",
           }}
-          className="absolute inset-auto z-50 h-0.5 -translate-y-[7rem] bg-amber-400"
+          className="absolute inset-auto z-50 h-0.5 -translate-y-[7rem] bg-amber-500"
         ></motion.div>
 
         <div className="absolute inset-auto z-40 h-44 w-full -translate-y-[12.5rem] bg-neutral-950"></div>

@@ -211,7 +211,7 @@ export function DamageSelector({
             className={cn(
               'text-xs px-2 py-1 rounded-lg min-w-[85px] text-center',
               selectedLabels.length > 0
-                ? 'text-amber-400 bg-amber-500/10'
+                ? 'text-amber-500 bg-amber-500/10'
                 : 'text-zinc-600 bg-zinc-800/50'
             )}
           >
@@ -228,7 +228,7 @@ export function DamageSelector({
                 className={cn(
                   'flex-1 py-3 px-4 rounded-xl border transition-all',
                   isSelected
-                    ? 'bg-amber-500/20 border-amber-500 text-amber-400'
+                    ? 'bg-amber-500/20 border-amber-500 text-amber-500'
                     : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-zinc-700'
                 )}
                 aria-label={`${isSelected ? 'Убрать' : 'Отметить'} повреждение: ${agg.name}`}

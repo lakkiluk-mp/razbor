@@ -2,6 +2,7 @@ import { builder } from '../builder'
 import {
   CalculationHistoryItemType,
   type CalculationHistoryItemData,
+  type CalculationDetails,
 } from '../types/calculation-history'
 
 builder.queryField('myCalculations', (t) =>
@@ -47,6 +48,7 @@ builder.queryField('myCalculations', (t) =>
         modelName: calc.generation.model.name,
         generationName: calc.generation.name,
         bodyType: calc.generation.bodyType,
+        details: calc.details as CalculationDetails | null,
       }))
     },
   })

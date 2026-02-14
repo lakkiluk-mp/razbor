@@ -40,12 +40,23 @@ builder.mutationField('calculate', (t) =>
       })
 
       if (ctx.user) {
+        const details = {
+          parts: result.parts.map((p) => ({
+            name: p.part.name,
+            category: p.part.category,
+            price: p.price,
+            included: p.included,
+            isDamaged: p.isDamaged,
+          })),
+        }
+
         await ctx.prisma.calculation.create({
           data: {
             userId: ctx.user.id,
             generationId: input.generationId,
             totalPrice: result.totalPrice,
             damagedZones: input.damagedZones,
+            details,
           },
         })
 

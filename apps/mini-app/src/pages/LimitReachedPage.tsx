@@ -45,14 +45,14 @@ export function LimitReachedPage() {
         {timeLeft && (
           <p className="text-zinc-500 mb-8">
             Новые оценки будут доступны через:{' '}
-            <span className="text-amber-400 font-semibold">{timeLeft}</span>
+            <span className="text-amber-500 font-semibold">{timeLeft}</span>
           </p>
         )}
 
         <div className="space-y-3">
           <Button
             asChild
-            className="w-full h-14 bg-amber-500 hover:bg-amber-400 text-zinc-900 text-base font-semibold rounded-2xl"
+            className="w-full h-14 bg-amber-500 hover:bg-amber-500 text-zinc-900 text-base font-semibold rounded-2xl"
           >
             <a href={`mailto:${SUPPORT_EMAIL}?subject=Хочу больше оценок`}>
               Хочу больше оценок

@@ -1,17 +1,25 @@
 import { useQuery } from '@tanstack/react-query'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Lock } from 'lucide-react'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
 import { CalculationCard } from '@/components/features/calculation-card'
 
+interface CalculationDetailPart {
+  name: string
+  category: string
+  included: boolean
+  isDamaged: boolean
+  price: number
+}
+
 interface Calculation {
   id: string
   totalPrice: number
-  damagedZonesCount: number
   createdAt: string
   brandName: string
   modelName: string
   generationName: string
+  details: { parts: CalculationDetailPart[] } | null
 }
 
 interface MyCalculationsResponse {
@@ -32,6 +40,8 @@ const FAKE_CALCULATIONS = [
 ]
 
 export function HistoryPage() {
+  const navigate = useNavigate()
+
   const { data: meData, isLoading: meLoading, isError: meError } = useQuery({
     queryKey: ['me'],
     queryFn: () => fetchGraphQL<MeResponse>(queries.me),
@@ -99,12 +109,11 @@ export function HistoryPage() {
           {calculations.map((calc) => (
             <CalculationCard
               key={calc.id}
-              totalPrice={calc.totalPrice}
-              damagedZonesCount={calc.damagedZonesCount}
               createdAt={calc.createdAt}
               brandName={calc.brandName}
               modelName={calc.modelName}
               generationName={calc.generationName}
+              onClick={() => navigate(`/history/${calc.id}`, { state: calc })}
             />
           ))}
         </div>
@@ -129,7 +138,7 @@ export function HistoryPage() {
                 <span className="text-zinc-500 text-xs">{item.date}</span>
               </div>
               <span className="text-zinc-400 text-sm">{item.generationName}</span>
-              <span className="text-amber-400 font-bold text-lg">
+              <span className="text-amber-500 font-bold text-lg">
                 {item.totalPrice.toLocaleString('ru-RU')} &#8381;
               </span>
             </div>

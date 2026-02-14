@@ -205,7 +205,7 @@ export function ConfigPage() {
       <div className="px-4 pb-8">
         <Button
           onClick={handleNext}
-          className="w-full h-14 bg-amber-500 hover:bg-amber-400 text-zinc-900 text-base font-semibold rounded-2xl"
+          className="w-full h-14 bg-amber-500 hover:bg-amber-500 text-zinc-900 text-base font-semibold rounded-2xl"
         >
           ДАЛЕЕ
         </Button>

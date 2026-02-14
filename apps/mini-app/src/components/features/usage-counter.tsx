@@ -37,7 +37,7 @@ export function UsageCounter() {
       <div className="bg-zinc-900 rounded-xl px-4 py-3 text-center">
         <span className="text-zinc-400 text-sm">
           Осталось{' '}
-          <span className="text-amber-400 font-semibold">{freeRemaining}</span>
+          <span className="text-amber-500 font-semibold">{freeRemaining}</span>
           {' '}из {dailyLimit} бесплатных оценок
         </span>
       </div>

@@ -204,7 +204,7 @@ export function ResultPage() {
                               {!item.isDamaged && (
                                 <Checkbox
                                   checked={isActive}
-                                  className="pointer-events-none border-zinc-600 data-[state=checked]:bg-amber-500/20 data-[state=checked]:border-amber-500 data-[state=checked]:text-amber-400"
+                                  className="pointer-events-none border-zinc-600 data-[state=checked]:bg-amber-500/20 data-[state=checked]:border-amber-500 data-[state=checked]:text-amber-500"
                                 />
                               )}
                               <span

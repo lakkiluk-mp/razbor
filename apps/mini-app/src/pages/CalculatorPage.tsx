@@ -149,7 +149,7 @@ export function CalculatorPage() {
         <Button
           onClick={handleCalculate}
           disabled={isCalculating}
-          className="w-full h-14 bg-amber-500 hover:bg-amber-400 text-zinc-900 text-base font-semibold rounded-2xl disabled:opacity-50"
+          className="w-full h-14 bg-amber-500 hover:bg-amber-500 text-zinc-900 text-base font-semibold rounded-2xl disabled:opacity-50"
         >
           РАССЧИТАТЬ
         </Button>

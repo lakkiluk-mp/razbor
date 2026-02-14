@@ -10,6 +10,7 @@ import { ConfigPage } from '@/pages/ConfigPage'
 import { CalculatorPage } from '@/pages/CalculatorPage'
 import { ResultPage } from '@/pages/ResultPage'
 import { HistoryPage } from '@/pages/HistoryPage'
+import { HistoryDetailPage } from '@/pages/HistoryDetailPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 import { LimitReachedPage } from '@/pages/LimitReachedPage'
 import { TelegramRequired } from '@/components/TelegramRequired'
@@ -63,6 +64,7 @@ export function App() {
             <Route path="/calculator/:generationId" element={<CalculatorPage />} />
             <Route path="/result" element={<ResultPage />} />
             <Route path="/history" element={<HistoryPage />} />
+            <Route path="/history/:id" element={<HistoryDetailPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
           <Route path="/limit-reached" element={<LimitReachedPage />} />

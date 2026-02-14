@@ -1,44 +1,43 @@
+import { ChevronRight } from 'lucide-react'
+
 interface CalculationCardProps {
-  totalPrice: number
-  damagedZonesCount: number
   createdAt: string
   brandName: string
   modelName: string
   generationName: string
+  onClick?: () => void
 }
 
 export function CalculationCard({
-  totalPrice,
-  damagedZonesCount,
   createdAt,
   brandName,
   modelName,
   generationName,
+  onClick,
 }: CalculationCardProps) {
-  const formattedPrice = totalPrice.toLocaleString('ru-RU') + ' \u20BD'
-  const formattedDate = new Date(createdAt).toLocaleDateString('ru-RU', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
+  const date = new Date(createdAt)
+  const formattedDate =
+    date.toLocaleDateString('ru-RU', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }) +
+    ', ' +
+    date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
 
   return (
-    <div className="bg-zinc-900 rounded-2xl p-4 flex flex-col gap-1">
-      <div className="flex items-center justify-between">
-        <span className="text-zinc-100 font-semibold">
+    <div
+      className="bg-zinc-900 rounded-2xl p-4 flex items-center gap-3 cursor-pointer active:bg-zinc-800 transition-colors"
+      onClick={onClick}
+    >
+      <div className="flex flex-col gap-1 flex-1 min-w-0">
+        <span className="text-zinc-100 font-semibold truncate">
           {brandName} {modelName}
         </span>
+        <span className="text-zinc-400 text-sm truncate">{generationName}</span>
         <span className="text-zinc-500 text-xs">{formattedDate}</span>
       </div>
-      <span className="text-zinc-400 text-sm">{generationName}</span>
-      <div className="flex items-center gap-2">
-        <span className="text-amber-400 font-bold text-lg">{formattedPrice}</span>
-        {damagedZonesCount > 0 && (
-          <span className="bg-red-500/20 text-red-400 text-xs rounded-full px-2 py-0.5">
-            {damagedZonesCount} повр.
-          </span>
-        )}
-      </div>
+      <ChevronRight className="w-5 h-5 text-zinc-500 shrink-0" />
     </div>
   )
 }

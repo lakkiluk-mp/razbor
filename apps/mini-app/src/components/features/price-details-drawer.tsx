@@ -80,7 +80,7 @@ function SourceLinks({
             disabled={!hasUrl}
             className={`flex items-center gap-1.5 text-sm min-h-[44px] px-2 -mr-2 ${
               hasUrl
-                ? 'text-zinc-400 active:text-amber-400'
+                ? 'text-zinc-400 active:text-amber-500'
                 : 'text-zinc-500'
             }`}
             onClick={(e) => {
@@ -138,7 +138,7 @@ export function PriceDetailsDrawer({
                 <span className="text-base font-medium text-zinc-200">
                   Медиана
                 </span>
-                <span className="text-base font-semibold text-amber-400">
+                <span className="text-base font-semibold text-amber-500">
                   {formatPrice(price.median)} ₽
                 </span>
               </div>
