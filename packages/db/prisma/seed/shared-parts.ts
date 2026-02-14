@@ -152,7 +152,24 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель H4M рено',
       'двигатель HR16DE',
     ],
-    usedBy: ['renault-logan', 'renault-sandero', 'renault-duster', 'lada-vesta'],
+    usedBy: ['renault-logan', 'renault-sandero', 'renault-duster', 'lada-vesta', 'nissan-qashqai'],
+  },
+
+  // ========================================
+  // NISSAN TRANSMISSIONS
+  // ========================================
+  {
+    oemCode: 'JF015E',
+    name: 'Вариатор (Jatco JF015E)',
+    category: 'transmission',
+    searchQueries: [
+      'oem:JF015E',
+      'oem:31020-3JX6A',
+      'вариатор JF015E',
+      'cvt JF015E',
+      'вариатор Jatco JF015E',
+    ],
+    usedBy: ['lada-vesta', 'nissan-qashqai'],
   },
 
   // ========================================

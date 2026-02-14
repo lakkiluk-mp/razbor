@@ -23,7 +23,23 @@ export const yoga = createYoga({
   plugins: [useGraphQLLogging()],
   context: async ({ request }) => {
     const initDataRaw = request.headers.get('x-telegram-init-data')
-    const user = initDataRaw ? await authenticateUser(initDataRaw, prisma) : null
+    let user = initDataRaw ? await authenticateUser(initDataRaw, prisma) : null
+
+    if (!user && !isProduction) {
+      user = await prisma.user.upsert({
+        where: { telegramId: BigInt(999999999) },
+        create: {
+          telegramId: BigInt(999999999),
+          firstName: 'Dev',
+          lastName: 'User',
+          username: 'dev_user',
+          isPremium: true,
+          dailyLimit: 999,
+        },
+        update: {},
+        select: { id: true, telegramId: true },
+      })
+    }
 
     if (!user && isProduction) {
       throw new GraphQLError('Authentication required', {

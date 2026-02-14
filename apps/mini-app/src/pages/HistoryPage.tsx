@@ -57,6 +57,7 @@ export function HistoryPage() {
         offset: 0,
       }),
     enabled: isPremium,
+    staleTime: 0,
   })
 
   const isLoading = meLoading || (isPremium && calcLoading)
