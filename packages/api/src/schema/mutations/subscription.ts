@@ -41,17 +41,24 @@ builder.mutationField('createSubscription', (t) =>
         throw new GraphQLError('У вас уже есть активная подписка')
       }
 
-      const pendingPayment = await ctx.prisma.yooPayment.findFirst({
+      const recentPayment = await ctx.prisma.yooPayment.findFirst({
+        where: {
+          userId: ctx.user.id,
+          isRecurring: { not: true },
+          createdAt: { gt: new Date(Date.now() - 60 * 1000) },
+        },
+      })
+      if (recentPayment) {
+        throw new GraphQLError('Подождите минуту перед повторной попыткой')
+      }
+
+      await ctx.prisma.yooPayment.deleteMany({
         where: {
           userId: ctx.user.id,
           status: 'pending',
           isRecurring: { not: true },
-          createdAt: { gt: new Date(Date.now() - 30 * 60 * 1000) },
         },
       })
-      if (pendingPayment) {
-        throw new GraphQLError('У вас уже есть незавершённый платёж. Подождите или попробуйте позже.')
-      }
 
       const planData = SUBSCRIPTION_PLANS[plan]
 
