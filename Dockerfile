@@ -20,6 +20,8 @@ COPY --from=deps /app/ ./
 COPY . .
 RUN pnpm db:generate
 ENV VITE_API_URL=""
+ARG VITE_ALLOW_WEB_ACCESS=false
+ENV VITE_ALLOW_WEB_ACCESS=$VITE_ALLOW_WEB_ACCESS
 RUN pnpm --filter @razbor/mini-app build
 RUN pnpm --filter @razbor/server build
 
