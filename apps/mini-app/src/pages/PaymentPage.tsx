@@ -1,8 +1,11 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { fetchGraphQL, mutations } from '@/lib/graphql-client'
+import { PLAN_LABELS, SUBSCRIPTION_PLANS, pluralCredits } from '@razbor/shared'
+import { useYooKassaWidget } from '@/hooks/use-yookassa-widget'
 
 interface CreateSubscriptionResponse {
   createSubscription: {
@@ -12,31 +15,63 @@ interface CreateSubscriptionResponse {
   }
 }
 
+const PAYMENT_CONTAINER_ID = 'payment-form'
+
 export function PaymentPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const hasFired = useRef(false)
+  const [confirmationToken, setConfirmationToken] = useState<string | null>(null)
+  const [widgetFailed, setWidgetFailed] = useState(false)
 
   const plan = (location.state as { plan?: string } | null)?.plan
+  const planConfig = plan ? SUBSCRIPTION_PLANS[plan as keyof typeof SUBSCRIPTION_PLANS] : null
 
   const { mutate, isPending, isError, reset } = useMutation({
     mutationFn: (selectedPlan: string) =>
       fetchGraphQL<CreateSubscriptionResponse>(mutations.createSubscription, {
         plan: selectedPlan,
       }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['me'] })
-      queryClient.invalidateQueries({ queryKey: ['mySubscription'] })
-      queryClient.invalidateQueries({ queryKey: ['usageInfo'] })
-      navigate('/payment/success', { replace: true })
+    onSuccess: (data) => {
+      const token = data.createSubscription.confirmationToken
+      if (token) {
+        setConfirmationToken(token)
+        setWidgetFailed(false)
+      } else {
+        queryClient.invalidateQueries({ queryKey: ['me'] })
+        queryClient.invalidateQueries({ queryKey: ['mySubscription'] })
+        queryClient.invalidateQueries({ queryKey: ['usageInfo'] })
+        navigate('/payment/success', { replace: true })
+      }
     },
+  })
+
+  const handleWidgetSuccess = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['me'] })
+    queryClient.invalidateQueries({ queryKey: ['mySubscription'] })
+    queryClient.invalidateQueries({ queryKey: ['usageInfo'] })
+    navigate('/payment/success', { replace: true })
+  }, [queryClient, navigate])
+
+  const handleWidgetFail = useCallback(() => {
+    setWidgetFailed(true)
+    setConfirmationToken(null)
+  }, [])
+
+  const { isReady, error: widgetError } = useYooKassaWidget({
+    confirmationToken,
+    containerId: PAYMENT_CONTAINER_ID,
+    onSuccess: handleWidgetSuccess,
+    onFail: handleWidgetFail,
   })
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp
     tg?.BackButton?.hide()
-    return () => { tg?.BackButton?.hide() }
+    return () => {
+      tg?.BackButton?.hide()
+    }
   }, [])
 
   useEffect(() => {
@@ -50,6 +85,14 @@ export function PaymentPage() {
     }
   }, [plan, navigate, mutate])
 
+  const handleRetry = () => {
+    hasFired.current = false
+    setConfirmationToken(null)
+    setWidgetFailed(false)
+    reset()
+    if (plan) mutate(plan)
+  }
+
   if (isError) {
     return (
       <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center p-4">
@@ -62,11 +105,7 @@ export function PaymentPage() {
             Не удалось оформить подписку. Попробуйте ещё раз.
           </p>
           <Button
-            onClick={() => {
-              hasFired.current = false
-              reset()
-              if (plan) mutate(plan)
-            }}
+            onClick={handleRetry}
             disabled={isPending}
             className="w-full h-14 bg-amber-500 hover:bg-amber-600 text-zinc-900 text-base font-semibold rounded-2xl"
           >
@@ -84,11 +123,80 @@ export function PaymentPage() {
     )
   }
 
+  if (widgetFailed || widgetError) {
+    return (
+      <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center p-4">
+        <div className="text-center max-w-sm space-y-4">
+          <div className="w-16 h-16 mx-auto rounded-full bg-red-500/20 flex items-center justify-center">
+            <span className="text-red-500 text-2xl font-bold">!</span>
+          </div>
+          <h1 className="text-xl font-bold">Ошибка оплаты</h1>
+          <p className="text-zinc-400 text-sm">
+            {widgetError ?? 'Платёж не удался. Попробуйте ещё раз.'}
+          </p>
+          <Button
+            onClick={handleRetry}
+            disabled={isPending}
+            className="w-full h-14 bg-amber-500 hover:bg-amber-600 text-zinc-900 text-base font-semibold rounded-2xl"
+          >
+            {isPending ? 'Обработка...' : 'Попробовать снова'}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => navigate('/subscribe', { replace: true })}
+            className="w-full h-14 border-zinc-700 text-zinc-300 hover:bg-zinc-800 rounded-2xl"
+          >
+            Назад
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!confirmationToken) {
+    return (
+      <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center p-4">
+        <div className="text-center space-y-4">
+          <div className="w-12 h-12 mx-auto border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-zinc-400 text-lg">Подготовка платежа...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center p-4">
-      <div className="text-center space-y-4">
-        <div className="w-12 h-12 mx-auto border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-zinc-400 text-lg">Обработка платежа...</p>
+    <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col px-4 pt-4 pb-6">
+      <button
+        onClick={() => navigate('/subscribe', { replace: true })}
+        className="flex items-center gap-1 text-zinc-400 hover:text-zinc-200 transition-colors mb-4 self-start"
+      >
+        <ArrowLeft className="w-5 h-5" />
+        <span className="text-sm">Назад</span>
+      </button>
+
+      <h1 className="text-2xl font-bold mb-4">Оплата</h1>
+
+      {planConfig && plan && (
+        <div className="bg-zinc-900 rounded-2xl p-4 mb-4 flex items-center justify-between">
+          <div>
+            <p className="text-zinc-100 font-semibold">
+              Premium &middot; {PLAN_LABELS[plan] ?? plan}
+            </p>
+            <p className="text-zinc-400 text-sm">
+              {planConfig.credits} {pluralCredits(planConfig.credits)}
+            </p>
+          </div>
+          <p className="text-zinc-100 font-bold text-lg">{planConfig.price} &#8381;</p>
+        </div>
+      )}
+
+      <div className="relative">
+        {!isReady && (
+          <div className="absolute inset-0 flex items-center justify-center bg-zinc-950/80 rounded-2xl z-10">
+            <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+        <div id={PAYMENT_CONTAINER_ID} className="min-h-[400px] rounded-2xl overflow-hidden" />
       </div>
     </div>
   )

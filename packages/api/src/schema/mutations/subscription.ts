@@ -1,12 +1,13 @@
 import { GraphQLError } from 'graphql'
+import { SUBSCRIPTION_PLANS } from '@razbor/shared'
 import { builder } from '../builder'
 import { SubscriptionPlanEnum, SubscriptionInfoType } from '../types/subscription'
 import {
-  createSubscription,
   cancelSubscription,
   resumeSubscription,
   getActiveSubscription,
 } from '../../services/subscription.service'
+import { createSubscriptionPayment } from '../../services/yookassa.service'
 
 interface CreateSubscriptionResultData {
   confirmationToken: string
@@ -35,12 +36,46 @@ builder.mutationField('createSubscription', (t) =>
         throw new GraphQLError('Требуется авторизация')
       }
 
-      const subscription = await createSubscription(ctx.prisma, ctx.user.id, plan)
+      const existing = await getActiveSubscription(ctx.prisma, ctx.user.id)
+      if (existing) {
+        throw new GraphQLError('У вас уже есть активная подписка')
+      }
+
+      const pendingPayment = await ctx.prisma.yooPayment.findFirst({
+        where: {
+          userId: ctx.user.id,
+          status: 'pending',
+          isRecurring: { not: true },
+          createdAt: { gt: new Date(Date.now() - 30 * 60 * 1000) },
+        },
+      })
+      if (pendingPayment) {
+        throw new GraphQLError('У вас уже есть незавершённый платёж. Подождите или попробуйте позже.')
+      }
+
+      const planData = SUBSCRIPTION_PLANS[plan]
+
+      const { confirmationToken, yooPaymentId, idempotencyKey } = await createSubscriptionPayment({
+        userId: ctx.user.id,
+        plan,
+        amount: planData.price,
+        description: `Подписка Razbor — ${planData.label}`,
+      })
+
+      const yooPayment = await ctx.prisma.yooPayment.create({
+        data: {
+          userId: ctx.user.id,
+          yooPaymentId,
+          idempotencyKey,
+          amount: planData.price,
+          status: 'pending',
+        },
+      })
 
       return {
-        confirmationToken: 'stub_token_' + subscription.id,
-        subscriptionId: subscription.id,
-        paymentId: 'stub_payment_' + subscription.id,
+        confirmationToken,
+        subscriptionId: '',
+        paymentId: yooPayment.id,
       }
     },
   })

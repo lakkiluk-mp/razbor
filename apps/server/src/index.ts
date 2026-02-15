@@ -5,6 +5,7 @@ import { serveStatic } from './static.js'
 import { bot } from './bot/index.js'
 import { registerPaymentHandlers } from './bot/payments.js'
 import { startRenewalCron } from './cron/renewal.js'
+import { createYooKassaWebhookHandler } from './payments/yookassa-webhook.js'
 
 const IS_DEV = process.env.NODE_ENV !== 'production'
 const VITE_URL = 'http://localhost:3000'
@@ -19,6 +20,8 @@ const MAX_BODY_SIZE = 1024 * 1024
 if (bot) {
   registerPaymentHandlers(bot)
 }
+
+const handleYooKassaWebhook = createYooKassaWebhookHandler(prisma)
 
 function collectBody(req: import('node:http').IncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -72,6 +75,17 @@ const server = createServer(async (req, res) => {
 
   if (url.startsWith('/api/graphql')) {
     yoga(req, res)
+    return
+  }
+
+  if (req.method === 'POST' && url === '/api/yookassa/webhook') {
+    const body = await collectBody(req).catch(() => null)
+    if (body === null) {
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ ok: true }))
+      return
+    }
+    await handleYooKassaWebhook(req, res, body)
     return
   }
 

@@ -14,6 +14,7 @@
     "@pothos/core": "^4.3.0",
     "@pothos/plugin-prisma": "^4.2.0",
     "@razbor/db": "workspace:*",
+    "@webzaytsev/yookassa-ts-sdk": "^3.2.2",
     "graphql": "^16.9.0"
   },
   "devDependencies": {

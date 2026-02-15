@@ -8,11 +8,12 @@ const graphqlClient = createGraphQLClient({
   url: '/api/graphql',
   isProduction: import.meta.env.PROD,
   getHeaders: (): Record<string, string> => {
+    const h: Record<string, string> = { 'ngrok-skip-browser-warning': '1' }
     const initData = getTelegramInitData()
     if (initData) {
-      return { 'x-telegram-init-data': initData }
+      h['x-telegram-init-data'] = initData
     }
-    return {}
+    return h
   },
 })
 
