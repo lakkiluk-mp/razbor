@@ -103,6 +103,7 @@ export function CalculatorPage() {
       )
 
       queryClient.invalidateQueries({ queryKey: ['usageInfo'] })
+      queryClient.invalidateQueries({ queryKey: ['me'] })
 
       sessionStorage.setItem(CALCULATION_PARTS_KEY, JSON.stringify(result.calculate.parts))
 
