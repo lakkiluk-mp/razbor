@@ -35,7 +35,7 @@ export function PaymentPage() {
     return () => clearInterval(timer)
   }, [cooldown])
 
-  const { mutate, isPending, isError, error, reset } = useMutation({
+  const { mutate, isPending, isError, reset } = useMutation({
     mutationFn: (selectedPlan: string) =>
       fetchGraphQL<CreateSubscriptionResponse>(mutations.createSubscription, {
         plan: selectedPlan,
