@@ -23,7 +23,7 @@ function ipToNumber(ip: string): number {
 }
 
 function isYooKassaIP(ip: string): boolean {
-  if (process.env.NODE_ENV !== 'production') return true
+  if (process.env.YOOKASSA_SKIP_IP_CHECK === 'true') return true
 
   if (ip.startsWith('2a02:5180:')) return true
 

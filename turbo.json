@@ -21,6 +21,10 @@
       "outputs": ["src/generated/**"],
       "cache": false
     },
+    "test": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
     "db:generate": {
       "inputs": ["prisma/schema.prisma"],
       "outputs": ["src/pothos-types.ts", "node_modules/.prisma/**"],

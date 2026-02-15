@@ -11,10 +11,14 @@ const allowWebAccess = process.env.ALLOW_WEB_ACCESS === 'true'
 function useGraphQLLogging(): Plugin {
   return {
     onExecute({ args }) {
+      const source = args.document.loc?.source?.body ?? ''
+      const isMutation = source.trimStart().startsWith('mutation')
+      if (!isMutation) return
+
       const op = args.operationName ?? 'anonymous'
       const user = (args.contextValue as unknown as Context).user
       const tgId = user?.telegramId?.toString() ?? 'anon'
-      console.log(`[GraphQL] ${op} | user: ${tgId}`)
+      console.log(`[GraphQL] mutation ${op} | user: ${tgId}`)
     },
   }
 }

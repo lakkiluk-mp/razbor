@@ -59,9 +59,13 @@ export async function processRenewals(prisma: PrismaClient): Promise<void> {
     },
   })
 
+  if (expiredSubscriptions.length === 0) return
+  console.log(`[Renewal] Found ${expiredSubscriptions.length} expired subscription(s)`)
+
   for (const subscription of expiredSubscriptions) {
     try {
       if (subscription.cancelAtPeriodEnd) {
+        console.log(`[Renewal] ${subscription.id} cancelAtPeriodEnd → canceling`)
         await prisma.$transaction([
           prisma.subscription.update({
             where: { id: subscription.id },
@@ -76,10 +80,12 @@ export async function processRenewals(prisma: PrismaClient): Promise<void> {
       }
 
       if (subscription.status === 'active') {
+        console.log(`[Renewal] ${subscription.id} active → charging ${subscription.plan}`)
         try {
-          await chargeSubscription(prisma, subscription)
+          const charged = await chargeSubscription(prisma, subscription)
+          console.log(`[Renewal] ${subscription.id} charge result: ${charged ? 'success' : 'failed'}`)
         } catch (err) {
-          console.error(`[Renewal] Charge failed for ${subscription.id}, moving to past_due:`, err)
+          console.error(`[Renewal] ${subscription.id} charge error, moving to past_due:`, err)
           await prisma.subscription.update({
             where: { id: subscription.id },
             data: { status: 'past_due', retryCount: 1, lastRetryAt: new Date() },
@@ -90,6 +96,7 @@ export async function processRenewals(prisma: PrismaClient): Promise<void> {
 
       if (subscription.status === 'past_due') {
         if (subscription.retryCount >= SUBSCRIPTION_MAX_RETRIES) {
+          console.log(`[Renewal] ${subscription.id} max retries (${subscription.retryCount}) → expiring`)
           await expireSubscription(prisma, subscription.id)
         } else {
           const daysSinceLastRetry = subscription.lastRetryAt
@@ -98,6 +105,7 @@ export async function processRenewals(prisma: PrismaClient): Promise<void> {
           const requiredDelay = subscription.retryCount
 
           if (daysSinceLastRetry >= requiredDelay) {
+            console.log(`[Renewal] ${subscription.id} past_due retry #${subscription.retryCount + 1}`)
             try {
               const charged = await chargeSubscription(prisma, subscription)
               if (!charged) {
@@ -107,7 +115,7 @@ export async function processRenewals(prisma: PrismaClient): Promise<void> {
                 })
               }
             } catch (err) {
-              console.error(`[Renewal] Retry charge failed for ${subscription.id}:`, err)
+              console.error(`[Renewal] ${subscription.id} retry failed:`, err)
               await prisma.subscription.update({
                 where: { id: subscription.id },
                 data: { retryCount: { increment: 1 }, lastRetryAt: new Date() },
@@ -117,7 +125,7 @@ export async function processRenewals(prisma: PrismaClient): Promise<void> {
         }
       }
     } catch (err) {
-      console.error(`[Renewal] Failed to process subscription ${subscription.id}:`, err)
+      console.error(`[Renewal] Failed to process ${subscription.id}:`, err)
     }
   }
 }

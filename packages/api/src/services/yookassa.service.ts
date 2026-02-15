@@ -31,6 +31,7 @@ interface CreateRecurringPaymentParams {
 }
 
 export async function createSubscriptionPayment(params: CreateSubscriptionPaymentParams) {
+  const idempotencyKey = randomUUID()
   const payment = await getSdk().payments.create({
     amount: {
       value: params.amount.toFixed(2),
@@ -47,16 +48,17 @@ export async function createSubscriptionPayment(params: CreateSubscriptionPaymen
       plan: params.plan,
       type: 'subscription',
     },
-  })
+  }, idempotencyKey)
 
   return {
     confirmationToken: (payment.confirmation as { confirmation_token: string }).confirmation_token,
     yooPaymentId: payment.id,
-    idempotencyKey: randomUUID(),
+    idempotencyKey,
   }
 }
 
 export async function createRecurringPayment(params: CreateRecurringPaymentParams) {
+  const idempotencyKey = randomUUID()
   const payment = await getSdk().payments.create({
     amount: {
       value: params.amount.toFixed(2),
@@ -70,12 +72,12 @@ export async function createRecurringPayment(params: CreateRecurringPaymentParam
       subscriptionId: params.subscriptionId,
       type: 'recurring',
     },
-  })
+  }, idempotencyKey)
 
   return {
     yooPaymentId: payment.id,
     status: payment.status,
-    idempotencyKey: randomUUID(),
+    idempotencyKey,
   }
 }
 

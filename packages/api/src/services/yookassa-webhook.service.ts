@@ -34,6 +34,19 @@ export async function handlePaymentSucceeded(
     return
   }
 
+  const metadata = paymentObject.metadata as Record<string, string> | undefined
+  if (metadata?.type === 'subscription' && metadata.plan) {
+    const plan = metadata.plan as SubscriptionPlanKey
+    const expectedPlan = SUBSCRIPTION_PLANS[plan]
+    if (expectedPlan) {
+      const paidAmount = parseFloat(verified.amount.value)
+      if (paidAmount < expectedPlan.price) {
+        console.error(`[YooKassa Webhook] Amount mismatch for ${yooPaymentId}: paid ${paidAmount}, expected ${expectedPlan.price}`)
+        return
+      }
+    }
+  }
+
   const { count } = await prisma.yooPayment.updateMany({
     where: { id: yooPayment.id, status: 'pending' },
     data: { status: 'succeeded' },
@@ -69,7 +82,6 @@ export async function handlePaymentSucceeded(
     }
   }
 
-  const metadata = paymentObject.metadata as Record<string, string> | undefined
   if (!metadata) return
 
   if (metadata.type === 'subscription') {
