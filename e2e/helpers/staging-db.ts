@@ -25,6 +25,7 @@ export function cleanupDevUser() {
   sql(`DELETE FROM yoo_payments WHERE "userId" = '${userId}'`)
   sql(`DELETE FROM subscriptions WHERE "userId" = '${userId}'`)
   sql(`DELETE FROM payment_methods WHERE "userId" = '${userId}'`)
+  sql(`UPDATE users SET "isPremium" = false WHERE id = '${userId}'`)
 }
 
 export function expireSubscription() {

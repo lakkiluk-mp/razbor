@@ -31,24 +31,17 @@ services:
       timeout: 5s
       retries: 5
 
-  app:
+  server:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: razbor-dev
+    container_name: razbor-server
     ports:
       - "4000:4000"
-      - "3000:3000"
     volumes:
       - ./apps/server/src:/app/apps/server/src
-      - ./apps/mini-app/src:/app/apps/mini-app/src
-      - ./apps/mini-app/public:/app/apps/mini-app/public
-      - ./apps/mini-app/index.html:/app/apps/mini-app/index.html
-      - ./apps/mini-app/vite.config.ts:/app/apps/mini-app/vite.config.ts
       - ./packages/api/src:/app/packages/api/src
       - ./packages/shared/src:/app/packages/shared/src
-      - ./packages/hooks/src:/app/packages/hooks/src
-      - ./packages/graphql-client/src:/app/packages/graphql-client/src
       - ./packages/db/prisma:/app/packages/db/prisma
     env_file:
       - .env
@@ -61,6 +54,36 @@ services:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:4000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 120s
+
+  mini-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: razbor-mini-app
+    ports:
+      - "3000:3000"
+    command: ["pnpm", "dev:mini-app"]
+    volumes:
+      - ./apps/mini-app/src:/app/apps/mini-app/src
+      - ./apps/mini-app/public:/app/apps/mini-app/public
+      - ./apps/mini-app/index.html:/app/apps/mini-app/index.html
+      - ./apps/mini-app/vite.config.ts:/app/apps/mini-app/vite.config.ts
+      - ./packages/hooks/src:/app/packages/hooks/src
+      - ./packages/graphql-client/src:/app/packages/graphql-client/src
+      - ./packages/shared/src:/app/packages/shared/src
+    env_file:
+      - .env
+    environment:
+      PORT: 3000
+    depends_on:
+      server:
         condition: service_healthy
 
 volumes:

@@ -1,14 +1,10 @@
-import { createServer, request as httpRequest } from 'node:http'
+import { createServer } from 'node:http'
 import { prisma } from '@razbor/db'
 import { yoga } from './graphql.js'
-import { serveStatic } from './static.js'
 import { bot } from './bot/index.js'
 import { registerPaymentHandlers } from './bot/payments.js'
 import { startRenewalCron } from './cron/renewal.js'
 import { createYooKassaWebhookHandler } from './payments/yookassa-webhook.js'
-
-const IS_DEV = process.env.NODE_ENV !== 'production'
-const VITE_URL = 'http://localhost:3000'
 
 const PORT = Number(process.env.PORT) || 4000
 const BOT_TOKEN = process.env.BOT_TOKEN ?? ''
@@ -101,24 +97,8 @@ const server = createServer(async (req, res) => {
     return
   }
 
-  if (IS_DEV) {
-    const proxyReq = httpRequest(
-      `${VITE_URL}${req.url}`,
-      { method: req.method, headers: req.headers },
-      (proxyRes) => {
-        res.writeHead(proxyRes.statusCode ?? 200, proxyRes.headers)
-        proxyRes.pipe(res)
-      },
-    )
-    proxyReq.on('error', () => {
-      res.writeHead(502, { 'Content-Type': 'text/plain' })
-      res.end('Vite dev server unavailable')
-    })
-    req.pipe(proxyReq)
-    return
-  }
-
-  serveStatic(req, res)
+  res.writeHead(404, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify({ error: 'Not found' }))
 })
 
 server.listen(PORT, async () => {

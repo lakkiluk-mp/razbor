@@ -7,22 +7,15 @@ FROM base AS deps
 RUN printf "shamefully-hoist=true\nstrict-peer-dependencies=false\nnode-linker=hoisted\n" > .npmrc
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/server/package.json ./apps/server/
-COPY apps/mini-app/package.json ./apps/mini-app/
 COPY packages/api/package.json ./packages/api/
 COPY packages/db/package.json ./packages/db/
 COPY packages/shared/package.json ./packages/shared/
-COPY packages/graphql-client/package.json ./packages/graphql-client/
-COPY packages/hooks/package.json ./packages/hooks/
 RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
 COPY --from=deps /app/ ./
 COPY . .
 RUN pnpm db:generate
-ENV VITE_API_URL=""
-ARG VITE_ALLOW_WEB_ACCESS=false
-ENV VITE_ALLOW_WEB_ACCESS=$VITE_ALLOW_WEB_ACCESS
-RUN pnpm --filter @razbor/mini-app build
 RUN pnpm --filter @razbor/server build
 
 FROM base AS runner
@@ -38,7 +31,6 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json /app/pnpm-workspace.yaml /app/pnpm-lock.yaml ./
 COPY --from=builder /app/apps/server/dist ./apps/server/dist
 COPY --from=builder /app/apps/server/package.json ./apps/server/
-COPY --from=builder /app/apps/mini-app/dist ./public
 COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
 COPY --from=builder /app/packages/db/package.json ./packages/db/
 COPY --from=builder /app/packages/api/package.json ./packages/api/

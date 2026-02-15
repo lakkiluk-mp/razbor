@@ -11,8 +11,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
@@ -37,13 +35,11 @@ services:
     networks:
       - razbor-internal
 
-  razzbor:
+  server:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        VITE_ALLOW_WEB_ACCESS: ${VITE_ALLOW_WEB_ACCESS:-false}
-    container_name: razzbor
+    container_name: razbor-server
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -60,7 +56,6 @@ services:
       BOT_WEBHOOK_URL: ${BOT_WEBHOOK_URL}
       YOOKASSA_SHOP_ID: ${YOOKASSA_SHOP_ID}
       YOOKASSA_SECRET_KEY: ${YOOKASSA_SECRET_KEY}
-      ALLOW_WEB_ACCESS: ${ALLOW_WEB_ACCESS:-false}
       ADMIN_TELEGRAM_IDS: ${ADMIN_TELEGRAM_IDS}
       RUN_MIGRATIONS: ${RUN_MIGRATIONS:-true}
       RUN_SEED: ${RUN_SEED:-false}
@@ -77,13 +72,33 @@ services:
       start_period: 60s
     networks:
       - razbor-internal
+
+  mini-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.mini-app
+      args:
+        VITE_ALLOW_WEB_ACCESS: ${VITE_ALLOW_WEB_ACCESS:-false}
+    container_name: razbor-mini-app
+    restart: unless-stopped
+    depends_on:
+      server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/nginx-health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - razbor-internal
       - dokploy-network
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.razbor.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.razbor.entrypoints=websecure"
       - "traefik.http.routers.razbor.tls.certresolver=letsencrypt"
-      - "traefik.http.services.razbor.loadbalancer.server.port=4000"
+      - "traefik.http.services.razbor.loadbalancer.server.port=80"
       - "traefik.http.routers.razbor-http.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.razbor-http.entrypoints=web"
       - "traefik.http.routers.razbor-http.middlewares=razbor-redirect-https"
