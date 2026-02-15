@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { ChevronRight, Crown, Star } from 'lucide-react'
+import { ChevronRight, Crown, Star, Shield } from 'lucide-react'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
 import { PLAN_LABELS } from '@razbor/shared'
 
@@ -37,6 +37,13 @@ export function ProfilePage() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['me'],
     queryFn: () => fetchGraphQL<MeResponse>(queries.me),
+  })
+
+  const { isSuccess: isAdmin } = useQuery({
+    queryKey: ['adminStats'],
+    queryFn: () => fetchGraphQL(queries.adminStats),
+    retry: false,
+    staleTime: 10 * 60 * 1000,
   })
 
   if (isLoading) {
@@ -124,6 +131,22 @@ export function ProfilePage() {
           </div>
         )}
       </div>
+
+      {isAdmin && (
+        <div className="mt-6">
+          <button
+            type="button"
+            onClick={() => navigate('/admin')}
+            className="w-full bg-zinc-900 rounded-xl p-4 flex items-center justify-between active:scale-[0.98] transition-transform"
+          >
+            <div className="flex items-center gap-2">
+              <Shield className="w-5 h-5 text-amber-500" />
+              <span className="font-semibold text-zinc-100">Админ-панель</span>
+            </div>
+            <ChevronRight className="w-5 h-5 text-zinc-500" />
+          </button>
+        </div>
+      )}
 
       <div className="mt-auto pt-6">
         <p className="text-center text-xs text-zinc-600">Razbor v1.0.0</p>

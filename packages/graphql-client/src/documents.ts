@@ -274,6 +274,185 @@ export const queries = {
       }
     }
   `,
+  adminStats: `
+    query AdminStats {
+      adminStats {
+        totalUsers
+        totalCalculations
+        totalRevenue
+        activeSubscriptions
+        newUsersToday
+        calculationsToday
+      }
+    }
+  `,
+  adminUsers: `
+    query AdminUsers($limit: Int, $offset: Int, $search: String) {
+      adminUsers(limit: $limit, offset: $offset, search: $search) {
+        items {
+          id
+          telegramId
+          firstName
+          lastName
+          username
+          isPremium
+          trialCredits
+          totalCalculations
+          totalPayments
+          activeSubscription
+          createdAt
+        }
+        totalCount
+      }
+    }
+  `,
+  adminUser: `
+    query AdminUser($id: ID!) {
+      adminUser(id: $id) {
+        id
+        telegramId
+        firstName
+        lastName
+        username
+        isPremium
+        trialCredits
+        totalCalculations
+        totalPayments
+        activeSubscription
+        createdAt
+        calculations {
+          id
+          userId
+          totalPrice
+          damagedZonesCount
+          createdAt
+          userName
+          userUsername
+          brandName
+          modelName
+          generationName
+        }
+        yooPayments {
+          id
+          userId
+          yooPaymentId
+          amount
+          currency
+          status
+          isRecurring
+          createdAt
+          userName
+          userUsername
+        }
+        telegramPayments {
+          id
+          userId
+          telegramPaymentId
+          amount
+          calculationsCount
+          createdAt
+          userName
+          userUsername
+        }
+        subscriptions {
+          id
+          userId
+          plan
+          status
+          credits
+          creditsTotal
+          currentPeriodStart
+          currentPeriodEnd
+          cancelAtPeriodEnd
+          createdAt
+          userName
+          userUsername
+        }
+        recentUsageLogs {
+          id
+          action
+          metadata
+          createdAt
+        }
+      }
+    }
+  `,
+  adminPayments: `
+    query AdminPayments($limit: Int, $offset: Int) {
+      adminPayments(limit: $limit, offset: $offset) {
+        items {
+          id
+          userId
+          yooPaymentId
+          amount
+          currency
+          status
+          isRecurring
+          createdAt
+          userName
+          userUsername
+        }
+        totalCount
+      }
+    }
+  `,
+  adminTelegramPayments: `
+    query AdminTelegramPayments($limit: Int, $offset: Int) {
+      adminTelegramPayments(limit: $limit, offset: $offset) {
+        items {
+          id
+          userId
+          telegramPaymentId
+          amount
+          calculationsCount
+          createdAt
+          userName
+          userUsername
+        }
+        totalCount
+      }
+    }
+  `,
+  adminSubscriptions: `
+    query AdminSubscriptions($limit: Int, $offset: Int, $status: String) {
+      adminSubscriptions(limit: $limit, offset: $offset, status: $status) {
+        items {
+          id
+          userId
+          plan
+          status
+          credits
+          creditsTotal
+          currentPeriodStart
+          currentPeriodEnd
+          cancelAtPeriodEnd
+          createdAt
+          userName
+          userUsername
+        }
+        totalCount
+      }
+    }
+  `,
+  adminCalculations: `
+    query AdminCalculations($limit: Int, $offset: Int, $userId: ID) {
+      adminCalculations(limit: $limit, offset: $offset, userId: $userId) {
+        items {
+          id
+          userId
+          totalPrice
+          damagedZonesCount
+          createdAt
+          userName
+          userUsername
+          brandName
+          modelName
+          generationName
+        }
+        totalCount
+      }
+    }
+  `,
 }
 
 export const mutations = {

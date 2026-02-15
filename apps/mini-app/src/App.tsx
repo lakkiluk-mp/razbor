@@ -17,6 +17,14 @@ import { SubscribePage } from '@/pages/SubscribePage'
 import { PaymentPage } from '@/pages/PaymentPage'
 import { PaymentSuccessPage } from '@/pages/PaymentSuccessPage'
 import { TelegramRequired } from '@/components/TelegramRequired'
+import { AdminGuard } from '@/components/admin/admin-guard'
+import { AdminLayout } from '@/components/admin/admin-layout'
+import { AdminDashboard } from '@/pages/admin/AdminDashboard'
+import { AdminUsersPage } from '@/pages/admin/AdminUsersPage'
+import { AdminUserDetailPage } from '@/pages/admin/AdminUserDetailPage'
+import { AdminPaymentsPage } from '@/pages/admin/AdminPaymentsPage'
+import { AdminSubscriptionsPage } from '@/pages/admin/AdminSubscriptionsPage'
+import { AdminCalculationsPage } from '@/pages/admin/AdminCalculationsPage'
 
 const queryClient = getQueryClient()
 const isDev = import.meta.env.DEV
@@ -80,6 +88,14 @@ export function App() {
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/payment/success" element={<PaymentSuccessPage />} />
           <Route path="/limit-reached" element={<LimitReachedPage />} />
+          <Route path="/admin" element={<AdminGuard><AdminLayout /></AdminGuard>}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsersPage />} />
+            <Route path="users/:id" element={<AdminUserDetailPage />} />
+            <Route path="payments" element={<AdminPaymentsPage />} />
+            <Route path="subscriptions" element={<AdminSubscriptionsPage />} />
+            <Route path="calculations" element={<AdminCalculationsPage />} />
+          </Route>
         </Routes>
       </HashRouter>
     </QueryClientProvider>
