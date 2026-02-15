@@ -78,7 +78,7 @@ export function createYooKassaWebhookHandler(prisma: PrismaClient) {
     const clientIP = getClientIP(req)
 
     if (!isYooKassaIP(clientIP)) {
-      console.warn(`[YooKassa Webhook] Blocked IP: ${clientIP}`)
+      console.error(`[YooKassa Webhook] Blocked IP: ${clientIP}`)
       res.writeHead(403, { 'Content-Type': 'application/json' })
       res.end(JSON.stringify({ error: 'Forbidden' }))
       return

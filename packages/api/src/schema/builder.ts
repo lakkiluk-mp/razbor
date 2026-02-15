@@ -7,7 +7,7 @@ import { type PrismaClient, prisma } from '@razbor/db'
 
 export interface Context {
   prisma: PrismaClient
-  user: { id: string; telegramId: bigint } | null
+  user: { id: string; telegramId: bigint; username?: string | null } | null
 }
 
 export const builder = new SchemaBuilder<{

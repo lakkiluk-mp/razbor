@@ -8,6 +8,9 @@ import type { Context } from '@razbor/api'
 const isProduction = process.env.NODE_ENV === 'production'
 const allowWebAccess = process.env.ALLOW_WEB_ACCESS === 'true'
 
+const recentLogs = new Map<string, number>()
+const LOG_DEDUP_MS = 60_000
+
 function useGraphQLLogging(): Plugin {
   return {
     onExecute({ args }) {
@@ -18,7 +21,16 @@ function useGraphQLLogging(): Plugin {
       const op = args.operationName ?? 'anonymous'
       const user = (args.contextValue as unknown as Context).user
       const tgId = user?.telegramId?.toString() ?? 'anon'
-      console.log(`[GraphQL] mutation ${op} | user: ${tgId}`)
+      const username = user?.username
+
+      const key = `${op}:${tgId}`
+      const now = Date.now()
+      const lastSeen = recentLogs.get(key)
+      if (lastSeen && now - lastSeen < LOG_DEDUP_MS) return
+      recentLogs.set(key, now)
+
+      const who = username ? `@${username} (${tgId})` : tgId
+      console.log(`[GraphQL] mutation ${op} | user: ${who}`)
     },
   }
 }

@@ -6,7 +6,7 @@ const BOT_TOKEN = process.env.BOT_TOKEN ?? ''
 export async function authenticateUser(
   initDataRaw: string,
   prisma: PrismaClient,
-): Promise<{ id: string; telegramId: bigint } | null> {
+): Promise<{ id: string; telegramId: bigint; username: string | null } | null> {
   if (!BOT_TOKEN) {
     return null
   }
@@ -39,7 +39,7 @@ export async function authenticateUser(
       lastName: lastName ?? null,
       username: username ?? null,
     },
-    select: { id: true, telegramId: true },
+    select: { id: true, telegramId: true, username: true },
   })
 
   return user
