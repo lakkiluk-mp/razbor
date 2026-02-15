@@ -12,6 +12,7 @@
     "@prisma/client": "^5.22.0",
     "@razbor/api": "workspace:*",
     "@razbor/db": "workspace:*",
+    "@razbor/shared": "workspace:*",
     "@telegram-apps/init-data-node": "^2.0.10",
     "graphql": "^16.9.0",
     "graphql-yoga": "^5.10.0",

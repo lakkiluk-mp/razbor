@@ -1,6 +1,7 @@
 import { builder } from '../builder'
 import { UserProfileType, type UserProfileData } from '../types/user'
-import { getRemainingCredits } from '../../services/usage.service'
+import { getRemainingCredits } from '../../services/credits.service'
+import { getActiveSubscription } from '../../services/subscription.service'
 
 builder.queryField('me', (t) =>
   t.field({
@@ -11,7 +12,7 @@ builder.queryField('me', (t) =>
         return null
       }
 
-      const [user, totalCalculations, credits] = await Promise.all([
+      const [user, totalCalculations, credits, subscription] = await Promise.all([
         ctx.prisma.user.findUnique({
           where: { id: ctx.user.id },
           select: {
@@ -26,6 +27,7 @@ builder.queryField('me', (t) =>
           where: { userId: ctx.user.id },
         }),
         getRemainingCredits(ctx.prisma, ctx.user.id),
+        getActiveSubscription(ctx.prisma, ctx.user.id),
       ])
 
       if (!user) {
@@ -38,10 +40,22 @@ builder.queryField('me', (t) =>
         lastName: user.lastName,
         username: user.username,
         isPremium: user.isPremium,
-        dailyLimit: credits.dailyLimit,
         totalCalculations,
-        freeRemaining: credits.remaining,
-        freeResetAt: credits.nextReset,
+        trialCredits: credits.trial,
+        subscriptionCredits: credits.subscription,
+        totalCredits: credits.total,
+        subscription: subscription
+          ? {
+              id: subscription.id,
+              plan: subscription.plan,
+              status: subscription.status,
+              credits: subscription.credits,
+              creditsTotal: subscription.creditsTotal,
+              currentPeriodStart: subscription.currentPeriodStart,
+              currentPeriodEnd: subscription.currentPeriodEnd,
+              cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
+            }
+          : null,
       }
     },
   })

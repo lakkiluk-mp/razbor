@@ -44,6 +44,34 @@ export type CalculateInput = {
   selectedTransmission?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type CalculationDetailPart = {
+  __typename?: 'CalculationDetailPart';
+  category: Maybe<Scalars['String']['output']>;
+  included: Maybe<Scalars['Boolean']['output']>;
+  isDamaged: Maybe<Scalars['Boolean']['output']>;
+  name: Maybe<Scalars['String']['output']>;
+  price: Maybe<Scalars['Int']['output']>;
+};
+
+export type CalculationDetails = {
+  __typename?: 'CalculationDetails';
+  parts: Maybe<Array<CalculationDetailPart>>;
+};
+
+export type CalculationHistoryItem = {
+  __typename?: 'CalculationHistoryItem';
+  bodyType: Maybe<BodyType>;
+  brandName: Maybe<Scalars['String']['output']>;
+  brandSlug: Maybe<Scalars['String']['output']>;
+  createdAt: Maybe<Scalars['DateTime']['output']>;
+  damagedZonesCount: Maybe<Scalars['Int']['output']>;
+  details: Maybe<CalculationDetails>;
+  generationName: Maybe<Scalars['String']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  modelName: Maybe<Scalars['String']['output']>;
+  totalPrice: Maybe<Scalars['Int']['output']>;
+};
+
 export type CalculationPart = {
   __typename?: 'CalculationPart';
   included: Maybe<Scalars['Boolean']['output']>;
@@ -63,6 +91,13 @@ export type ConfigOption = {
   configGroup: Maybe<Scalars['String']['output']>;
   name: Maybe<Scalars['String']['output']>;
   price: Maybe<Scalars['Int']['output']>;
+};
+
+export type CreateSubscriptionResult = {
+  __typename?: 'CreateSubscriptionResult';
+  confirmationToken: Maybe<Scalars['String']['output']>;
+  paymentId: Maybe<Scalars['String']['output']>;
+  subscriptionId: Maybe<Scalars['String']['output']>;
 };
 
 export type Generation = {
@@ -96,11 +131,24 @@ export type Model = {
 export type Mutation = {
   __typename?: 'Mutation';
   calculate: Maybe<CalculationResult>;
+  cancelSubscription: Maybe<SubscriptionInfo>;
+  createSubscription: Maybe<CreateSubscriptionResult>;
+  removePaymentMethod: Maybe<Scalars['Boolean']['output']>;
 };
 
 
 export type MutationCalculateArgs = {
   input: CalculateInput;
+};
+
+
+export type MutationCreateSubscriptionArgs = {
+  plan: SubscriptionPlan;
+};
+
+
+export type MutationRemovePaymentMethodArgs = {
+  paymentMethodId: Scalars['ID']['input'];
 };
 
 export type Part = {
@@ -137,6 +185,16 @@ export type PartWithPrice = {
   schematicZone: Maybe<SchematicZone>;
 };
 
+export type PaymentMethodInfo = {
+  __typename?: 'PaymentMethodInfo';
+  cardLast4: Maybe<Scalars['String']['output']>;
+  cardType: Maybe<Scalars['String']['output']>;
+  expiryMonth: Maybe<Scalars['String']['output']>;
+  expiryYear: Maybe<Scalars['String']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  isDefault: Maybe<Scalars['Boolean']['output']>;
+};
+
 export type Price = {
   __typename?: 'Price';
   count: Maybe<Scalars['Int']['output']>;
@@ -157,8 +215,13 @@ export type Query = {
   generation: Maybe<Generation>;
   generationById: Maybe<Generation>;
   generationConfigs: Maybe<GenerationConfigs>;
+  me: Maybe<UserProfile>;
   model: Maybe<Model>;
+  myCalculations: Maybe<Array<CalculationHistoryItem>>;
+  myPaymentMethods: Maybe<Array<PaymentMethodInfo>>;
+  mySubscription: Maybe<SubscriptionInfo>;
   schematicZones: Maybe<Array<SchematicZone>>;
+  subscriptionPlans: Maybe<Array<SubscriptionPlanInfo>>;
   usageInfo: Maybe<UsageInfo>;
 };
 
@@ -191,6 +254,12 @@ export type QueryModelArgs = {
 };
 
 
+export type QueryMyCalculationsArgs = {
+  limit: InputMaybe<Scalars['Int']['input']>;
+  offset: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QuerySchematicZonesArgs = {
   bodyType: BodyType;
 };
@@ -213,11 +282,58 @@ export type SourcePrice = {
   source: Maybe<Scalars['String']['output']>;
 };
 
+export type SubscriptionInfo = {
+  __typename?: 'SubscriptionInfo';
+  cancelAtPeriodEnd: Maybe<Scalars['Boolean']['output']>;
+  credits: Maybe<Scalars['Int']['output']>;
+  creditsTotal: Maybe<Scalars['Int']['output']>;
+  currentPeriodEnd: Maybe<Scalars['DateTime']['output']>;
+  currentPeriodStart: Maybe<Scalars['DateTime']['output']>;
+  daysRemaining: Maybe<Scalars['Int']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  plan: Maybe<SubscriptionPlan>;
+  status: Maybe<SubscriptionStatus>;
+};
+
+export type SubscriptionPlan =
+  | 'monthly'
+  | 'weekly';
+
+export type SubscriptionPlanInfo = {
+  __typename?: 'SubscriptionPlanInfo';
+  credits: Maybe<Scalars['Int']['output']>;
+  days: Maybe<Scalars['Int']['output']>;
+  label: Maybe<Scalars['String']['output']>;
+  plan: Maybe<Scalars['String']['output']>;
+  price: Maybe<Scalars['Int']['output']>;
+};
+
+export type SubscriptionStatus =
+  | 'active'
+  | 'canceled'
+  | 'expired'
+  | 'past_due';
+
 export type UsageInfo = {
   __typename?: 'UsageInfo';
-  dailyLimit: Maybe<Scalars['Int']['output']>;
-  freeRemaining: Maybe<Scalars['Int']['output']>;
-  freeResetAt: Maybe<Scalars['DateTime']['output']>;
+  hasActiveSubscription: Maybe<Scalars['Boolean']['output']>;
+  subscriptionCredits: Maybe<Scalars['Int']['output']>;
+  totalCredits: Maybe<Scalars['Int']['output']>;
+  trialCredits: Maybe<Scalars['Int']['output']>;
+};
+
+export type UserProfile = {
+  __typename?: 'UserProfile';
+  firstName: Maybe<Scalars['String']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  isPremium: Maybe<Scalars['Boolean']['output']>;
+  lastName: Maybe<Scalars['String']['output']>;
+  subscription: Maybe<SubscriptionInfo>;
+  subscriptionCredits: Maybe<Scalars['Int']['output']>;
+  totalCalculations: Maybe<Scalars['Int']['output']>;
+  totalCredits: Maybe<Scalars['Int']['output']>;
+  trialCredits: Maybe<Scalars['Int']['output']>;
+  username: Maybe<Scalars['String']['output']>;
 };
 
 export type ZoneType =
@@ -231,6 +347,25 @@ export type CalculateMutationVariables = Exact<{
 
 
 export type CalculateMutation = { __typename?: 'Mutation', calculate: { __typename?: 'CalculationResult', totalPrice: number | null, parts: Array<{ __typename?: 'CalculationPart', included: boolean | null, isDamaged: boolean | null, price: number | null, part: { __typename?: 'PartWithPrice', id: string | null, name: string | null, category: PartCategory | null, schematicZone: { __typename?: 'SchematicZone', id: string | null, code: string | null, name: string | null } | null, price: { __typename?: 'Price', median: number | null } | null } | null }> | null } | null };
+
+export type CreateSubscriptionMutationVariables = Exact<{
+  plan: SubscriptionPlan;
+}>;
+
+
+export type CreateSubscriptionMutation = { __typename?: 'Mutation', createSubscription: { __typename?: 'CreateSubscriptionResult', confirmationToken: string | null, subscriptionId: string | null, paymentId: string | null } | null };
+
+export type CancelSubscriptionMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CancelSubscriptionMutation = { __typename?: 'Mutation', cancelSubscription: { __typename?: 'SubscriptionInfo', id: string | null, status: SubscriptionStatus | null, cancelAtPeriodEnd: boolean | null, currentPeriodEnd: string | null, daysRemaining: number | null } | null };
+
+export type RemovePaymentMethodMutationVariables = Exact<{
+  paymentMethodId: Scalars['ID']['input'];
+}>;
+
+
+export type RemovePaymentMethodMutation = { __typename?: 'Mutation', removePaymentMethod: boolean | null };
 
 export type GetBrandsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -271,7 +406,27 @@ export type GetSchematicZonesQuery = { __typename?: 'Query', schematicZones: Arr
 export type GetUsageInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUsageInfoQuery = { __typename?: 'Query', usageInfo: { __typename?: 'UsageInfo', freeRemaining: number | null, freeResetAt: string | null } | null };
+export type GetUsageInfoQuery = { __typename?: 'Query', usageInfo: { __typename?: 'UsageInfo', trialCredits: number | null, subscriptionCredits: number | null, totalCredits: number | null, hasActiveSubscription: boolean | null } | null };
+
+export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'UserProfile', id: string | null, firstName: string | null, lastName: string | null, username: string | null, isPremium: boolean | null, totalCalculations: number | null, trialCredits: number | null, subscriptionCredits: number | null, totalCredits: number | null, subscription: { __typename?: 'SubscriptionInfo', id: string | null, plan: SubscriptionPlan | null, status: SubscriptionStatus | null, credits: number | null, creditsTotal: number | null, currentPeriodEnd: string | null, cancelAtPeriodEnd: boolean | null, daysRemaining: number | null } | null } | null };
+
+export type GetSubscriptionPlansQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetSubscriptionPlansQuery = { __typename?: 'Query', subscriptionPlans: Array<{ __typename?: 'SubscriptionPlanInfo', plan: string | null, price: number | null, label: string | null, days: number | null, credits: number | null }> | null };
+
+export type GetMySubscriptionQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMySubscriptionQuery = { __typename?: 'Query', mySubscription: { __typename?: 'SubscriptionInfo', id: string | null, plan: SubscriptionPlan | null, status: SubscriptionStatus | null, credits: number | null, creditsTotal: number | null, currentPeriodStart: string | null, currentPeriodEnd: string | null, cancelAtPeriodEnd: boolean | null, daysRemaining: number | null } | null };
+
+export type GetMyPaymentMethodsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMyPaymentMethodsQuery = { __typename?: 'Query', myPaymentMethods: Array<{ __typename?: 'PaymentMethodInfo', id: string | null, cardLast4: string | null, cardType: string | null, expiryMonth: string | null, expiryYear: string | null, isDefault: boolean | null }> | null };
 
 export type GetGenerationByIdQueryVariables = Exact<{
   id: Scalars['String']['input'];

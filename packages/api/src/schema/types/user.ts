@@ -1,4 +1,5 @@
 import { builder } from '../builder'
+import { type SubscriptionInfoData, SubscriptionInfoType } from './subscription'
 
 export interface UserProfileData {
   id: string
@@ -6,10 +7,11 @@ export interface UserProfileData {
   lastName: string | null
   username: string | null
   isPremium: boolean
-  dailyLimit: number
   totalCalculations: number
-  freeRemaining: number
-  freeResetAt: Date
+  trialCredits: number
+  subscriptionCredits: number
+  totalCredits: number
+  subscription: SubscriptionInfoData | null
 }
 
 export const UserProfileType = builder.objectRef<UserProfileData>('UserProfile')
@@ -21,12 +23,14 @@ builder.objectType(UserProfileType, {
     lastName: t.exposeString('lastName', { nullable: true }),
     username: t.exposeString('username', { nullable: true }),
     isPremium: t.exposeBoolean('isPremium'),
-    dailyLimit: t.exposeInt('dailyLimit'),
     totalCalculations: t.exposeInt('totalCalculations'),
-    freeRemaining: t.exposeInt('freeRemaining'),
-    freeResetAt: t.field({
-      type: 'DateTime',
-      resolve: (parent) => parent.freeResetAt,
+    trialCredits: t.exposeInt('trialCredits'),
+    subscriptionCredits: t.exposeInt('subscriptionCredits'),
+    totalCredits: t.exposeInt('totalCredits'),
+    subscription: t.field({
+      type: SubscriptionInfoType,
+      nullable: true,
+      resolve: (parent) => parent.subscription,
     }),
   }),
 })

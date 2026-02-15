@@ -1,6 +1,19 @@
 import { useQuery } from '@tanstack/react-query'
-import { Crown, Star } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { ChevronRight, Crown, Star } from 'lucide-react'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
+import { PLAN_LABELS } from '@razbor/shared'
+
+interface SubscriptionData {
+  id: string
+  plan: string
+  status: string
+  credits: number
+  creditsTotal: number
+  currentPeriodEnd: string
+  cancelAtPeriodEnd: boolean
+  daysRemaining: number
+}
 
 interface MeData {
   id: string
@@ -8,10 +21,11 @@ interface MeData {
   lastName: string | null
   username: string | null
   isPremium: boolean
-  dailyLimit: number
   totalCalculations: number
-  freeRemaining: number
-  freeResetAt: string | null
+  trialCredits: number
+  subscriptionCredits: number
+  totalCredits: number
+  subscription: SubscriptionData | null
 }
 
 interface MeResponse {
@@ -19,6 +33,7 @@ interface MeResponse {
 }
 
 export function ProfilePage() {
+  const navigate = useNavigate()
   const { data, isLoading, isError } = useQuery({
     queryKey: ['me'],
     queryFn: () => fetchGraphQL<MeResponse>(queries.me),
@@ -62,38 +77,50 @@ export function ProfilePage() {
           <p className="text-xs text-zinc-500 mt-1">Расчётов</p>
         </div>
         <div className="bg-zinc-900 rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-amber-500">
-            {user.freeRemaining}/{user.dailyLimit}
-          </p>
-          <p className="text-xs text-zinc-500 mt-1">Осталось сегодня</p>
+          <p className="text-2xl font-bold text-amber-500">{user.totalCredits}</p>
+          <p className="text-xs text-zinc-500 mt-1">Осталось расчётов</p>
         </div>
       </div>
 
       <div className="mt-6">
-        {user.isPremium ? (
-          <div className="bg-amber-500/20 rounded-xl p-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Crown className="w-5 h-5 text-amber-500" />
-              <span className="font-semibold text-amber-500">Premium</span>
+        {user.subscription ? (
+          <div
+            className="bg-amber-500/20 rounded-xl p-4 cursor-pointer active:scale-[0.98] transition-transform"
+            onClick={() => navigate('/subscribe')}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Crown className="w-5 h-5 text-amber-500" />
+                <span className="font-semibold text-amber-500">
+                  Premium · {PLAN_LABELS[user.subscription.plan] ?? user.subscription.plan}
+                </span>
+              </div>
+              <ChevronRight className="w-5 h-5 text-amber-500/60" />
             </div>
-            <span className="text-amber-500 text-sm">Активен</span>
+            <div className="mt-2 space-y-1">
+              <p className="text-sm text-zinc-300">
+                Осталось: {user.subscription.credits} из {user.subscription.creditsTotal} расч.
+              </p>
+              <p className="text-sm text-zinc-400">
+                До: {new Date(user.subscription.currentPeriodEnd).toLocaleDateString('ru-RU')}
+              </p>
+            </div>
           </div>
         ) : (
-          <div className="bg-gradient-to-r from-amber-500/10 to-amber-600/10 border border-amber-500/20 rounded-xl p-4">
-            <div className="flex items-center gap-2">
-              <Star className="w-5 h-5 text-amber-500" />
-              <span className="font-semibold text-zinc-100">Получите Premium</span>
+          <div
+            className="bg-gradient-to-r from-amber-500/10 to-amber-600/10 border border-amber-500/20 rounded-xl p-4 cursor-pointer active:scale-[0.98] transition-transform"
+            onClick={() => navigate('/subscribe')}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-amber-500" />
+                <span className="font-semibold text-zinc-100">Получите Premium</span>
+              </div>
+              <ChevronRight className="w-5 h-5 text-zinc-500" />
             </div>
             <p className="text-sm text-zinc-400 mt-1">
-              Полная история расчётов и безлимитные оценки
+              Полная история расчётов и дополнительные оценки
             </p>
-            <button
-              type="button"
-              className="text-amber-500 text-sm font-medium mt-2 py-2"
-              onClick={() => alert('Скоро')}
-            >
-              Подробнее
-            </button>
           </div>
         )}
       </div>

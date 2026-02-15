@@ -123,7 +123,11 @@ export function CalculatorPage() {
         return
       }
       console.error('Calculation error:', error)
-      alert('Ошибка при расчёте. Попробуйте ещё раз.')
+      window.Telegram?.WebApp?.showPopup?.({
+        title: 'Ошибка',
+        message: 'Ошибка при расчёте. Попробуйте ещё раз.',
+        buttons: [{ type: 'ok' }],
+      })
     } finally {
       setIsCalculating(false)
     }

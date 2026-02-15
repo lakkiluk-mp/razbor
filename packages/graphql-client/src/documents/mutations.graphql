@@ -21,3 +21,35 @@ mutation Calculate($input: CalculateInput!) {
     }
   }
 }
+
+mutation CreateSubscription($plan: SubscriptionPlan!) {
+  createSubscription(plan: $plan) {
+    confirmationToken
+    subscriptionId
+    paymentId
+  }
+}
+
+mutation CancelSubscription {
+  cancelSubscription {
+    id
+    status
+    cancelAtPeriodEnd
+    currentPeriodEnd
+    daysRemaining
+  }
+}
+
+mutation ResumeSubscription {
+  resumeSubscription {
+    id
+    status
+    cancelAtPeriodEnd
+    currentPeriodEnd
+    daysRemaining
+  }
+}
+
+mutation RemovePaymentMethod($paymentMethodId: ID!) {
+  removePaymentMethod(paymentMethodId: $paymentMethodId)
+}

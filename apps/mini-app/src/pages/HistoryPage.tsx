@@ -158,7 +158,7 @@ export function HistoryPage() {
             <button
               type="button"
               className="mt-2 w-full bg-amber-500 text-zinc-950 rounded-xl px-6 py-3 font-semibold text-sm active:scale-95 transition-transform"
-              onClick={() => alert('Скоро')}
+              onClick={() => navigate('/subscribe')}
             >
               Разблокировать
             </button>

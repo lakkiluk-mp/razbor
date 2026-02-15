@@ -1,20 +1,19 @@
 import { builder } from '../builder'
 
 export interface UsageInfoData {
-  freeRemaining: number
-  freeResetAt: Date
-  dailyLimit: number
+  trialCredits: number
+  subscriptionCredits: number
+  totalCredits: number
+  hasActiveSubscription: boolean
 }
 
 export const UsageInfoType = builder.objectRef<UsageInfoData>('UsageInfo')
 
 builder.objectType(UsageInfoType, {
   fields: (t) => ({
-    freeRemaining: t.exposeInt('freeRemaining'),
-    freeResetAt: t.field({
-      type: 'DateTime',
-      resolve: (parent) => parent.freeResetAt,
-    }),
-    dailyLimit: t.exposeInt('dailyLimit'),
+    trialCredits: t.exposeInt('trialCredits'),
+    subscriptionCredits: t.exposeInt('subscriptionCredits'),
+    totalCredits: t.exposeInt('totalCredits'),
+    hasActiveSubscription: t.exposeBoolean('hasActiveSubscription'),
   }),
 })

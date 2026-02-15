@@ -50,6 +50,18 @@ enum ZoneType {
   mechanical
 }
 
+enum SubscriptionPlan {
+  weekly
+  monthly
+}
+
+enum SubscriptionStatus {
+  active
+  past_due
+  canceled
+  expired
+}
+
 
 // ============================================
 // КАТАЛОГ АВТОМОБИЛЕЙ
@@ -222,12 +234,15 @@ model User {
   firstName  String
   lastName   String?
   username   String?
-  isPremium  Boolean  @default(false)
-  dailyLimit Int      @default(10)
+  isPremium    Boolean  @default(false)
+  trialCredits Int      @default(3)
 
-  calculations Calculation[]
-  payments     Payment[]
-  usageLogs    UsageLog[]
+  calculations   Calculation[]
+  payments       Payment[]
+  usageLogs      UsageLog[]
+  subscriptions  Subscription[]
+  paymentMethods PaymentMethod[]
+  yooPayments    YooPayment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -266,6 +281,70 @@ model Payment {
 
   @@index([userId])
   @@map("payments")
+}
+
+model Subscription {
+  id                 String             @id @default(cuid())
+  userId             String
+  plan               SubscriptionPlan
+  status             SubscriptionStatus @default(active)
+  credits            Int
+  creditsTotal       Int
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean            @default(false)
+  retryCount         Int                @default(0)
+  lastRetryAt        DateTime?
+
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments YooPayment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status, currentPeriodEnd])
+  @@map("subscriptions")
+}
+
+model PaymentMethod {
+  id                 String   @id @default(cuid())
+  userId             String
+  yooPaymentMethodId String   @unique
+  cardLast4          String
+  cardType           String
+  expiryMonth        String
+  expiryYear         String
+  isDefault          Boolean  @default(true)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("payment_methods")
+}
+
+model YooPayment {
+  id              String        @id @default(cuid())
+  userId          String
+  subscriptionId  String?
+  yooPaymentId    String        @unique
+  idempotencyKey  String        @unique
+  amount          Int
+  currency        String        @default("RUB")
+  status          String        @default("pending")
+  isRecurring     Boolean       @default(false)
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([subscriptionId])
+  @@map("yoo_payments")
 }
 
 model UsageLog {

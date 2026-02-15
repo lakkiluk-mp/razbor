@@ -13,6 +13,9 @@ import { HistoryPage } from '@/pages/HistoryPage'
 import { HistoryDetailPage } from '@/pages/HistoryDetailPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 import { LimitReachedPage } from '@/pages/LimitReachedPage'
+import { SubscribePage } from '@/pages/SubscribePage'
+import { PaymentPage } from '@/pages/PaymentPage'
+import { PaymentSuccessPage } from '@/pages/PaymentSuccessPage'
 import { TelegramRequired } from '@/components/TelegramRequired'
 
 const queryClient = getQueryClient()
@@ -66,7 +69,10 @@ export function App() {
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/history/:id" element={<HistoryDetailPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/subscribe" element={<SubscribePage />} />
           </Route>
+          <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/payment/success" element={<PaymentSuccessPage />} />
           <Route path="/limit-reached" element={<LimitReachedPage />} />
         </Routes>
       </HashRouter>

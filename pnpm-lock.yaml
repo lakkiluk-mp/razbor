@@ -111,6 +111,9 @@ importers:
       '@razbor/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@razbor/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@telegram-apps/init-data-node':
         specifier: ^2.0.10
         version: 2.0.10(typescript@5.9.3)

@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
+import { Crown } from 'lucide-react'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
 
 interface UsageInfoResponse {
   usageInfo: {
-    freeRemaining: number
-    freeResetAt: string
-    dailyLimit: number
+    trialCredits: number
+    subscriptionCredits: number
+    totalCredits: number
+    hasActiveSubscription: boolean
   }
 }
 
@@ -30,15 +32,17 @@ export function UsageCounter() {
     )
   }
 
-  const { freeRemaining, dailyLimit } = data.usageInfo
+  const { totalCredits, hasActiveSubscription } = data.usageInfo
 
   return (
     <div className="px-4 pb-8">
-      <div className="bg-zinc-900 rounded-xl px-4 py-3 text-center">
+      <div className="bg-zinc-900 rounded-xl px-4 py-3 text-center flex items-center justify-center gap-2">
+        {hasActiveSubscription && (
+          <Crown className="w-4 h-4 text-amber-500" />
+        )}
         <span className="text-zinc-400 text-sm">
-          Осталось{' '}
-          <span className="text-amber-500 font-semibold">{freeRemaining}</span>
-          {' '}из {dailyLimit} бесплатных оценок
+          Осталось расчётов:{' '}
+          <span className="text-amber-500 font-semibold">{totalCredits}</span>
         </span>
       </div>
     </div>

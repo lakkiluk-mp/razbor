@@ -1,8 +1,10 @@
 import { createServer, request as httpRequest } from 'node:http'
+import { prisma } from '@razbor/db'
 import { yoga } from './graphql.js'
 import { serveStatic } from './static.js'
 import { bot } from './bot/index.js'
 import { registerPaymentHandlers } from './bot/payments.js'
+import { startRenewalCron } from './cron/renewal.js'
 
 const IS_DEV = process.env.NODE_ENV !== 'production'
 const VITE_URL = 'http://localhost:3000'
@@ -109,6 +111,8 @@ server.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`)
   console.log(`GraphQL: http://localhost:${PORT}/api/graphql`)
   console.log(`Health:  http://localhost:${PORT}/api/health`)
+
+  startRenewalCron(prisma)
 
   if (bot && BOT_WEBHOOK_URL && BOT_TOKEN) {
     try {

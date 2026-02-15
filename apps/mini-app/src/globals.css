@@ -55,6 +55,38 @@
   --radius-4xl: calc(var(--radius) + 16px);
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-success-check: success-check 0.5s ease-out both;
+  --animate-success-circle: success-circle 0.6s ease-out both;
+  --animate-success-path: success-path 0.4s ease-out 0.3s both;
+}
+
+@keyframes success-check {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes success-circle {
+  from {
+    stroke-dasharray: 0 226;
+  }
+  to {
+    stroke-dasharray: 226 226;
+  }
+}
+
+@keyframes success-path {
+  from {
+    stroke-dasharray: 0 50;
+  }
+  to {
+    stroke-dasharray: 50 50;
+  }
 }
 
 @keyframes accordion-down {

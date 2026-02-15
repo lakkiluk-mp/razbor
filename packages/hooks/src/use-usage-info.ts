@@ -2,8 +2,10 @@ import { useQuery } from '@tanstack/react-query'
 import { queries } from '@razbor/graphql-client'
 
 export interface UsageInfo {
-  freeRemaining: number
-  freeResetAt: string | null
+  trialCredits: number
+  subscriptionCredits: number
+  totalCredits: number
+  hasActiveSubscription: boolean
 }
 
 export interface UsageInfoResponse {

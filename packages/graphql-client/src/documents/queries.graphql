@@ -91,8 +91,69 @@ query GetSchematicZones($bodyType: BodyType!) {
 
 query GetUsageInfo {
   usageInfo {
-    freeRemaining
-    freeResetAt
+    trialCredits
+    subscriptionCredits
+    totalCredits
+    hasActiveSubscription
+  }
+}
+
+query GetMe {
+  me {
+    id
+    firstName
+    lastName
+    username
+    isPremium
+    totalCalculations
+    trialCredits
+    subscriptionCredits
+    totalCredits
+    subscription {
+      id
+      plan
+      status
+      credits
+      creditsTotal
+      currentPeriodEnd
+      cancelAtPeriodEnd
+      daysRemaining
+    }
+  }
+}
+
+query GetSubscriptionPlans {
+  subscriptionPlans {
+    plan
+    price
+    label
+    days
+    credits
+  }
+}
+
+query GetMySubscription {
+  mySubscription {
+    id
+    plan
+    status
+    credits
+    creditsTotal
+    currentPeriodStart
+    currentPeriodEnd
+    cancelAtPeriodEnd
+    daysRemaining
+  }
+}
+
+query GetMyPaymentMethods {
+  myPaymentMethods {
+    id
+    cardLast4
+    cardType
+    expiryMonth
+    expiryYear
+    isDefault
   }
 }
 

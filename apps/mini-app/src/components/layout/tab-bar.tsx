@@ -10,8 +10,9 @@ const tabs = [
 
 function getActiveTab(pathname: string) {
   if (pathname.startsWith('/history')) return 'history'
-  if (pathname.startsWith('/profile')) return 'profile'
-  return 'calc'
+  if (pathname.startsWith('/profile') || pathname.startsWith('/subscribe')) return 'profile'
+  if (pathname === '/' || pathname.startsWith('/brand') || pathname.startsWith('/calculator') || pathname.startsWith('/result')) return 'calc'
+  return null
 }
 
 export function TabBar() {

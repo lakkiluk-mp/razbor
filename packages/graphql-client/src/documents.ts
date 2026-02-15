@@ -161,9 +161,10 @@ export const queries = {
   usageInfo: `
     query GetUsageInfo {
       usageInfo {
-        freeRemaining
-        freeResetAt
-        dailyLimit
+        trialCredits
+        subscriptionCredits
+        totalCredits
+        hasActiveSubscription
       }
     }
   `,
@@ -196,10 +197,20 @@ export const queries = {
         lastName
         username
         isPremium
-        dailyLimit
         totalCalculations
-        freeRemaining
-        freeResetAt
+        trialCredits
+        subscriptionCredits
+        totalCredits
+        subscription {
+          id
+          plan
+          status
+          credits
+          creditsTotal
+          currentPeriodEnd
+          cancelAtPeriodEnd
+          daysRemaining
+        }
       }
     }
   `,
@@ -222,6 +233,44 @@ export const queries = {
             price
           }
         }
+      }
+    }
+  `,
+  subscriptionPlans: `
+    query GetSubscriptionPlans {
+      subscriptionPlans {
+        plan
+        price
+        label
+        days
+        credits
+      }
+    }
+  `,
+  mySubscription: `
+    query GetMySubscription {
+      mySubscription {
+        id
+        plan
+        status
+        credits
+        creditsTotal
+        currentPeriodStart
+        currentPeriodEnd
+        cancelAtPeriodEnd
+        daysRemaining
+      }
+    }
+  `,
+  myPaymentMethods: `
+    query GetMyPaymentMethods {
+      myPaymentMethods {
+        id
+        cardLast4
+        cardType
+        expiryMonth
+        expiryYear
+        isDefault
       }
     }
   `,
@@ -266,6 +315,42 @@ export const mutations = {
           price
         }
       }
+    }
+  `,
+  createSubscription: `
+    mutation CreateSubscription($plan: SubscriptionPlan!) {
+      createSubscription(plan: $plan) {
+        confirmationToken
+        subscriptionId
+        paymentId
+      }
+    }
+  `,
+  cancelSubscription: `
+    mutation CancelSubscription {
+      cancelSubscription {
+        id
+        status
+        cancelAtPeriodEnd
+        currentPeriodEnd
+        daysRemaining
+      }
+    }
+  `,
+  resumeSubscription: `
+    mutation ResumeSubscription {
+      resumeSubscription {
+        id
+        status
+        cancelAtPeriodEnd
+        currentPeriodEnd
+        daysRemaining
+      }
+    }
+  `,
+  removePaymentMethod: `
+    mutation RemovePaymentMethod($paymentMethodId: ID!) {
+      removePaymentMethod(paymentMethodId: $paymentMethodId)
     }
   `,
 }
