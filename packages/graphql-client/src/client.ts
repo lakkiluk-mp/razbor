@@ -60,12 +60,17 @@ export function createGraphQLClient(config: GraphQLClientConfig) {
     }
 
     if (json.errors && json.errors.length > 0) {
-      const originalMessage = json.errors[0]?.message || 'GraphQL Error'
-      const errorMessage = isProduction
+      const gqlError = json.errors[0]
+      const originalMessage = gqlError?.message || 'GraphQL Error'
+      const hasBusinessCode = !!gqlError?.extensions?.code
+      const errorMessage = isProduction && !hasBusinessCode
         ? 'Произошла ошибка при обработке запроса'
         : originalMessage
       const error = new Error(errorMessage)
-      ;(error as Error & { originalMessage: string }).originalMessage = originalMessage
+      ;(error as Error & { originalMessage: string; code?: string }).originalMessage = originalMessage
+      if (hasBusinessCode) {
+        ;(error as Error & { code: string }).code = gqlError!.extensions!.code as string
+      }
       throw error
     }
 

@@ -131,26 +131,57 @@ describe('createSubscription', () => {
     expect(result.errors![0].message).toBe('Требуется авторизация')
   })
 
-  it('should throw when user already has active subscription', async () => {
-    getActiveSubscriptionMock.mockResolvedValue(mockSubscription())
+  it('should throw when user already has active subscription without cancelAtPeriodEnd', async () => {
+    getActiveSubscriptionMock.mockResolvedValue(mockSubscription({ cancelAtPeriodEnd: false }))
 
     const result = await executeQuery(CREATE_SUBSCRIPTION, { plan: 'weekly' })
 
     expect(result.errors).toBeDefined()
     expect(result.errors![0].message).toBe('У вас уже есть активная подписка')
+    expect(result.errors![0].extensions?.code).toBe('ACTIVE_SUBSCRIPTION')
   })
 
-  it('should throw when recent payment exists within 1 minute', async () => {
+  it('should allow creating payment when subscription has cancelAtPeriodEnd: true', async () => {
+    getActiveSubscriptionMock.mockResolvedValue(mockSubscription({ cancelAtPeriodEnd: true }))
+    prismaMock.yooPayment.findFirst.mockResolvedValue(null)
+    prismaMock.yooPayment.deleteMany.mockResolvedValue({ count: 0 })
+    createSubscriptionPaymentMock.mockResolvedValue({
+      confirmationToken: 'ct_switch',
+      yooPaymentId: 'yoo-switch',
+      idempotencyKey: 'idem-switch',
+    })
+    prismaMock.yooPayment.create.mockResolvedValue({
+      id: 'payment-switch',
+      userId: 'test-user-id',
+      yooPaymentId: 'yoo-switch',
+      idempotencyKey: 'idem-switch',
+      amount: 788,
+      status: 'pending',
+    })
+
+    const result = await executeQuery(CREATE_SUBSCRIPTION, { plan: 'monthly' })
+
+    expect(result.errors).toBeUndefined()
+    expect(result.data?.createSubscription).toEqual({
+      confirmationToken: 'ct_switch',
+      subscriptionId: '',
+      paymentId: 'payment-switch',
+    })
+    expect(createSubscriptionPaymentMock).toHaveBeenCalled()
+  })
+
+  it('should throw when rate limit exceeded (3+ payments in 1 minute)', async () => {
     getActiveSubscriptionMock.mockResolvedValue(null)
+    prismaMock.yooPayment.count.mockResolvedValueOnce(3)
     prismaMock.yooPayment.findFirst.mockResolvedValue({
       id: 'recent-payment',
-      createdAt: new Date(),
+      createdAt: new Date(Date.now() - 30000),
     })
 
     const result = await executeQuery(CREATE_SUBSCRIPTION, { plan: 'weekly' })
 
     expect(result.errors).toBeDefined()
-    expect(result.errors![0].message).toBe('Подождите минуту перед повторной попыткой')
+    expect(result.errors![0].message).toContain('Слишком много попыток')
   })
 
   it('should delete pending payments before creating new one', async () => {

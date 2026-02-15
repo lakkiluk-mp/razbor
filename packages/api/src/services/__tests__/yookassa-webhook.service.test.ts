@@ -6,16 +6,16 @@ vi.mock('../yookassa.service', () => ({
 }))
 
 vi.mock('../subscription.service', () => ({
-  createSubscription: vi.fn(),
+  switchSubscription: vi.fn(),
   renewSubscription: vi.fn(),
 }))
 
 import { getPaymentInfo } from '../yookassa.service'
-import { createSubscription, renewSubscription } from '../subscription.service'
+import { switchSubscription, renewSubscription } from '../subscription.service'
 import { handlePaymentSucceeded, handlePaymentCanceled } from '../yookassa-webhook.service'
 
 const mockGetPaymentInfo = vi.mocked(getPaymentInfo)
-const mockCreateSubscription = vi.mocked(createSubscription)
+const mockSwitchSubscription = vi.mocked(switchSubscription)
 const mockRenewSubscription = vi.mocked(renewSubscription)
 
 beforeEach(() => {
@@ -46,7 +46,7 @@ describe('handlePaymentSucceeded', () => {
     mockGetPaymentInfo.mockResolvedValue({ status: 'succeeded', amount: { value: '249.00' } } as never)
     prismaMock.yooPayment.updateMany.mockResolvedValue({ count: 1 })
     prismaMock.yooPayment.update.mockResolvedValue({})
-    mockCreateSubscription.mockResolvedValue({ id: 'sub-1' } as never)
+    mockSwitchSubscription.mockResolvedValue({ id: 'sub-1' } as never)
 
     const promise = handlePaymentSucceeded(prismaMock, basePaymentObject)
     await vi.advanceTimersByTimeAsync(5000)
@@ -79,7 +79,7 @@ describe('handlePaymentSucceeded', () => {
     mockGetPaymentInfo.mockResolvedValue({ status: 'succeeded', amount: { value: '249.00' } } as never)
     prismaMock.yooPayment.updateMany.mockResolvedValue({ count: 1 })
     prismaMock.yooPayment.update.mockResolvedValue({})
-    mockCreateSubscription.mockResolvedValue({ id: 'sub-1' } as never)
+    mockSwitchSubscription.mockResolvedValue({ id: 'sub-1' } as never)
 
     await handlePaymentSucceeded(prismaMock, basePaymentObject)
 
@@ -117,7 +117,7 @@ describe('handlePaymentSucceeded', () => {
 
     await handlePaymentSucceeded(prismaMock, basePaymentObject)
 
-    expect(mockCreateSubscription).not.toHaveBeenCalled()
+    expect(mockSwitchSubscription).not.toHaveBeenCalled()
   })
 
   it('should save payment method when saved is true', async () => {
@@ -126,7 +126,7 @@ describe('handlePaymentSucceeded', () => {
     prismaMock.yooPayment.updateMany.mockResolvedValue({ count: 1 })
     prismaMock.paymentMethod.findUnique.mockResolvedValue(null)
     prismaMock.yooPayment.update.mockResolvedValue({})
-    mockCreateSubscription.mockResolvedValue({ id: 'sub-1' } as never)
+    mockSwitchSubscription.mockResolvedValue({ id: 'sub-1' } as never)
 
     const txMock = {
       paymentMethod: {
@@ -164,7 +164,7 @@ describe('handlePaymentSucceeded', () => {
     prismaMock.yooPayment.updateMany.mockResolvedValue({ count: 1 })
     prismaMock.paymentMethod.findUnique.mockResolvedValue({ id: 'existing-pm' })
     prismaMock.yooPayment.update.mockResolvedValue({})
-    mockCreateSubscription.mockResolvedValue({ id: 'sub-1' } as never)
+    mockSwitchSubscription.mockResolvedValue({ id: 'sub-1' } as never)
 
     const paymentObject = {
       ...basePaymentObject,
@@ -186,7 +186,7 @@ describe('handlePaymentSucceeded', () => {
     prismaMock.yooPayment.updateMany.mockResolvedValue({ count: 1 })
     prismaMock.paymentMethod.findUnique.mockResolvedValue(null)
     prismaMock.yooPayment.update.mockResolvedValue({})
-    mockCreateSubscription.mockResolvedValue({ id: 'sub-1' } as never)
+    mockSwitchSubscription.mockResolvedValue({ id: 'sub-1' } as never)
 
     const txMock = {
       paymentMethod: {
@@ -218,11 +218,11 @@ describe('handlePaymentSucceeded', () => {
     mockGetPaymentInfo.mockResolvedValue({ status: 'succeeded', amount: { value: '249.00' } } as never)
     prismaMock.yooPayment.updateMany.mockResolvedValue({ count: 1 })
     prismaMock.yooPayment.update.mockResolvedValue({})
-    mockCreateSubscription.mockResolvedValue({ id: 'sub-1' } as never)
+    mockSwitchSubscription.mockResolvedValue({ id: 'sub-1' } as never)
 
     await handlePaymentSucceeded(prismaMock, basePaymentObject)
 
-    expect(mockCreateSubscription).toHaveBeenCalledWith(prismaMock, 'user-1', 'weekly')
+    expect(mockSwitchSubscription).toHaveBeenCalledWith(prismaMock, 'user-1', 'weekly')
   })
 
   it('should link subscription to yooPayment after creation', async () => {
@@ -230,7 +230,7 @@ describe('handlePaymentSucceeded', () => {
     mockGetPaymentInfo.mockResolvedValue({ status: 'succeeded', amount: { value: '249.00' } } as never)
     prismaMock.yooPayment.updateMany.mockResolvedValue({ count: 1 })
     prismaMock.yooPayment.update.mockResolvedValue({})
-    mockCreateSubscription.mockResolvedValue({ id: 'sub-new' } as never)
+    mockSwitchSubscription.mockResolvedValue({ id: 'sub-new' } as never)
 
     await handlePaymentSucceeded(prismaMock, basePaymentObject)
 
@@ -254,7 +254,7 @@ describe('handlePaymentSucceeded', () => {
     await handlePaymentSucceeded(prismaMock, paymentObject)
 
     expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Unknown plan'))
-    expect(mockCreateSubscription).not.toHaveBeenCalled()
+    expect(mockSwitchSubscription).not.toHaveBeenCalled()
     consoleSpy.mockRestore()
   })
 
@@ -322,7 +322,7 @@ describe('handlePaymentSucceeded', () => {
 
     await handlePaymentSucceeded(prismaMock, paymentObject)
 
-    expect(mockCreateSubscription).not.toHaveBeenCalled()
+    expect(mockSwitchSubscription).not.toHaveBeenCalled()
     expect(mockRenewSubscription).not.toHaveBeenCalled()
   })
 
@@ -331,7 +331,7 @@ describe('handlePaymentSucceeded', () => {
     mockGetPaymentInfo.mockResolvedValue({ status: 'succeeded', amount: { value: '249.00' } } as never)
     prismaMock.yooPayment.updateMany.mockResolvedValue({ count: 1 })
     prismaMock.yooPayment.update.mockResolvedValue({})
-    mockCreateSubscription.mockResolvedValue({ id: 'sub-1' } as never)
+    mockSwitchSubscription.mockResolvedValue({ id: 'sub-1' } as never)
 
     const paymentObject = {
       ...basePaymentObject,
@@ -348,7 +348,7 @@ describe('handlePaymentSucceeded', () => {
     mockGetPaymentInfo.mockResolvedValue({ status: 'succeeded', amount: { value: '249.00' } } as never)
     prismaMock.yooPayment.updateMany.mockResolvedValue({ count: 1 })
     prismaMock.yooPayment.update.mockResolvedValue({})
-    mockCreateSubscription.mockResolvedValue({ id: 'sub-1' } as never)
+    mockSwitchSubscription.mockResolvedValue({ id: 'sub-1' } as never)
 
     await handlePaymentSucceeded(prismaMock, basePaymentObject)
 

@@ -37,8 +37,10 @@ builder.mutationField('createSubscription', (t) =>
       }
 
       const existing = await getActiveSubscription(ctx.prisma, ctx.user.id)
-      if (existing) {
-        throw new GraphQLError('У вас уже есть активная подписка')
+      if (existing && !existing.cancelAtPeriodEnd) {
+        throw new GraphQLError('У вас уже есть активная подписка', {
+          extensions: { code: 'ACTIVE_SUBSCRIPTION' },
+        })
       }
 
       const recentCount = await ctx.prisma.yooPayment.count({

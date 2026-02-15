@@ -1,7 +1,7 @@
 import type { PrismaClient } from '@razbor/db'
 import { SUBSCRIPTION_PLANS, type SubscriptionPlanKey } from '@razbor/shared'
 import { getPaymentInfo } from './yookassa.service'
-import { createSubscription, renewSubscription } from './subscription.service'
+import { switchSubscription, renewSubscription } from './subscription.service'
 
 async function findYooPaymentWithRetry(prisma: PrismaClient, yooPaymentId: string, retries = 3) {
   for (let i = 0; i <= retries; i++) {
@@ -91,7 +91,7 @@ export async function handlePaymentSucceeded(
       return
     }
 
-    const subscription = await createSubscription(prisma, yooPayment.userId, plan)
+    const subscription = await switchSubscription(prisma, yooPayment.userId, plan)
 
     await prisma.yooPayment.update({
       where: { id: yooPayment.id },

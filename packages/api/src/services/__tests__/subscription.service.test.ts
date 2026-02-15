@@ -3,6 +3,7 @@ import { prismaMock } from '../../__mocks__/prisma'
 import {
   getActiveSubscription,
   createSubscription,
+  switchSubscription,
   cancelSubscription,
   resumeSubscription,
   renewSubscription,
@@ -171,6 +172,109 @@ describe('createSubscription', () => {
     prismaMock.$transaction.mockImplementation((cb: (tx: typeof txMock) => Promise<unknown>) => cb(txMock))
 
     await createSubscription(prismaMock, 'user-1', 'monthly')
+  })
+})
+
+describe('switchSubscription', () => {
+  it('should create subscription when no existing subscription', async () => {
+    const txMock = {
+      subscription: {
+        findFirst: vi.fn().mockResolvedValue(null),
+        create: vi.fn().mockResolvedValue({ id: 'sub-new', plan: 'weekly', credits: 5 }),
+        update: vi.fn(),
+      },
+      user: { update: vi.fn().mockResolvedValue({}) },
+    }
+    prismaMock.$transaction.mockImplementation((cb: (tx: typeof txMock) => Promise<unknown>) => cb(txMock))
+
+    const result = await switchSubscription(prismaMock, 'user-1', 'weekly')
+
+    expect(result).toEqual({ id: 'sub-new', plan: 'weekly', credits: 5 })
+    expect(txMock.subscription.update).not.toHaveBeenCalled()
+    expect(txMock.subscription.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        userId: 'user-1',
+        plan: 'weekly',
+        status: 'active',
+        credits: 5,
+        creditsTotal: 5,
+      }),
+    })
+  })
+
+  it('should expire old subscription and create new one when cancelAtPeriodEnd is true', async () => {
+    const txMock = {
+      subscription: {
+        findFirst: vi.fn().mockResolvedValue({
+          id: 'old-sub',
+          status: 'active',
+          cancelAtPeriodEnd: true,
+        }),
+        create: vi.fn().mockResolvedValue({ id: 'sub-new', plan: 'monthly', credits: 25 }),
+        update: vi.fn().mockResolvedValue({}),
+      },
+      user: { update: vi.fn().mockResolvedValue({}) },
+    }
+    prismaMock.$transaction.mockImplementation((cb: (tx: typeof txMock) => Promise<unknown>) => cb(txMock))
+
+    const result = await switchSubscription(prismaMock, 'user-1', 'monthly')
+
+    expect(result).toEqual({ id: 'sub-new', plan: 'monthly', credits: 25 })
+    expect(txMock.subscription.update).toHaveBeenCalledWith({
+      where: { id: 'old-sub' },
+      data: { status: 'expired', credits: 0 },
+    })
+    expect(txMock.subscription.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        plan: 'monthly',
+        status: 'active',
+        credits: 25,
+      }),
+    })
+  })
+
+  it('should keep isPremium true during switch', async () => {
+    const txMock = {
+      subscription: {
+        findFirst: vi.fn().mockResolvedValue({
+          id: 'old-sub',
+          status: 'active',
+          cancelAtPeriodEnd: true,
+        }),
+        create: vi.fn().mockResolvedValue({ id: 'sub-new' }),
+        update: vi.fn().mockResolvedValue({}),
+      },
+      user: { update: vi.fn().mockResolvedValue({}) },
+    }
+    prismaMock.$transaction.mockImplementation((cb: (tx: typeof txMock) => Promise<unknown>) => cb(txMock))
+
+    await switchSubscription(prismaMock, 'user-1', 'weekly')
+
+    expect(txMock.user.update).toHaveBeenCalledWith({
+      where: { id: 'user-1' },
+      data: { isPremium: true },
+    })
+  })
+
+  it('should throw when active subscription without cancelAtPeriodEnd', async () => {
+    const txMock = {
+      subscription: {
+        findFirst: vi.fn().mockResolvedValue({
+          id: 'existing-sub',
+          status: 'active',
+          cancelAtPeriodEnd: false,
+        }),
+        create: vi.fn(),
+        update: vi.fn(),
+      },
+      user: { update: vi.fn() },
+    }
+    prismaMock.$transaction.mockImplementation((cb: (tx: typeof txMock) => Promise<unknown>) => cb(txMock))
+
+    await expect(switchSubscription(prismaMock, 'user-1', 'weekly')).rejects.toThrow(
+      'У вас уже есть активная подписка',
+    )
+    expect(txMock.subscription.create).not.toHaveBeenCalled()
   })
 })
 

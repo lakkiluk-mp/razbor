@@ -58,6 +58,60 @@ export async function createSubscription(
   })
 }
 
+export async function switchSubscription(
+  prisma: PrismaClient,
+  userId: string,
+  plan: SubscriptionPlanKey,
+): Promise<Subscription> {
+  const planData = SUBSCRIPTION_PLANS[plan]
+  const now = new Date()
+  const periodEnd = new Date(now.getTime() + planData.days * 24 * 60 * 60 * 1000)
+
+  return prisma.$transaction(async (tx) => {
+    const existing = await tx.subscription.findFirst({
+      where: {
+        userId,
+        status: { in: ACTIVE_STATUSES },
+      },
+    })
+
+    if (existing && !existing.cancelAtPeriodEnd) {
+      throw new GraphQLError('У вас уже есть активная подписка')
+    }
+
+    if (existing && existing.cancelAtPeriodEnd) {
+      if (existing.credits > 0) {
+        console.log(
+          `[switchSubscription] User ${userId} lost ${existing.credits} credits from sub ${existing.id}`,
+        )
+      }
+      await tx.subscription.update({
+        where: { id: existing.id },
+        data: { status: 'expired', credits: 0 },
+      })
+    }
+
+    const subscription = await tx.subscription.create({
+      data: {
+        userId,
+        plan,
+        status: 'active',
+        credits: planData.credits,
+        creditsTotal: planData.credits,
+        currentPeriodStart: now,
+        currentPeriodEnd: periodEnd,
+      },
+    })
+
+    await tx.user.update({
+      where: { id: userId },
+      data: { isPremium: true },
+    })
+
+    return subscription
+  }, { isolationLevel: 'Serializable' })
+}
+
 export async function cancelSubscription(
   prisma: PrismaClient,
   subscriptionId: string,
