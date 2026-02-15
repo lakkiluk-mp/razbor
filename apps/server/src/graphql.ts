@@ -6,6 +6,7 @@ import { authenticateUser } from './auth.js'
 import type { Context } from '@razbor/api'
 
 const isProduction = process.env.NODE_ENV === 'production'
+const allowWebAccess = process.env.ALLOW_WEB_ACCESS === 'true'
 
 function useGraphQLLogging(): Plugin {
   return {
@@ -25,7 +26,7 @@ export const yoga = createYoga({
     const initDataRaw = request.headers.get('x-telegram-init-data')
     let user = initDataRaw ? await authenticateUser(initDataRaw, prisma) : null
 
-    if (!user && !isProduction) {
+    if (!user && (!isProduction || allowWebAccess)) {
       user = await prisma.user.upsert({
         where: { telegramId: BigInt(999999999) },
         create: {
@@ -41,7 +42,7 @@ export const yoga = createYoga({
       })
     }
 
-    if (!user && isProduction) {
+    if (!user && isProduction && !allowWebAccess) {
       throw new GraphQLError('Authentication required', {
         extensions: { code: 'UNAUTHENTICATED' },
       })
