@@ -66,15 +66,19 @@ builder.mutationField('createSubscription', (t) =>
         })
       }
 
-      await ctx.prisma.yooPayment.deleteMany({
+      const deleted = await ctx.prisma.yooPayment.deleteMany({
         where: {
           userId: ctx.user.id,
           status: 'pending',
           isRecurring: { not: true },
         },
       })
+      if (deleted.count > 0) {
+        console.log(`[Subscription] Cleaned up ${deleted.count} old pending payment(s) for user=${ctx.user.id}`)
+      }
 
       const planData = SUBSCRIPTION_PLANS[plan]
+      console.log(`[Subscription] Creating payment: user=${ctx.user.id}, plan=${plan}, amount=${planData.price}`)
 
       const { confirmationToken, yooPaymentId, idempotencyKey } = await createSubscriptionPayment({
         userId: ctx.user.id,
@@ -92,6 +96,7 @@ builder.mutationField('createSubscription', (t) =>
           status: 'pending',
         },
       })
+      console.log(`[Subscription] Payment record created: id=${yooPayment.id}, yooPaymentId=${yooPaymentId}, user=${ctx.user.id}`)
 
       return {
         confirmationToken,

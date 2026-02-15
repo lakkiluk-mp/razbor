@@ -32,6 +32,7 @@ interface CreateRecurringPaymentParams {
 
 export async function createSubscriptionPayment(params: CreateSubscriptionPaymentParams) {
   const idempotencyKey = randomUUID()
+  console.log(`[YooKassa] Creating subscription payment: user=${params.userId}, plan=${params.plan}, amount=${params.amount}`)
   const payment = await getSdk().payments.create({
     amount: {
       value: params.amount.toFixed(2),
@@ -50,6 +51,8 @@ export async function createSubscriptionPayment(params: CreateSubscriptionPaymen
     },
   }, idempotencyKey)
 
+  console.log(`[YooKassa] Payment created: yooPaymentId=${payment.id}, status=${payment.status}, user=${params.userId}`)
+
   return {
     confirmationToken: (payment.confirmation as { confirmation_token: string }).confirmation_token,
     yooPaymentId: payment.id,
@@ -59,6 +62,7 @@ export async function createSubscriptionPayment(params: CreateSubscriptionPaymen
 
 export async function createRecurringPayment(params: CreateRecurringPaymentParams) {
   const idempotencyKey = randomUUID()
+  console.log(`[YooKassa] Creating recurring payment: user=${params.userId}, subscription=${params.subscriptionId}, amount=${params.amount}`)
   const payment = await getSdk().payments.create({
     amount: {
       value: params.amount.toFixed(2),
@@ -73,6 +77,8 @@ export async function createRecurringPayment(params: CreateRecurringPaymentParam
       type: 'recurring',
     },
   }, idempotencyKey)
+
+  console.log(`[YooKassa] Recurring payment created: yooPaymentId=${payment.id}, status=${payment.status}, user=${params.userId}`)
 
   return {
     yooPaymentId: payment.id,

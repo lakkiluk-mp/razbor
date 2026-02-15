@@ -10,6 +10,7 @@ async function findYooPaymentWithRetry(prisma: PrismaClient, yooPaymentId: strin
     })
     if (yooPayment) return yooPayment
     if (i < retries) {
+      console.log(`[YooKassa Webhook] Payment ${yooPaymentId} not found in DB, retry ${i + 1}/${retries} in 5s`)
       await new Promise((r) => setTimeout(r, 5000))
     }
   }
@@ -21,18 +22,21 @@ export async function handlePaymentSucceeded(
   paymentObject: Record<string, unknown>,
 ): Promise<void> {
   const yooPaymentId = paymentObject.id as string
+  console.log(`[YooKassa Webhook] Processing payment.succeeded: ${yooPaymentId}`)
 
   const yooPayment = await findYooPaymentWithRetry(prisma, yooPaymentId)
   if (!yooPayment) {
-    console.error(`[YooKassa Webhook] YooPayment not found: ${yooPaymentId}`)
+    console.error(`[YooKassa Webhook] YooPayment not found in DB: ${yooPaymentId}`)
     return
   }
+  console.log(`[YooKassa Webhook] Found payment in DB: id=${yooPayment.id}, user=${yooPayment.userId}, amount=${yooPayment.amount}, status=${yooPayment.status}`)
 
   const verified = await getPaymentInfo(yooPaymentId)
   if (verified.status !== 'succeeded') {
-    console.error(`[YooKassa Webhook] API verification failed for ${yooPaymentId}: ${verified.status}`)
+    console.error(`[YooKassa Webhook] API verification failed for ${yooPaymentId}: expected succeeded, got ${verified.status}`)
     return
   }
+  console.log(`[YooKassa Webhook] API verification passed: ${yooPaymentId}`)
 
   const metadata = paymentObject.metadata as Record<string, string> | undefined
   if (metadata?.type === 'subscription' && metadata.plan) {
@@ -51,7 +55,11 @@ export async function handlePaymentSucceeded(
     where: { id: yooPayment.id, status: 'pending' },
     data: { status: 'succeeded' },
   })
-  if (count === 0) return
+  if (count === 0) {
+    console.log(`[YooKassa Webhook] Payment ${yooPaymentId} already processed (not pending), skipping`)
+    return
+  }
+  console.log(`[YooKassa Webhook] Payment status updated to succeeded: ${yooPaymentId}`)
 
   const paymentMethod = paymentObject.payment_method as Record<string, unknown> | undefined
   if (paymentMethod?.saved === true) {
@@ -61,6 +69,7 @@ export async function handlePaymentSucceeded(
     })
 
     if (!existingMethod && card) {
+      console.log(`[YooKassa Webhook] Saving payment method: user=${yooPayment.userId}, card=*${card.last4}, type=${card.card_type}`)
       await prisma.$transaction(async (tx) => {
         await tx.paymentMethod.updateMany({
           where: { userId: yooPayment.userId },
@@ -91,7 +100,9 @@ export async function handlePaymentSucceeded(
       return
     }
 
+    console.log(`[YooKassa Webhook] Activating subscription: user=${yooPayment.userId}, plan=${plan}`)
     const subscription = await switchSubscription(prisma, yooPayment.userId, plan)
+    console.log(`[YooKassa Webhook] Subscription activated: id=${subscription.id}, user=${yooPayment.userId}, plan=${plan}`)
 
     await prisma.yooPayment.update({
       where: { id: yooPayment.id },
@@ -106,7 +117,9 @@ export async function handlePaymentSucceeded(
       return
     }
 
+    console.log(`[YooKassa Webhook] Renewing subscription: id=${subscriptionId}, user=${yooPayment.userId}`)
     await renewSubscription(prisma, subscriptionId)
+    console.log(`[YooKassa Webhook] Subscription renewed: id=${subscriptionId}`)
 
     await prisma.yooPayment.update({
       where: { id: yooPayment.id },
@@ -120,18 +133,22 @@ export async function handlePaymentCanceled(
   paymentObject: Record<string, unknown>,
 ): Promise<void> {
   const yooPaymentId = paymentObject.id as string
+  console.log(`[YooKassa Webhook] Processing payment.canceled: ${yooPaymentId}`)
 
   const yooPayment = await findYooPaymentWithRetry(prisma, yooPaymentId)
   if (!yooPayment) {
-    console.error(`[YooKassa Webhook] YooPayment not found for cancel: ${yooPaymentId}`)
+    console.error(`[YooKassa Webhook] YooPayment not found in DB for cancel: ${yooPaymentId}`)
     return
   }
+  console.log(`[YooKassa Webhook] Found payment for cancel: id=${yooPayment.id}, user=${yooPayment.userId}, status=${yooPayment.status}`)
 
   const { count } = await prisma.yooPayment.updateMany({
     where: { id: yooPayment.id, status: 'pending' },
     data: { status: 'canceled' },
   })
   if (count === 0) {
-    console.log(`[YooKassa Webhook] Payment ${yooPaymentId} already processed, skipping cancel`)
+    console.log(`[YooKassa Webhook] Payment ${yooPaymentId} already processed (not pending), skipping cancel`)
+  } else {
+    console.log(`[YooKassa Webhook] Payment canceled: ${yooPaymentId}, user=${yooPayment.userId}`)
   }
 }

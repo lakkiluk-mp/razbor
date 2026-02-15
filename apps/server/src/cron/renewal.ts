@@ -51,7 +51,28 @@ async function chargeSubscription(prisma: PrismaClient, subscription: { id: stri
   return false
 }
 
+export async function cleanupStalePendingPayments(prisma: PrismaClient): Promise<void> {
+  try {
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+    const result = await prisma.yooPayment.updateMany({
+      where: {
+        status: 'pending',
+        isRecurring: false,
+        createdAt: { lt: oneDayAgo },
+      },
+      data: { status: 'canceled' },
+    })
+    if (result.count > 0) {
+      console.log(`[Cleanup] Canceled ${result.count} stale pending payment(s)`)
+    }
+  } catch (err) {
+    console.error('[Cleanup] Failed to cleanup stale pending payments:', err)
+  }
+}
+
 export async function processRenewals(prisma: PrismaClient): Promise<void> {
+  await cleanupStalePendingPayments(prisma)
+
   const expiredSubscriptions = await prisma.subscription.findMany({
     where: {
       currentPeriodEnd: { lt: new Date() },

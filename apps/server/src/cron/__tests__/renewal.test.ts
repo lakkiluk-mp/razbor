@@ -16,7 +16,7 @@ vi.mock('@razbor/shared', () => ({
 }))
 
 import { renewSubscription, expireSubscription, createRecurringPayment } from '@razbor/api'
-import { processRenewals } from '../renewal'
+import { processRenewals, cleanupStalePendingPayments } from '../renewal'
 
 const mockRenewSubscription = vi.mocked(renewSubscription)
 const mockExpireSubscription = vi.mocked(expireSubscription)
@@ -33,6 +33,7 @@ function createMockPrisma() {
     },
     yooPayment: {
       create: vi.fn().mockResolvedValue({}),
+      updateMany: vi.fn().mockResolvedValue({ count: 0 }),
     },
     user: {
       update: vi.fn().mockResolvedValue({}),
@@ -48,6 +49,7 @@ function createMockPrisma() {
     }
     yooPayment: {
       create: ReturnType<typeof vi.fn>
+      updateMany: ReturnType<typeof vi.fn>
     }
     user: {
       update: ReturnType<typeof vi.fn>
@@ -449,5 +451,67 @@ describe('processRenewals', () => {
     expect(prisma.yooPayment.create).toHaveBeenCalledWith({
       data: expect.objectContaining({ status: 'pending' }),
     })
+  })
+
+  it('should call cleanupStalePendingPayments before processing renewals', async () => {
+    prisma.subscription.findMany.mockResolvedValue([])
+
+    await processRenewals(prisma)
+
+    expect(prisma.yooPayment.updateMany).toHaveBeenCalled()
+    expect(prisma.subscription.findMany).toHaveBeenCalled()
+  })
+})
+
+describe('cleanupStalePendingPayments', () => {
+  it('should cancel pending non-recurring payments older than 24 hours', async () => {
+    prisma.yooPayment.updateMany.mockResolvedValue({ count: 3 })
+    vi.spyOn(console, 'log').mockImplementation(() => {})
+
+    await cleanupStalePendingPayments(prisma)
+
+    expect(prisma.yooPayment.updateMany).toHaveBeenCalledWith({
+      where: {
+        status: 'pending',
+        isRecurring: false,
+        createdAt: { lt: new Date('2026-02-14T12:00:00Z') },
+      },
+      data: { status: 'canceled' },
+    })
+  })
+
+  it('should log count when payments are canceled', async () => {
+    prisma.yooPayment.updateMany.mockResolvedValue({ count: 5 })
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+
+    await cleanupStalePendingPayments(prisma)
+
+    expect(logSpy).toHaveBeenCalledWith('[Cleanup] Canceled 5 stale pending payment(s)')
+  })
+
+  it('should not log when no payments are canceled', async () => {
+    prisma.yooPayment.updateMany.mockResolvedValue({ count: 0 })
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+
+    await cleanupStalePendingPayments(prisma)
+
+    expect(logSpy).not.toHaveBeenCalledWith(expect.stringContaining('[Cleanup]'))
+  })
+
+  it('should not crash on database error', async () => {
+    prisma.yooPayment.updateMany.mockRejectedValue(new Error('DB error'))
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    await expect(cleanupStalePendingPayments(prisma)).resolves.toBeUndefined()
+  })
+
+  it('should log error on database failure', async () => {
+    const dbError = new Error('DB connection lost')
+    prisma.yooPayment.updateMany.mockRejectedValue(dbError)
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    await cleanupStalePendingPayments(prisma)
+
+    expect(errorSpy).toHaveBeenCalledWith('[Cleanup] Failed to cleanup stale pending payments:', dbError)
   })
 })

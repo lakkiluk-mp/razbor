@@ -78,11 +78,13 @@ export function createYooKassaWebhookHandler(prisma: PrismaClient) {
     const clientIP = getClientIP(req)
 
     if (!isYooKassaIP(clientIP)) {
-      console.error(`[YooKassa Webhook] Blocked IP: ${clientIP}`)
+      console.error(`[YooKassa Webhook] Blocked IP: ${clientIP}, headers: x-real-ip=${req.headers['x-real-ip']}, x-forwarded-for=${req.headers['x-forwarded-for']}, remoteAddress=${req.socket.remoteAddress}`)
       res.writeHead(403, { 'Content-Type': 'application/json' })
       res.end(JSON.stringify({ error: 'Forbidden' }))
       return
     }
+
+    console.log(`[YooKassa Webhook] Accepted request from IP: ${clientIP}`)
 
     let data: Record<string, unknown>
     try {
