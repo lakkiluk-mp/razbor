@@ -20,6 +20,7 @@ import { TelegramRequired } from '@/components/TelegramRequired'
 
 const queryClient = getQueryClient()
 const isDev = import.meta.env.DEV
+const allowWebAccess = import.meta.env.VITE_ALLOW_WEB_ACCESS === 'true'
 
 function useTelegramApp() {
   useEffect(() => {
@@ -51,7 +52,12 @@ export function App() {
 
   const isTelegram = Boolean(window.Telegram?.WebApp?.initData)
 
-  if (!isDev && !isTelegram) {
+  if (allowWebAccess && new URLSearchParams(window.location.search).has('web')) {
+    sessionStorage.setItem('web-bypass', '1')
+  }
+  const webBypass = allowWebAccess && sessionStorage.getItem('web-bypass') === '1'
+
+  if (!isDev && !isTelegram && !webBypass) {
     return <TelegramRequired />
   }
 
