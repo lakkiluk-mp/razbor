@@ -41,15 +41,27 @@ builder.mutationField('createSubscription', (t) =>
         throw new GraphQLError('У вас уже есть активная подписка')
       }
 
-      const recentPayment = await ctx.prisma.yooPayment.findFirst({
+      const recentCount = await ctx.prisma.yooPayment.count({
         where: {
           userId: ctx.user.id,
           isRecurring: { not: true },
           createdAt: { gt: new Date(Date.now() - 60 * 1000) },
         },
       })
-      if (recentPayment) {
-        throw new GraphQLError('Подождите минуту перед повторной попыткой')
+      if (recentCount >= 3) {
+        const oldest = await ctx.prisma.yooPayment.findFirst({
+          where: {
+            userId: ctx.user.id,
+            isRecurring: { not: true },
+            createdAt: { gt: new Date(Date.now() - 60 * 1000) },
+          },
+          orderBy: { createdAt: 'asc' },
+          select: { createdAt: true },
+        })
+        const retryAfter = oldest ? Math.ceil((oldest.createdAt.getTime() + 60000 - Date.now()) / 1000) : 60
+        throw new GraphQLError(`Слишком много попыток. Повторите через ${retryAfter} сек.`, {
+          extensions: { code: 'RATE_LIMITED', retryAfter },
+        })
       }
 
       await ctx.prisma.yooPayment.deleteMany({

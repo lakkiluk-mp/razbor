@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 import { fetchGraphQL, mutations } from '@/lib/graphql-client'
 import { PLAN_LABELS, SUBSCRIPTION_PLANS, pluralCredits } from '@razbor/shared'
@@ -24,11 +24,18 @@ export function PaymentPage() {
   const hasFired = useRef(false)
   const [confirmationToken, setConfirmationToken] = useState<string | null>(null)
   const [widgetFailed, setWidgetFailed] = useState(false)
+  const [cooldown, setCooldown] = useState(0)
 
   const plan = (location.state as { plan?: string } | null)?.plan
   const planConfig = plan ? SUBSCRIPTION_PLANS[plan as keyof typeof SUBSCRIPTION_PLANS] : null
 
-  const { mutate, isPending, isError, reset } = useMutation({
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const timer = setInterval(() => setCooldown((v) => v - 1), 1000)
+    return () => clearInterval(timer)
+  }, [cooldown])
+
+  const { mutate, isPending, isError, error, reset } = useMutation({
     mutationFn: (selectedPlan: string) =>
       fetchGraphQL<CreateSubscriptionResponse>(mutations.createSubscription, {
         plan: selectedPlan,
@@ -43,6 +50,13 @@ export function PaymentPage() {
         queryClient.invalidateQueries({ queryKey: ['mySubscription'] })
         queryClient.invalidateQueries({ queryKey: ['usageInfo'] })
         navigate('/payment/success', { replace: true })
+      }
+    },
+    onError: (err: unknown) => {
+      const msg = err instanceof Error ? err.message : String(err)
+      const match = msg.match(/через (\d+) сек/)
+      if (match) {
+        setCooldown(Number(match[1]))
       }
     },
   })
@@ -68,11 +82,15 @@ export function PaymentPage() {
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp
-    tg?.BackButton?.hide()
+    if (!tg) return
+    const handleBack = () => navigate('/subscribe', { replace: true })
+    tg.BackButton.show()
+    tg.BackButton.onClick(handleBack)
     return () => {
-      tg?.BackButton?.hide()
+      tg.BackButton.offClick(handleBack)
+      tg.BackButton.hide()
     }
-  }, [])
+  }, [navigate])
 
   useEffect(() => {
     if (!plan) {
@@ -94,29 +112,27 @@ export function PaymentPage() {
   }
 
   if (isError) {
+    const isRateLimited = cooldown > 0
     return (
       <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center p-4">
         <div className="text-center max-w-sm space-y-4">
           <div className="w-16 h-16 mx-auto rounded-full bg-red-500/20 flex items-center justify-center">
             <span className="text-red-500 text-2xl font-bold">!</span>
           </div>
-          <h1 className="text-xl font-bold">Ошибка создания платежа</h1>
+          <h1 className="text-xl font-bold">
+            {isRateLimited ? 'Слишком много попыток' : 'Ошибка создания платежа'}
+          </h1>
           <p className="text-zinc-400 text-sm">
-            Не удалось оформить подписку. Попробуйте ещё раз.
+            {isRateLimited
+              ? `Доступно через ${cooldown} сек.`
+              : 'Не удалось оформить подписку. Попробуйте ещё раз.'}
           </p>
           <Button
             onClick={handleRetry}
-            disabled={isPending}
+            disabled={isPending || isRateLimited}
             className="w-full h-14 bg-amber-500 hover:bg-amber-600 text-zinc-900 text-base font-semibold rounded-2xl"
           >
-            {isPending ? 'Обработка...' : 'Попробовать снова'}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => navigate('/subscribe', { replace: true })}
-            className="w-full h-14 border-zinc-700 text-zinc-300 hover:bg-zinc-800 rounded-2xl"
-          >
-            Назад
+            {isPending ? 'Обработка...' : isRateLimited ? `Подождите ${cooldown} сек.` : 'Попробовать снова'}
           </Button>
         </div>
       </div>
@@ -141,13 +157,6 @@ export function PaymentPage() {
           >
             {isPending ? 'Обработка...' : 'Попробовать снова'}
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => navigate('/subscribe', { replace: true })}
-            className="w-full h-14 border-zinc-700 text-zinc-300 hover:bg-zinc-800 rounded-2xl"
-          >
-            Назад
-          </Button>
         </div>
       </div>
     )
@@ -166,14 +175,6 @@ export function PaymentPage() {
 
   return (
     <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col px-4 pt-4 pb-6">
-      <button
-        onClick={() => navigate('/subscribe', { replace: true })}
-        className="flex items-center gap-1 text-zinc-400 hover:text-zinc-200 transition-colors mb-4 self-start"
-      >
-        <ArrowLeft className="w-5 h-5" />
-        <span className="text-sm">Назад</span>
-      </button>
-
       <h1 className="text-2xl font-bold mb-4">Оплата</h1>
 
       {planConfig && plan && (
