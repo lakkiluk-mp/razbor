@@ -133,7 +133,11 @@ export async function handlePaymentCanceled(
   paymentObject: Record<string, unknown>,
 ): Promise<void> {
   const yooPaymentId = paymentObject.id as string
-  console.log(`[YooKassa Webhook] Processing payment.canceled: ${yooPaymentId}`)
+  const cancellationDetails = paymentObject.cancellation_details as Record<string, string> | undefined
+  console.log(`[YooKassa Webhook] Processing payment.canceled: ${yooPaymentId}, reason=${cancellationDetails?.reason || 'unknown'}, party=${cancellationDetails?.party || 'unknown'}`)
+  if (cancellationDetails) {
+    console.error(`[YooKassa Webhook] Cancellation details for ${yooPaymentId}: ${JSON.stringify(cancellationDetails)}`)
+  }
 
   const yooPayment = await findYooPaymentWithRetry(prisma, yooPaymentId)
   if (!yooPayment) {

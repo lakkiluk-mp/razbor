@@ -105,6 +105,13 @@ export async function processRenewals(prisma: PrismaClient): Promise<void> {
         try {
           const charged = await chargeSubscription(prisma, subscription)
           console.log(`[Renewal] ${subscription.id} charge result: ${charged ? 'success' : 'failed'}`)
+          if (!charged) {
+            console.log(`[Renewal] ${subscription.id} charge failed, moving to past_due`)
+            await prisma.subscription.update({
+              where: { id: subscription.id },
+              data: { status: 'past_due', retryCount: 1, lastRetryAt: new Date() },
+            })
+          }
         } catch (err) {
           console.error(`[Renewal] ${subscription.id} charge error, moving to past_due:`, err)
           await prisma.subscription.update({
