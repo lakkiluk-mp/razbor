@@ -9,8 +9,8 @@ vi.mock('@razbor/api', () => ({
 
 vi.mock('@razbor/shared', () => ({
   SUBSCRIPTION_PLANS: {
-    weekly: { price: 249, label: '1 неделя', days: 7, credits: 5 },
-    monthly: { price: 788, label: '1 месяц', days: 30, credits: 25 },
+    weekly: { price: 249, label: '1 неделя', days: 7, credits: 5, graceDays: 1 },
+    monthly: { price: 788, label: '1 месяц', days: 30, credits: 25, graceDays: 3 },
   },
   SUBSCRIPTION_MAX_RETRIES: 3,
 }))
@@ -33,6 +33,7 @@ function createMockPrisma() {
     },
     yooPayment: {
       create: vi.fn().mockResolvedValue({}),
+      findFirst: vi.fn().mockResolvedValue(null),
       updateMany: vi.fn().mockResolvedValue({ count: 0 }),
     },
     user: {
@@ -49,6 +50,7 @@ function createMockPrisma() {
     }
     yooPayment: {
       create: ReturnType<typeof vi.fn>
+      findFirst: ReturnType<typeof vi.fn>
       updateMany: ReturnType<typeof vi.fn>
     }
     user: {
@@ -72,15 +74,17 @@ afterEach(() => {
 })
 
 describe('processRenewals', () => {
-  it('should query expired subscriptions with active statuses', async () => {
+  it('should query expired active and all past_due subscriptions', async () => {
     prisma.subscription.findMany.mockResolvedValue([])
 
     await processRenewals(prisma)
 
     expect(prisma.subscription.findMany).toHaveBeenCalledWith({
       where: {
-        currentPeriodEnd: { lt: expect.any(Date) },
-        status: { in: ['active', 'past_due'] },
+        OR: [
+          { currentPeriodEnd: { lt: expect.any(Date) }, status: 'active' },
+          { status: 'past_due' },
+        ],
       },
     })
   })
@@ -148,7 +152,7 @@ describe('processRenewals', () => {
     expect(mockRenewSubscription).toHaveBeenCalledWith(prisma, 'sub-1')
   })
 
-  it('should move to past_due when charge fails for active subscription', async () => {
+  it('should move to past_due with grace period when charge fails for active subscription', async () => {
     prisma.subscription.findMany.mockResolvedValue([
       { id: 'sub-1', userId: 'user-1', cancelAtPeriodEnd: false, status: 'active', plan: 'weekly' },
     ])
@@ -158,9 +162,15 @@ describe('processRenewals', () => {
 
     await processRenewals(prisma)
 
+    const expectedGraceEnd = new Date('2026-02-16T12:00:00Z')
     expect(prisma.subscription.update).toHaveBeenCalledWith({
       where: { id: 'sub-1' },
-      data: { status: 'past_due', retryCount: 1, lastRetryAt: expect.any(Date) },
+      data: {
+        status: 'past_due',
+        retryCount: 1,
+        lastRetryAt: expect.any(Date),
+        currentPeriodEnd: expectedGraceEnd,
+      },
     })
   })
 
@@ -176,7 +186,7 @@ describe('processRenewals', () => {
     expect(mockExpireSubscription).toHaveBeenCalledWith(prisma, 'sub-1')
   })
 
-  it('should expire subscription when past_due retries exceed max', async () => {
+  it('should expire subscription when past_due retries exceed max and grace expired', async () => {
     prisma.subscription.findMany.mockResolvedValue([
       {
         id: 'sub-1',
@@ -186,12 +196,32 @@ describe('processRenewals', () => {
         plan: 'weekly',
         retryCount: 3,
         lastRetryAt: new Date('2026-02-14T12:00:00Z'),
+        currentPeriodEnd: new Date('2026-02-14T00:00:00Z'),
       },
     ])
 
     await processRenewals(prisma)
 
     expect(mockExpireSubscription).toHaveBeenCalledWith(prisma, 'sub-1')
+  })
+
+  it('should not expire subscription when max retries but grace period still active', async () => {
+    prisma.subscription.findMany.mockResolvedValue([
+      {
+        id: 'sub-1',
+        userId: 'user-1',
+        cancelAtPeriodEnd: false,
+        status: 'past_due',
+        plan: 'weekly',
+        retryCount: 3,
+        lastRetryAt: new Date('2026-02-14T12:00:00Z'),
+        currentPeriodEnd: new Date('2026-02-16T12:00:00Z'),
+      },
+    ])
+
+    await processRenewals(prisma)
+
+    expect(mockExpireSubscription).not.toHaveBeenCalled()
   })
 
   it('should retry charge for past_due subscription when delay has passed', async () => {
@@ -341,6 +371,7 @@ describe('processRenewals', () => {
         plan: 'monthly',
         retryCount: 3,
         lastRetryAt: new Date('2026-02-14T12:00:00Z'),
+        currentPeriodEnd: new Date('2026-02-14T00:00:00Z'),
       },
     ])
 
@@ -387,6 +418,48 @@ describe('processRenewals', () => {
     await processRenewals(prisma)
 
     expect(mockCreateRecurringPayment).toHaveBeenCalled()
+  })
+
+  it('should set grace period currentPeriodEnd +1 day for weekly when charge returns canceled', async () => {
+    prisma.subscription.findMany.mockResolvedValue([
+      { id: 'sub-1', userId: 'user-1', cancelAtPeriodEnd: false, status: 'active', plan: 'weekly' },
+    ])
+    prisma.paymentMethod.findFirst.mockResolvedValue({ yooPaymentMethodId: 'pm-1' })
+    mockCreateRecurringPayment.mockResolvedValue({
+      yooPaymentId: 'yoo-1',
+      status: 'canceled',
+      idempotencyKey: 'key-1',
+    })
+
+    await processRenewals(prisma)
+
+    const expectedGraceEnd = new Date('2026-02-16T12:00:00Z')
+    expect(prisma.subscription.update).toHaveBeenCalledWith({
+      where: { id: 'sub-1' },
+      data: expect.objectContaining({
+        status: 'past_due',
+        currentPeriodEnd: expectedGraceEnd,
+      }),
+    })
+  })
+
+  it('should find past_due subscriptions with future currentPeriodEnd but not expire if grace active', async () => {
+    prisma.subscription.findMany.mockResolvedValue([
+      {
+        id: 'sub-1',
+        userId: 'user-1',
+        cancelAtPeriodEnd: false,
+        status: 'past_due',
+        plan: 'weekly',
+        retryCount: 3,
+        lastRetryAt: new Date('2026-02-14T12:00:00Z'),
+        currentPeriodEnd: new Date('2026-02-20T12:00:00Z'),
+      },
+    ])
+
+    await processRenewals(prisma)
+
+    expect(mockExpireSubscription).not.toHaveBeenCalled()
   })
 
   it('should create yooPayment record for recurring charge', async () => {
@@ -451,6 +524,19 @@ describe('processRenewals', () => {
     expect(prisma.yooPayment.create).toHaveBeenCalledWith({
       data: expect.objectContaining({ status: 'pending' }),
     })
+  })
+
+  it('should skip charge and not move to grace period when pending recurring payment exists', async () => {
+    prisma.subscription.findMany.mockResolvedValue([
+      { id: 'sub-1', userId: 'user-1', cancelAtPeriodEnd: false, status: 'active', plan: 'weekly' },
+    ])
+    prisma.yooPayment.findFirst.mockResolvedValue({ id: 'yp-1', status: 'pending' })
+    vi.spyOn(console, 'log').mockImplementation(() => {})
+
+    await processRenewals(prisma)
+
+    expect(mockCreateRecurringPayment).not.toHaveBeenCalled()
+    expect(prisma.subscription.update).not.toHaveBeenCalled()
   })
 
   it('should call cleanupStalePendingPayments before processing renewals', async () => {

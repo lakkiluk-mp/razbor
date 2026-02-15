@@ -80,6 +80,11 @@ export async function createRecurringPayment(params: CreateRecurringPaymentParam
 
   console.log(`[YooKassa] Recurring payment created: yooPaymentId=${payment.id}, status=${payment.status}, user=${params.userId}`)
 
+  const paymentAny = payment as Record<string, unknown>
+  if (paymentAny.confirmation) {
+    console.error(`[YooKassa] WARNING: Recurring payment returned confirmation (3DS required): ${JSON.stringify(paymentAny.confirmation)}`)
+  }
+
   return {
     yooPaymentId: payment.id,
     status: payment.status,

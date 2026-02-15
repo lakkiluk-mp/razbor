@@ -1,7 +1,7 @@
 import type { PrismaClient } from '@razbor/db'
-import { SUBSCRIPTION_PLANS, type SubscriptionPlanKey } from '@razbor/shared'
+import { SUBSCRIPTION_PLANS, FATAL_CANCELLATION_REASONS, type SubscriptionPlanKey } from '@razbor/shared'
 import { getPaymentInfo } from './yookassa.service'
-import { switchSubscription, renewSubscription } from './subscription.service'
+import { switchSubscription, renewSubscription, expireSubscription } from './subscription.service'
 
 async function findYooPaymentWithRetry(prisma: PrismaClient, yooPaymentId: string, retries = 3) {
   for (let i = 0; i <= retries; i++) {
@@ -154,5 +154,17 @@ export async function handlePaymentCanceled(
     console.log(`[YooKassa Webhook] Payment ${yooPaymentId} already processed (not pending), skipping cancel`)
   } else {
     console.log(`[YooKassa Webhook] Payment canceled: ${yooPaymentId}, user=${yooPayment.userId}`)
+  }
+
+  if (yooPayment.isRecurring && cancellationDetails?.reason) {
+    const reason = cancellationDetails.reason
+    if ((FATAL_CANCELLATION_REASONS as readonly string[]).includes(reason)) {
+      console.log(`[YooKassa Webhook] Fatal reason "${reason}" for ${yooPaymentId}, expiring subscription immediately`)
+      if (yooPayment.subscriptionId) {
+        await expireSubscription(prisma, yooPayment.subscriptionId)
+      } else {
+        console.error(`[YooKassa Webhook] Fatal cancel but no subscriptionId on yooPayment ${yooPaymentId}, userId=${yooPayment.userId}`)
+      }
+    }
   }
 }

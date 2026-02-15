@@ -5,7 +5,7 @@ import {
   pluralCredits,
   PLAN_LABELS,
   SUBSCRIPTION_MAX_RETRIES,
-  SUBSCRIPTION_GRACE_PERIOD_DAYS,
+  FATAL_CANCELLATION_REASONS,
   CACHE_TTL,
   ROUTES,
   formatPrice,
@@ -39,6 +39,11 @@ describe('SUBSCRIPTION_PLANS', () => {
   it('should have labels for both plans', () => {
     expect(SUBSCRIPTION_PLANS.weekly.label).toBe('1 неделя')
     expect(SUBSCRIPTION_PLANS.monthly.label).toBe('1 месяц')
+  })
+
+  it('should have graceDays per plan', () => {
+    expect(SUBSCRIPTION_PLANS.weekly.graceDays).toBe(1)
+    expect(SUBSCRIPTION_PLANS.monthly.graceDays).toBe(3)
   })
 
   it('should have exactly two plans', () => {
@@ -111,9 +116,25 @@ describe('SUBSCRIPTION_MAX_RETRIES', () => {
   })
 })
 
-describe('SUBSCRIPTION_GRACE_PERIOD_DAYS', () => {
-  it('should be 3', () => {
-    expect(SUBSCRIPTION_GRACE_PERIOD_DAYS).toBe(3)
+describe('FATAL_CANCELLATION_REASONS', () => {
+  it('should contain card_expired', () => {
+    expect(FATAL_CANCELLATION_REASONS).toContain('card_expired')
+  })
+
+  it('should contain fraud_suspected', () => {
+    expect(FATAL_CANCELLATION_REASONS).toContain('fraud_suspected')
+  })
+
+  it('should contain permission_revoked', () => {
+    expect(FATAL_CANCELLATION_REASONS).toContain('permission_revoked')
+  })
+
+  it('should contain payment_method_restricted', () => {
+    expect(FATAL_CANCELLATION_REASONS).toContain('payment_method_restricted')
+  })
+
+  it('should have exactly 4 reasons', () => {
+    expect(FATAL_CANCELLATION_REASONS).toHaveLength(4)
   })
 })
 

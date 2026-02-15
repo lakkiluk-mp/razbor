@@ -2,11 +2,33 @@ import type { PrismaClient } from '@razbor/db'
 import { SUBSCRIPTION_PLANS, SUBSCRIPTION_MAX_RETRIES } from '@razbor/shared'
 import { renewSubscription, expireSubscription, createRecurringPayment, ACTIVE_STATUSES } from '@razbor/api'
 
-async function chargeSubscription(prisma: PrismaClient, subscription: { id: string; userId: string; plan: string }) {
+async function moveToGracePeriod(prisma: PrismaClient, subscriptionId: string, graceDays: number): Promise<void> {
+  const graceEnd = new Date(Date.now() + graceDays * 24 * 60 * 60 * 1000)
+  await prisma.subscription.update({
+    where: { id: subscriptionId },
+    data: { status: 'past_due', retryCount: 1, lastRetryAt: new Date(), currentPeriodEnd: graceEnd },
+  })
+}
+
+async function hasPendingRecurringPayment(prisma: PrismaClient, subscriptionId: string): Promise<boolean> {
+  const pending = await prisma.yooPayment.findFirst({
+    where: { subscriptionId, status: 'pending', isRecurring: true },
+  })
+  return !!pending
+}
+
+type ChargeResult = 'success' | 'pending_exists' | 'failed'
+
+async function chargeSubscription(prisma: PrismaClient, subscription: { id: string; userId: string; plan: string }): Promise<ChargeResult> {
   const planData = SUBSCRIPTION_PLANS[subscription.plan as keyof typeof SUBSCRIPTION_PLANS]
   if (!planData) {
     console.error(`[Renewal] Unknown plan: ${subscription.plan}`)
-    return false
+    return 'failed'
+  }
+
+  if (await hasPendingRecurringPayment(prisma, subscription.id)) {
+    console.log(`[Renewal] ${subscription.id} has pending recurring payment, skipping charge`)
+    return 'pending_exists'
   }
 
   const defaultMethod = await prisma.paymentMethod.findFirst({
@@ -16,7 +38,7 @@ async function chargeSubscription(prisma: PrismaClient, subscription: { id: stri
   if (!defaultMethod) {
     console.log(`[Renewal] No payment method for user ${subscription.userId}, expiring subscription`)
     await expireSubscription(prisma, subscription.id)
-    return false
+    return 'failed'
   }
 
   const result = await createRecurringPayment({
@@ -27,7 +49,7 @@ async function chargeSubscription(prisma: PrismaClient, subscription: { id: stri
     description: `Автопродление Razbor — ${planData.label}`,
   })
 
-  const yooPayment = await prisma.yooPayment.create({
+  await prisma.yooPayment.create({
     data: {
       userId: subscription.userId,
       subscriptionId: subscription.id,
@@ -41,14 +63,10 @@ async function chargeSubscription(prisma: PrismaClient, subscription: { id: stri
 
   if (result.status === 'succeeded') {
     await renewSubscription(prisma, subscription.id)
-    return true
+    return 'success'
   }
 
-  if (result.status === 'canceled') {
-    return false
-  }
-
-  return false
+  return 'failed'
 }
 
 export async function cleanupStalePendingPayments(prisma: PrismaClient): Promise<void> {
@@ -75,8 +93,10 @@ export async function processRenewals(prisma: PrismaClient): Promise<void> {
 
   const expiredSubscriptions = await prisma.subscription.findMany({
     where: {
-      currentPeriodEnd: { lt: new Date() },
-      status: { in: ACTIVE_STATUSES },
+      OR: [
+        { currentPeriodEnd: { lt: new Date() }, status: 'active' },
+        { status: 'past_due' },
+      ],
     },
   })
 
@@ -101,31 +121,31 @@ export async function processRenewals(prisma: PrismaClient): Promise<void> {
       }
 
       if (subscription.status === 'active') {
+        const planData = SUBSCRIPTION_PLANS[subscription.plan as keyof typeof SUBSCRIPTION_PLANS]
+        const graceDays = planData?.graceDays ?? 1
         console.log(`[Renewal] ${subscription.id} active → charging ${subscription.plan}`)
         try {
-          const charged = await chargeSubscription(prisma, subscription)
-          console.log(`[Renewal] ${subscription.id} charge result: ${charged ? 'success' : 'failed'}`)
-          if (!charged) {
-            console.log(`[Renewal] ${subscription.id} charge failed, moving to past_due`)
-            await prisma.subscription.update({
-              where: { id: subscription.id },
-              data: { status: 'past_due', retryCount: 1, lastRetryAt: new Date() },
-            })
+          const result = await chargeSubscription(prisma, subscription)
+          console.log(`[Renewal] ${subscription.id} charge result: ${result}`)
+          if (result === 'failed') {
+            console.log(`[Renewal] ${subscription.id} charge failed, moving to past_due with grace period +${graceDays}d`)
+            await moveToGracePeriod(prisma, subscription.id, graceDays)
           }
         } catch (err) {
           console.error(`[Renewal] ${subscription.id} charge error, moving to past_due:`, err)
-          await prisma.subscription.update({
-            where: { id: subscription.id },
-            data: { status: 'past_due', retryCount: 1, lastRetryAt: new Date() },
-          })
+          await moveToGracePeriod(prisma, subscription.id, graceDays)
         }
         continue
       }
 
       if (subscription.status === 'past_due') {
         if (subscription.retryCount >= SUBSCRIPTION_MAX_RETRIES) {
-          console.log(`[Renewal] ${subscription.id} max retries (${subscription.retryCount}) → expiring`)
-          await expireSubscription(prisma, subscription.id)
+          if (subscription.currentPeriodEnd <= new Date()) {
+            console.log(`[Renewal] ${subscription.id} max retries (${subscription.retryCount}) and grace expired → expiring`)
+            await expireSubscription(prisma, subscription.id)
+          } else {
+            console.log(`[Renewal] ${subscription.id} max retries but grace period still active until ${subscription.currentPeriodEnd.toISOString()}`)
+          }
         } else {
           const daysSinceLastRetry = subscription.lastRetryAt
             ? (Date.now() - subscription.lastRetryAt.getTime()) / (24 * 60 * 60 * 1000)
@@ -135,8 +155,8 @@ export async function processRenewals(prisma: PrismaClient): Promise<void> {
           if (daysSinceLastRetry >= requiredDelay) {
             console.log(`[Renewal] ${subscription.id} past_due retry #${subscription.retryCount + 1}`)
             try {
-              const charged = await chargeSubscription(prisma, subscription)
-              if (!charged) {
+              const chargeResult = await chargeSubscription(prisma, subscription)
+              if (chargeResult === 'failed') {
                 await prisma.subscription.update({
                   where: { id: subscription.id },
                   data: { retryCount: { increment: 1 }, lastRetryAt: new Date() },

@@ -17,14 +17,20 @@ export const ROUTES = {
 export const TRIAL_CREDITS = 3
 
 export const SUBSCRIPTION_PLANS = {
-  weekly: { price: 249, label: '1 неделя', days: 7, credits: 5 },
-  monthly: { price: 788, label: '1 месяц', days: 30, credits: 25 },
+  weekly: { price: 249, label: '1 неделя', days: 7, credits: 5, graceDays: 1 },
+  monthly: { price: 788, label: '1 месяц', days: 30, credits: 25, graceDays: 3 },
 } as const
 
 export type SubscriptionPlanKey = keyof typeof SUBSCRIPTION_PLANS
 
-export const SUBSCRIPTION_GRACE_PERIOD_DAYS = 3
 export const SUBSCRIPTION_MAX_RETRIES = 3
+
+export const FATAL_CANCELLATION_REASONS = [
+  'card_expired',
+  'fraud_suspected',
+  'permission_revoked',
+  'payment_method_restricted',
+] as const
 
 export const PLAN_LABELS: Record<string, string> = Object.fromEntries(
   Object.entries(SUBSCRIPTION_PLANS).map(([key, val]) => [key, val.label])
