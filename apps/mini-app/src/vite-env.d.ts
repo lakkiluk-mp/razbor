@@ -32,6 +32,11 @@ interface TelegramWebApp {
   requestFullscreen?(): void
   isFullscreen?: boolean
   disableVerticalSwipes?(): void
+  showPopup?(params: {
+    title?: string
+    message: string
+    buttons?: Array<{ id?: string; type?: 'default' | 'ok' | 'close' | 'cancel' | 'destructive'; text?: string }>
+  }, callback?: (buttonId: string) => void): void
 }
 
 interface Window {
