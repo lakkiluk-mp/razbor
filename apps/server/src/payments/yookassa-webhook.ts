@@ -50,7 +50,7 @@ function getClientIP(req: IncomingMessage): string {
   if (forwarded) {
     const raw = Array.isArray(forwarded) ? forwarded[0] : forwarded
     const parts = raw.split(',')
-    return parts[parts.length - 1].trim()
+    return parts[0].trim()
   }
   return req.socket.remoteAddress || ''
 }

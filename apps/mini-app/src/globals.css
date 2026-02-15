@@ -188,16 +188,16 @@
   }
   body {
     @apply bg-background text-foreground;
-    padding-top: calc(
-      var(--tg-safe-area-inset-top, 0px) +
-        var(--tg-content-safe-area-inset-top, 0px)
-    );
     height: var(--tg-viewport-stable-height, 100vh);
   }
   #root {
     height: 100%;
     display: flex;
     flex-direction: column;
+    padding-top: calc(
+      var(--tg-safe-area-inset-top, 0px) +
+        var(--tg-content-safe-area-inset-top, 0px)
+    );
   }
 }
 
