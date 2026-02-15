@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { Crown, Sparkles, AlertTriangle } from 'lucide-react'
+import { Crown, Sparkles, AlertTriangle, CreditCard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Drawer,
@@ -69,6 +69,8 @@ export function SubscribePage() {
   const [showPlans, setShowPlans] = useState(false)
   const [cancelDrawerOpen, setCancelDrawerOpen] = useState(false)
   const [resumeDrawerOpen, setResumeDrawerOpen] = useState(false)
+  const [removeCardDrawerOpen, setRemoveCardDrawerOpen] = useState(false)
+  const [cardToRemove, setCardToRemove] = useState<PaymentMethod | null>(null)
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp
@@ -142,7 +144,10 @@ export function SubscribePage() {
     mutationFn: (paymentMethodId: string) =>
       fetchGraphQL(mutations.removePaymentMethod, { paymentMethodId }),
     onSuccess: () => {
+      setRemoveCardDrawerOpen(false)
+      setCardToRemove(null)
       queryClient.invalidateQueries({ queryKey: ['myPaymentMethods'] })
+      queryClient.invalidateQueries({ queryKey: ['mySubscription'] })
     },
     onError: () => {
       window.Telegram?.WebApp?.showPopup?.({
@@ -196,7 +201,10 @@ export function SubscribePage() {
                 cardType={method.cardType}
                 expiryMonth={method.expiryMonth}
                 expiryYear={method.expiryYear}
-                onRemove={() => removeMethodMutation.mutate(method.id)}
+                onRemove={() => {
+                  setCardToRemove(method)
+                  setRemoveCardDrawerOpen(true)
+                }}
               />
             ))}
           </div>
@@ -205,18 +213,20 @@ export function SubscribePage() {
         <div className="mt-auto pt-6 space-y-3">
           {subscription.cancelAtPeriodEnd ? (
             <>
-              <Button
-                onClick={() => setResumeDrawerOpen(true)}
-                className="w-full h-14 bg-amber-500 hover:bg-amber-600 text-zinc-900 text-base font-semibold rounded-2xl"
-              >
-                Возобновить автопродление
-              </Button>
+              {paymentMethods.length > 0 && (
+                <Button
+                  onClick={() => setResumeDrawerOpen(true)}
+                  className="w-full h-14 bg-amber-500 hover:bg-amber-600 text-zinc-900 text-base font-semibold rounded-2xl"
+                >
+                  Возобновить автопродление
+                </Button>
+              )}
               <Button
                 variant="outline"
                 onClick={() => setShowPlans(true)}
                 className="w-full h-14 border-zinc-700 text-zinc-300 hover:bg-zinc-800 rounded-2xl"
               >
-                Сменить план
+                {paymentMethods.length > 0 ? 'Сменить план' : 'Оформить новую подписку'}
               </Button>
             </>
           ) : (
@@ -282,6 +292,41 @@ export function SubscribePage() {
                   className="w-full h-14 border-zinc-700 text-zinc-300 hover:bg-zinc-800 rounded-2xl"
                 >
                   Оставить подписку
+                </Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+
+        <Drawer open={removeCardDrawerOpen} onOpenChange={(open) => {
+          setRemoveCardDrawerOpen(open)
+          if (!open) setCardToRemove(null)
+        }}>
+          <DrawerContent>
+            <DrawerHeader className="text-center">
+              <CreditCard className="w-10 h-10 text-red-500 mx-auto mb-1" />
+              <DrawerTitle>Удалить карту?</DrawerTitle>
+              <DrawerDescription>
+                {cardToRemove && `${cardToRemove.cardType} •••• ${cardToRemove.cardLast4}`}
+                {paymentMethods.length <= 1
+                  ? '. Это единственный способ оплаты — подписка будет отменена после окончания текущего периода.'
+                  : ''}
+              </DrawerDescription>
+            </DrawerHeader>
+            <DrawerFooter>
+              <Button
+                onClick={() => cardToRemove && removeMethodMutation.mutate(cardToRemove.id)}
+                disabled={removeMethodMutation.isPending}
+                className="w-full h-14 bg-red-500 hover:bg-red-600 text-white text-base font-semibold rounded-2xl"
+              >
+                {removeMethodMutation.isPending ? 'Удаление...' : 'Да, удалить'}
+              </Button>
+              <DrawerClose asChild>
+                <Button
+                  variant="outline"
+                  className="w-full h-14 border-zinc-700 text-zinc-300 hover:bg-zinc-800 rounded-2xl"
+                >
+                  Отмена
                 </Button>
               </DrawerClose>
             </DrawerFooter>
