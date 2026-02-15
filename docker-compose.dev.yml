@@ -82,6 +82,7 @@ services:
       - .env
     environment:
       PORT: 3000
+      VITE_API_PROXY_TARGET: http://server:4000
     depends_on:
       server:
         condition: service_healthy
