@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto'
 import { YooKassa, type YooKassaSdk, CurrencyEnum } from '@webzaytsev/yookassa-ts-sdk'
 
 let sdk: YooKassaSdk | null = null
@@ -51,7 +52,7 @@ export async function createSubscriptionPayment(params: CreateSubscriptionPaymen
   return {
     confirmationToken: (payment.confirmation as { confirmation_token: string }).confirmation_token,
     yooPaymentId: payment.id,
-    idempotencyKey: '',
+    idempotencyKey: randomUUID(),
   }
 }
 
@@ -74,7 +75,7 @@ export async function createRecurringPayment(params: CreateRecurringPaymentParam
   return {
     yooPaymentId: payment.id,
     status: payment.status,
-    idempotencyKey: '',
+    idempotencyKey: randomUUID(),
   }
 }
 
