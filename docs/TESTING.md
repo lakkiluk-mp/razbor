@@ -138,7 +138,8 @@ npx playwright test --ui
 | Константа | Значение | Назначение |
 |-----------|----------|------------|
 | `SUBSCRIPTION_MAX_RETRIES` | `3` | Макс. попыток повторного списания |
-| `SUBSCRIPTION_GRACE_PERIOD_DAYS` | `3` | Grace period до истечения подписки |
+| `SUBSCRIPTION_PLANS.weekly.graceDays` | `1` | Grace period для недельной подписки |
+| `SUBSCRIPTION_PLANS.monthly.graceDays` | `3` | Grace period для месячной подписки |
 | `CACHE_TTL.prices` | `14 * 24 * 60 * 60` (14 дней) | TTL кэша цен |
 | `ROUTES.home` | `"/"` | Маршруты приложения |
 

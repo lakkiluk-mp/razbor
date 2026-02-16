@@ -443,6 +443,29 @@ describe('processRenewals', () => {
     })
   })
 
+  it('should set grace period currentPeriodEnd +3 days for monthly when charge fails', async () => {
+    prisma.subscription.findMany.mockResolvedValue([
+      { id: 'sub-1', userId: 'user-1', cancelAtPeriodEnd: false, status: 'active', plan: 'monthly' },
+    ])
+    prisma.paymentMethod.findFirst.mockResolvedValue({ yooPaymentMethodId: 'pm-1' })
+    mockCreateRecurringPayment.mockResolvedValue({
+      yooPaymentId: 'yoo-1',
+      status: 'canceled',
+      idempotencyKey: 'key-1',
+    })
+
+    await processRenewals(prisma)
+
+    const expectedGraceEnd = new Date('2026-02-18T12:00:00Z')
+    expect(prisma.subscription.update).toHaveBeenCalledWith({
+      where: { id: 'sub-1' },
+      data: expect.objectContaining({
+        status: 'past_due',
+        currentPeriodEnd: expectedGraceEnd,
+      }),
+    })
+  })
+
   it('should find past_due subscriptions with future currentPeriodEnd but not expire if grace active', async () => {
     prisma.subscription.findMany.mockResolvedValue([
       {
