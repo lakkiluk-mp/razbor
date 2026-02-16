@@ -29,7 +29,7 @@ export async function authenticateUser(
     return null
   }
 
-  const parsed = parse(initDataRaw)
+  const parsed = parse(initDataRaw, true)
 
   if (!parsed.user) {
     return null
