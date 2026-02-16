@@ -1,5 +1,7 @@
 import { createYoga, type Plugin } from 'graphql-yoga'
 import { GraphQLError } from 'graphql'
+// @ts-expect-error no types for graphql-depth-limit
+import depthLimit from 'graphql-depth-limit'
 import { schema } from '@razbor/api'
 import { prisma } from '@razbor/db'
 import { authenticateUser } from './auth.js'
@@ -7,6 +9,8 @@ import type { Context } from '@razbor/api'
 
 const isProduction = process.env.NODE_ENV === 'production'
 const allowWebAccess = process.env.ALLOW_WEB_ACCESS === 'true'
+
+let devUserCache: { id: string; telegramId: bigint } | null = null
 
 const recentLogs = new Map<string, number>()
 const LOG_DEDUP_MS = 60_000
@@ -35,27 +39,41 @@ function useGraphQLLogging(): Plugin {
   }
 }
 
+function useDepthLimit(): Plugin {
+  return {
+    onValidate({ addValidationRule }) {
+      addValidationRule(depthLimit(7))
+    },
+  }
+}
+
 export const yoga = createYoga({
   schema,
-  plugins: [useGraphQLLogging()],
+  plugins: [useDepthLimit(), useGraphQLLogging()],
   context: async ({ request }) => {
     const initDataRaw = request.headers.get('x-telegram-init-data')
     let user = initDataRaw ? await authenticateUser(initDataRaw, prisma) : null
 
     if (!user && (!isProduction || allowWebAccess)) {
-      user = await prisma.user.upsert({
-        where: { telegramId: BigInt(999999999) },
-        create: {
-          telegramId: BigInt(999999999),
-          firstName: 'Dev',
-          lastName: 'User',
-          username: 'dev_user',
-          isPremium: false,
-          trialCredits: 999,
-        },
-        update: {},
-        select: { id: true, telegramId: true },
-      })
+      if (devUserCache) {
+        user = devUserCache
+      } else {
+        const devUser = await prisma.user.upsert({
+          where: { telegramId: BigInt(999999999) },
+          create: {
+            telegramId: BigInt(999999999),
+            firstName: 'Dev',
+            lastName: 'User',
+            username: 'dev_user',
+            isPremium: false,
+            trialCredits: 999,
+          },
+          update: {},
+          select: { id: true, telegramId: true },
+        })
+        devUserCache = devUser
+        user = devUser
+      }
     }
 
     if (!user && isProduction && !allowWebAccess) {

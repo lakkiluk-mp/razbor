@@ -1,10 +1,14 @@
 import { createServer } from 'node:http'
+import { createGzip } from 'node:zlib'
+import cluster from 'node:cluster'
 import { prisma } from '@razbor/db'
 import { yoga } from './graphql.js'
 import { bot } from './bot/index.js'
 import { registerPaymentHandlers } from './bot/payments.js'
 import { startRenewalCron } from './cron/renewal.js'
 import { createYooKassaWebhookHandler } from './payments/yookassa-webhook.js'
+
+const isMainWorker = !cluster.isWorker || cluster.worker?.id === 1
 
 const PORT = Number(process.env.PORT) || 4000
 const BOT_TOKEN = process.env.BOT_TOKEN ?? ''
@@ -70,7 +74,31 @@ const server = createServer(async (req, res) => {
   }
 
   if (url.startsWith('/api/graphql')) {
-    yoga(req, res)
+    const acceptEncoding = req.headers['accept-encoding'] ?? ''
+    const supportsGzip = typeof acceptEncoding === 'string' && acceptEncoding.includes('gzip')
+
+    if (supportsGzip) {
+      const response = await yoga.handleNodeRequest(req)
+      const body = Buffer.from(await response.arrayBuffer())
+
+      const gzipStream = createGzip()
+      const chunks: Buffer[] = []
+
+      gzipStream.on('data', (chunk: Buffer) => chunks.push(chunk))
+      gzipStream.on('end', () => {
+        const compressed = Buffer.concat(chunks)
+        res.writeHead(response.status, {
+          'Content-Type': response.headers.get('content-type') ?? 'application/json',
+          'Content-Encoding': 'gzip',
+          'Content-Length': compressed.length,
+        })
+        res.end(compressed)
+      })
+
+      gzipStream.end(body)
+    } else {
+      yoga(req, res)
+    }
     return
   }
 
@@ -106,14 +134,16 @@ server.listen(PORT, async () => {
   console.log(`GraphQL: http://localhost:${PORT}/api/graphql`)
   console.log(`Health:  http://localhost:${PORT}/api/health`)
 
-  startRenewalCron(prisma)
+  if (isMainWorker) {
+    startRenewalCron(prisma)
 
-  if (bot && BOT_WEBHOOK_URL && BOT_TOKEN) {
-    try {
-      await bot.telegram.setWebhook(`${BOT_WEBHOOK_URL}${botPath}`)
-      console.log(`Bot webhook: ${BOT_WEBHOOK_URL}${botPath}`)
-    } catch (err) {
-      console.error('Failed to set bot webhook:', err)
+    if (bot && BOT_WEBHOOK_URL && BOT_TOKEN) {
+      try {
+        await bot.telegram.setWebhook(`${BOT_WEBHOOK_URL}${botPath}`)
+        console.log(`Bot webhook: ${BOT_WEBHOOK_URL}${botPath}`)
+      } catch (err) {
+        console.error('Failed to set bot webhook:', err)
+      }
     }
   }
 })

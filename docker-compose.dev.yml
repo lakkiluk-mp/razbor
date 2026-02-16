@@ -46,7 +46,7 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql://razbor:razbor_dev@postgres:5432/razbor
+      DATABASE_URL: postgresql://razbor:razbor_dev@postgres:5432/razbor?connection_limit=30&pool_timeout=15
       REDIS_URL: redis://redis:6379
       PORT: 4000
       ADMIN_TELEGRAM_IDS: ${ADMIN_TELEGRAM_IDS}

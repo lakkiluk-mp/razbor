@@ -10,6 +10,7 @@ COPY apps/server/package.json ./apps/server/
 COPY packages/api/package.json ./packages/api/
 COPY packages/db/package.json ./packages/db/
 COPY packages/shared/package.json ./packages/shared/
+COPY packages/cache/package.json ./packages/cache/
 RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
@@ -35,6 +36,7 @@ COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
 COPY --from=builder /app/packages/db/package.json ./packages/db/
 COPY --from=builder /app/packages/api/package.json ./packages/api/
 COPY --from=builder /app/packages/shared/package.json ./packages/shared/
+COPY --from=builder /app/packages/cache/package.json ./packages/cache/
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
@@ -45,4 +47,4 @@ ENV PORT=4000
 EXPOSE 4000
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["node", "apps/server/dist/index.cjs"]
+CMD ["node", "apps/server/dist/cluster.cjs"]

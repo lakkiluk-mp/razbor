@@ -12,6 +12,7 @@ COPY apps/mini-app/package.json ./apps/mini-app/
 COPY packages/api/package.json ./packages/api/
 COPY packages/db/package.json ./packages/db/
 COPY packages/shared/package.json ./packages/shared/
+COPY packages/cache/package.json ./packages/cache/
 COPY packages/graphql-client/package.json ./packages/graphql-client/
 COPY packages/hooks/package.json ./packages/hooks/
 COPY tools/price-updater/package.json ./tools/price-updater/

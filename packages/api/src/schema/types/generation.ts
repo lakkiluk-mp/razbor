@@ -3,6 +3,9 @@ import { BodyTypeEnum } from './enums'
 import type { PartWithPriceData } from './part'
 import { PartWithPriceType } from './part'
 import { aggregatePrices } from '../../utils/aggregate-prices'
+import { cacheGet, cacheSet } from '@razbor/cache'
+
+const PARTS_CACHE_TTL = 86400
 
 builder.prismaObject('Generation', {
   fields: (t) => ({
@@ -19,6 +22,10 @@ builder.prismaObject('Generation', {
     parts: t.field({
       type: [PartWithPriceType],
       resolve: async (generation, _args, ctx) => {
+        const cacheKey = `gen:parts:${generation.id}`
+        const cached = await cacheGet<PartWithPriceData[]>(cacheKey)
+        if (cached) return cached
+
         const modelParts = await ctx.prisma.modelPart.findMany({
           where: { generationId: generation.id },
           include: {
@@ -60,6 +67,8 @@ builder.prismaObject('Generation', {
             price: aggregated ?? null,
           }
         })
+
+        await cacheSet(cacheKey, partsWithPrice, PARTS_CACHE_TTL)
 
         return partsWithPrice
       },

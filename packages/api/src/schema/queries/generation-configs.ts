@@ -1,5 +1,8 @@
 import { aggregatePrices } from '../../utils/aggregate-prices'
+import { cacheGet, cacheSet } from '@razbor/cache'
 import { builder } from '../builder'
+
+const CONFIGS_CACHE_TTL = 86400
 
 interface ConfigOptionData {
   configGroup: string
@@ -49,6 +52,10 @@ builder.queryField('generationConfigs', (t) =>
       generationId: t.arg.id({ required: true }),
     },
     resolve: async (_root, args, ctx) => {
+      const cacheKey = `gen:configs:${args.generationId}`
+      const cached = await cacheGet<GenerationConfigsData>(cacheKey)
+      if (cached) return cached
+
       const modelParts = await ctx.prisma.modelPart.findMany({
         where: {
           generationId: args.generationId,
@@ -126,7 +133,10 @@ builder.queryField('generationConfigs', (t) =>
       transmissions.sort((a, b) => b.price - a.price)
       drivetrains.sort((a, b) => b.price - a.price)
 
-      return { engines, transmissions, drivetrains }
+      const result = { engines, transmissions, drivetrains }
+      await cacheSet(cacheKey, result, CONFIGS_CACHE_TTL)
+
+      return result
     },
   })
 )
