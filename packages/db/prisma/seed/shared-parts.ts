@@ -550,6 +550,138 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     searchQueries: ['oem:3040012760', 'вариатор K120 тойота', 'cvt K120 камри', 'Direct Shift CVT'],
     usedBy: ['toyota-camry'],
   },
+
+  // ========================================
+  // AUDI Q5 ENGINES — Petrol (8R)
+  // ========================================
+  {
+    oemCode: '06H100031R',
+    name: 'Двигатель 2.0 CDNB (180 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:06H100031R', 'двигатель 2.0 CDNB', 'мотор CDNB', 'двигатель CDNB ауди'],
+    usedBy: ['audi-q5'],
+  },
+  {
+    oemCode: '06H100035H',
+    name: 'Двигатель 2.0 CDNC (211 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:06H100035H', 'двигатель 2.0 CDNC', 'мотор CDNC', 'двигатель CDNC ауди'],
+    usedBy: ['audi-q5'],
+  },
+  {
+    oemCode: '06L100032L',
+    name: 'Двигатель 2.0 CNCD (225 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:06L100032L', 'двигатель 2.0 CNCD', 'мотор CNCD', 'двигатель CNCD ауди'],
+    usedBy: ['audi-q5'],
+  },
+  {
+    oemCode: 'CNCE',
+    name: 'Двигатель 2.0 CNCE (230 л.с.)',
+    category: 'engine',
+    searchQueries: ['двигатель 2.0 CNCE', 'мотор CNCE', 'двигатель CNCE ауди'],
+    usedBy: ['audi-q5'],
+  },
+  {
+    oemCode: '06E100031L',
+    name: 'Двигатель 3.2 CALB V6 (270 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:06E100031L', 'двигатель 3.2 CALB', 'мотор CALB', 'двигатель CALB V6'],
+    usedBy: ['audi-q5'],
+  },
+  {
+    oemCode: '06E100036A',
+    name: 'Двигатель 3.0 CTUC V6 SC (272 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:06E100036A', 'двигатель 3.0 CTUC', 'мотор CTUC', 'двигатель CTUC компрессор'],
+    usedBy: ['audi-q5'],
+  },
+
+  // ========================================
+  // AUDI Q5 ENGINES — Diesel (8R)
+  // ========================================
+  {
+    oemCode: '03L100036C',
+    name: 'Двигатель 2.0d CAHA TDI (170 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:03L100036C', 'двигатель 2.0 CAHA', 'мотор CAHA', 'двигатель CAHA TDI'],
+    usedBy: ['audi-q5'],
+  },
+  {
+    oemCode: 'CGLC',
+    name: 'Двигатель 2.0d CGLC TDI (177 л.с.)',
+    category: 'engine',
+    searchQueries: ['двигатель 2.0 CGLC', 'мотор CGLC', 'двигатель CGLC TDI'],
+    usedBy: ['audi-q5'],
+  },
+  {
+    oemCode: 'CCWA',
+    name: 'Двигатель 3.0d CCWA TDI V6 (240 л.с.)',
+    category: 'engine',
+    searchQueries: ['двигатель 3.0 CCWA', 'мотор CCWA', 'двигатель CCWA TDI V6'],
+    usedBy: ['audi-q5'],
+  },
+  {
+    oemCode: 'CDUD',
+    name: 'Двигатель 3.0d CDUD TDI V6 (245 л.с.)',
+    category: 'engine',
+    searchQueries: ['двигатель 3.0 CDUD', 'мотор CDUD', 'двигатель CDUD TDI V6'],
+    usedBy: ['audi-q5'],
+  },
+
+  // ========================================
+  // AUDI Q5 ENGINES — Petrol (FY)
+  // ========================================
+  {
+    oemCode: '06L100032T',
+    name: 'Двигатель 2.0 DAXB (249 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:06L100032T', 'двигатель 2.0 DAXB', 'мотор DAXB', 'двигатель DAXB ауди'],
+    usedBy: ['audi-q5'],
+  },
+
+  // ========================================
+  // AUDI Q5 ENGINES — Diesel (FY)
+  // ========================================
+  {
+    oemCode: 'DETA',
+    name: 'Двигатель 2.0d DETA TDI (190 л.с.)',
+    category: 'engine',
+    searchQueries: ['двигатель 2.0 DETA', 'мотор DETA', 'двигатель DETA TDI'],
+    usedBy: ['audi-q5'],
+  },
+  // ========================================
+  // AUDI Q5 TRANSMISSIONS
+  // ========================================
+  {
+    oemCode: '0A6',
+    name: 'МКПП 6-ступ (0A6)',
+    category: 'transmission',
+    searchQueries: ['oem:0A6', 'мкпп 6 ступ ауди', 'мкпп 0A6', 'коробка механика ауди q5'],
+    usedBy: ['audi-q5'],
+  },
+  {
+    oemCode: '0B5',
+    name: 'S-tronic 7-ступ (DL501)',
+    category: 'transmission',
+    searchQueries: [
+      'oem:0B5', 'oem:DL501',
+      's-tronic DL501', 'робот DL501', 'dsg 7 ступ ауди',
+      's tronic ауди q5', 'коробка 0B5',
+    ],
+    usedBy: ['audi-q5'],
+  },
+  {
+    oemCode: '0BK',
+    name: 'Tiptronic 8-ступ (ZF 8HP)',
+    category: 'transmission',
+    searchQueries: [
+      'oem:0BK',
+      'акпп 8 ступ ауди', 'tiptronic 8 ступ', 'zf 8hp ауди',
+      'акпп 0BK', 'коробка автомат ауди q5',
+    ],
+    usedBy: ['audi-q5'],
+  },
 ]
 
 export function findSharedPart(oemCode: string): SharedPartDefinition | undefined {
