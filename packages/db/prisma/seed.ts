@@ -17,13 +17,14 @@ import { toyotaCamrySeed } from './seed/toyota-camry'
 import { nissanQashqaiSeed } from './seed/nissan-qashqai'
 import { audiQ5Seed } from './seed/audi-q5'
 import { bmw5SeriesSeed } from './seed/bmw-5-series'
+import { porscheCayenneSeed } from './seed/porsche-cayenne'
 import { SHARED_PARTS_REGISTRY, generateSharedPartSlug } from './seed/shared-parts'
 import type { ModelSeed } from './seed/types'
 import { isSharedPartRef } from './seed/types'
 
 const prisma = new PrismaClient()
 
-const modelSeeds: ModelSeed[] = [mazda6Seed, mercedesCClassSeed, mercedesSClassSeed, renaultLoganSeed, renaultDusterSeed, kiaRioSeed, fordFocusSeed, hyundaiSolarisSeed, ladaVestaSeed, ladaGrantaSeed, ladaNivaSeed, skodaRapidSeed, volkswagenPoloSeed, toyotaCamrySeed, nissanQashqaiSeed, audiQ5Seed, bmw5SeriesSeed] as ModelSeed[]
+const modelSeeds: ModelSeed[] = [mazda6Seed, mercedesCClassSeed, mercedesSClassSeed, renaultLoganSeed, renaultDusterSeed, kiaRioSeed, fordFocusSeed, hyundaiSolarisSeed, ladaVestaSeed, ladaGrantaSeed, ladaNivaSeed, skodaRapidSeed, volkswagenPoloSeed, toyotaCamrySeed, nissanQashqaiSeed, audiQ5Seed, bmw5SeriesSeed, porscheCayenneSeed] as ModelSeed[]
 
 async function seedSharedParts() {
   console.log('\n--- Seeding shared parts ---')
@@ -101,6 +102,7 @@ async function seedModel(seedData: ModelSeed) {
     totalGenerations++
 
     const parts = seedData.getPartsForGeneration(genData)
+    const seededPartIds: number[] = []
 
     for (const partOrRef of parts) {
       if (isSharedPartRef(partOrRef)) {
@@ -139,6 +141,7 @@ async function seedModel(seedData: ModelSeed) {
             isDefault: true,
           },
         })
+        seededPartIds.push(sharedPart.id)
         totalParts++
       } else {
         let schematicZoneId = null
@@ -180,8 +183,19 @@ async function seedModel(seedData: ModelSeed) {
             isDefault: true,
           },
         })
+        seededPartIds.push(part.id)
         totalParts++
       }
+    }
+
+    const stale = await prisma.modelPart.deleteMany({
+      where: {
+        generationId: generation.id,
+        partId: { notIn: seededPartIds },
+      },
+    })
+    if (stale.count > 0) {
+      console.log(`Cleaned up ${stale.count} stale ModelPart(s) for ${genData.name}`)
     }
 
     console.log(`Created generation: ${generation.name} with ${parts.length} parts`)
