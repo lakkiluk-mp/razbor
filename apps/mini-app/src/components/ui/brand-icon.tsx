@@ -1,17 +1,13 @@
-import { getBrandIcon } from '@/lib/brand-icons'
-
 interface BrandIconProps {
-  slug: string
+  logo?: string | null
   name: string
   size?: number
 }
 
-export function BrandIcon({ slug, name, size = 28 }: BrandIconProps) {
-  const icon = getBrandIcon(slug)
-
+export function BrandIcon({ logo, name, size = 28 }: BrandIconProps) {
   return (
     <div className="w-12 h-12 bg-zinc-800 rounded-full flex items-center justify-center text-zinc-300">
-      {icon ? (
+      {logo ? (
         <svg
           viewBox="0 0 24 24"
           fill="currentColor"
@@ -19,7 +15,7 @@ export function BrandIcon({ slug, name, size = 28 }: BrandIconProps) {
           height={size}
           aria-hidden="true"
         >
-          <path d={icon.path} />
+          <path d={logo} />
         </svg>
       ) : (
         <span className="text-lg font-bold">{name.charAt(0)}</span>

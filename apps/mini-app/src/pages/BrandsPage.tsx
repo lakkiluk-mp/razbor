@@ -47,7 +47,7 @@ export function BrandsPage() {
               to={`/${brand.slug}`}
               className="aspect-square bg-zinc-900 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-zinc-800 transition-colors active:scale-95"
             >
-              <BrandIcon slug={brand.slug} name={brand.name} />
+              <BrandIcon logo={brand.logo} name={brand.name} />
               <span className={`${getBrandNameClass(brand.name)} text-zinc-300 text-center leading-tight px-1`}>{brand.name}</span>
             </Link>
           ))}

@@ -64,7 +64,10 @@ async function seedModel(seedData: ModelSeed) {
 
   const brand = await prisma.brand.upsert({
     where: { slug: seedData.brand.slug },
-    update: {},
+    update: {
+      logo: seedData.brand.logo,
+      sortOrder: seedData.brand.sortOrder,
+    },
     create: seedData.brand,
   })
   console.log(`Brand: ${brand.name}`)
