@@ -161,6 +161,67 @@ export function injectorsDiesel(
   }
 }
 
+export function turbo(
+  prefix: string,
+  searchNames: string[],
+  engineConfig: string,
+  engineCode: string,
+  oemCode?: string,
+  side?: 'left' | 'right',
+): PartData | SharedPartRef {
+  if (oemCode) {
+    const sharedDef = findSharedPart(oemCode)
+    if (sharedDef) {
+      return { type: 'shared', oemCode, configGroup: `engine:${engineConfig}` }
+    }
+  }
+  const slugConfig = engineConfig.replace(/\./g, '-')
+  const vol = engineConfig.replace(/-\d+\w*$/, '')
+  const sideRu = side === 'left' ? 'левая' : side === 'right' ? 'правая' : ''
+  const sideSuffix = side ? `-${side}` : ''
+  const namePrefix = sideRu ? `Турбина ${sideRu}` : 'Турбина'
+  const oem = oemCode ? [`oem:${oemCode}`] : []
+  return {
+    name: `${namePrefix} ${engineCode}`,
+    slug: `${prefix}-turbo${sideSuffix}-${slugConfig}`,
+    category: 'other' as PartCategory,
+    schematicZoneCode: null,
+    searchQueries: [
+      ...oem,
+      ...searchNames.map((n) => sideRu
+        ? `турбина ${sideRu} ${engineCode} ${n}`
+        : `турбина ${engineCode} ${n}`),
+      ...searchNames.map((n) => sideRu
+        ? `турбина ${sideRu} ${vol} ${n}`
+        : `турбина ${vol} ${n}`),
+      ...searchNames.map((n) => `турбокомпрессор ${n}`),
+    ],
+    configGroup: `engine:${engineConfig}`,
+  }
+}
+
+export function supercharger(
+  prefix: string,
+  searchNames: string[],
+  engineConfig: string,
+  engineCode: string,
+): PartData {
+  const slugConfig = engineConfig.replace(/\./g, '-')
+  const vol = engineConfig.replace(/-\d+\w*$/, '')
+  return {
+    name: `Компрессор (нагнетатель) ${engineCode}`,
+    slug: `${prefix}-supercharger-${slugConfig}`,
+    category: 'other' as PartCategory,
+    schematicZoneCode: null,
+    searchQueries: [
+      ...searchNames.map((n) => `компрессор ${engineCode} ${n}`),
+      ...searchNames.map((n) => `компрессор ${vol} ${n}`),
+      ...searchNames.map((n) => `нагнетатель ${n}`),
+    ],
+    configGroup: `engine:${engineConfig}`,
+  }
+}
+
 export function drivetrainAWD(
   prefix: string,
   searchNames: string[],

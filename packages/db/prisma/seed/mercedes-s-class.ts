@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, drivetrainRWD, drivetrainAWD, fuelPumpHP } from './builders'
+import { engine, transmission, drivetrainRWD, drivetrainAWD, fuelPumpHP, turbo } from './builders'
 
 const P = 'mercedes-s-class'
 const S = ['s class', 'с класс', 's-class']
@@ -25,8 +25,12 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '5.5-388', 'M273', 388, ['273961']),
   engine(P, S, '3.5-306', 'M276', 306, ['276957']),
   fuelPumpHP(P, S, '3.5-306'),
+  turbo(P, S, '3.5-306', 'M276', 'A2760900300', 'left'),
+  turbo(P, S, '3.5-306', 'M276', 'A2760900400', 'right'),
   engine(P, S, '4.7-435', 'M278', 435, ['278929']),
   fuelPumpHP(P, S, '4.7-435'),
+  turbo(P, S, '4.7-435', 'M278', 'A2780903580', 'left'),
+  turbo(P, S, '4.7-435', 'M278', 'A2780901880', 'right'),
 
   // КПП (shared с C-Class)
   transmission(P, S, 'at5', 'АКПП 5-ступ', ['722.6']),

@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, fuelPumpHP, transmission, drivetrainFWD } from './builders'
+import { engine, fuelPumpHP, transmission, drivetrainFWD, turbo } from './builders'
 
 const P = 'skoda-rapid'
 const S = ['skoda rapid', 'шкода рапид', 'рапид', 'rapid']
@@ -11,11 +11,13 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.2-75', 'CGPC', 75, ['03E100033R']),
   engine(P, S, '1.4-122', 'CAXA', 122, ['03C100038P']),
   fuelPumpHP(P, S, '1.4-122'),
+  turbo(P, S, '1.4-122', 'CAXA'),
   engine(P, S, '1.6-105', 'CFNA', 105, ['03C100038F']),
 
   // EA211 engines (Gen 1 mid + Gen 2)
   engine(P, S, '1.4-125', 'CZCA', 125, ['04E100033B']),
   fuelPumpHP(P, S, '1.4-125'),
+  turbo(P, S, '1.4-125', 'CZCA'),
   engine(P, S, '1.6-90', 'CFW', 90),
   engine(P, S, '1.6-110', 'CWVA', 110, ['04E100037C']),
 

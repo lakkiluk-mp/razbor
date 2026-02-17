@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, drivetrainRWD, drivetrainAWD, fuelPumpHP, injectorsDiesel } from './builders'
+import { engine, transmission, drivetrainRWD, drivetrainAWD, fuelPumpHP, injectorsDiesel, turbo } from './builders'
 
 const P = 'bmw-5-series'
 const S = ['5 series', '5 серия', '5 серии', 'бмв 5']
@@ -16,6 +16,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '3.0d-193', 'M57D30', 193, ['M57D30']),
   fuelPumpHP(P, S, '3.0d-193'),
   injectorsDiesel(P, S, '3.0d-193'),
+  turbo(P, S, '3.0d-193', 'M57D30'),
 
   // === E60 engines (MPI — без ТНВД) ===
   engine(P, S, '2.5-218', 'N52B25', 218, ['N52B25']),
@@ -24,26 +25,35 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   // E60 GDI turbo (ТНВД)
   engine(P, S, '3.0t-272', 'N54B30', 272, ['N54B30']),
   fuelPumpHP(P, S, '3.0t-272'),
+  turbo(P, S, '3.0t-272', 'N54B30', undefined, 'left'),
+  turbo(P, S, '3.0t-272', 'N54B30', undefined, 'right'),
 
   // E60 diesel (ТНВД + форсунки)
   engine(P, S, '3.0d-231', 'M57D30', 231, ['M57D30']),
   fuelPumpHP(P, S, '3.0d-231'),
   injectorsDiesel(P, S, '3.0d-231'),
+  turbo(P, S, '3.0d-231', 'M57D30'),
 
   // === F10 engines (все GDI — ТНВД) ===
   engine(P, S, '2.0t-184', 'N20B20', 184, ['N20B20']),
   fuelPumpHP(P, S, '2.0t-184'),
+  turbo(P, S, '2.0t-184', 'N20B20'),
   engine(P, S, '2.0t-245', 'N20B20', 245, ['N20B20']),
   fuelPumpHP(P, S, '2.0t-245'),
+  turbo(P, S, '2.0t-245', 'N20B20'),
   engine(P, S, '3.0t-306', 'N55B30', 306, ['N55B30']),
   fuelPumpHP(P, S, '3.0t-306'),
+  turbo(P, S, '3.0t-306', 'N55B30'),
   engine(P, S, '4.4t-407', 'N63B44', 407, ['N63B44']),
   fuelPumpHP(P, S, '4.4t-407'),
+  turbo(P, S, '4.4t-407', 'N63B44', undefined, 'left'),
+  turbo(P, S, '4.4t-407', 'N63B44', undefined, 'right'),
 
   // F10 diesel (ТНВД + форсунки)
   engine(P, S, '3.0d-245', 'N57D30', 245, ['N57D30']),
   fuelPumpHP(P, S, '3.0d-245'),
   injectorsDiesel(P, S, '3.0d-245'),
+  turbo(P, S, '3.0d-245', 'N57D30'),
 
   // === Transmissions ===
   transmission(P, S, 'mt5', 'МКПП 5-ступ'),

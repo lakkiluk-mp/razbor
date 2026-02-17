@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, fuelPumpHP, injectorsDiesel, transmission, drivetrainFWD } from './builders'
+import { engine, fuelPumpHP, injectorsDiesel, transmission, drivetrainFWD, turbo } from './builders'
 
 const P = 'opel-astra'
 const S = ['opel astra', 'опель астра', 'астра', 'astra']
@@ -14,13 +14,16 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.9d-120', 'Z19DTL', 120),
   fuelPumpHP(P, S, '1.9d-120'),
   injectorsDiesel(P, S, '1.9d-120'),
+  turbo(P, S, '1.9d-120', 'Z19DTL'),
   engine(P, S, '1.9d-150', 'Z19DTH', 150),
   fuelPumpHP(P, S, '1.9d-150'),
   injectorsDiesel(P, S, '1.9d-150'),
+  turbo(P, S, '1.9d-150', 'Z19DTH'),
 
   engine(P, S, '1.4-100', 'A14XER', 100),
   engine(P, S, '1.4t-140', 'A14NET', 140),
   fuelPumpHP(P, S, '1.4t-140'),
+  turbo(P, S, '1.4t-140', 'A14NET'),
   engine(P, S, '1.6-115', 'A16XER', 115),
 
   transmission(P, S, 'mt5', 'МКПП 5-ступ (F17)', ['55565138']),

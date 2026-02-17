@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, drivetrainFWD, fuelPumpHP } from './builders'
+import { engine, transmission, drivetrainFWD, fuelPumpHP, turbo } from './builders'
 
 const P = 'mazda-6'
 const S = ['mazda 6', 'мазда 6']
@@ -18,6 +18,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   fuelPumpHP(P, S, '2.5-192'),
   engine(P, S, '2.5t-231', 'Turbo SKYACTIV-G', 231, ['PYZE02300']),
   fuelPumpHP(P, S, '2.5t-231'),
+  turbo(P, S, '2.5t-231', 'SKYACTIV-G'),
   transmission(P, S, 'mt5', 'МКПП 5-ступ', ['G61117150']),
   transmission(P, S, 'mt6', 'МКПП 6-ступ'),
   transmission(P, S, 'at5', 'АКПП 5-ступ', ['FS5AEL', 'FNR5']),

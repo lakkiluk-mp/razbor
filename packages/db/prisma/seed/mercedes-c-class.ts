@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, drivetrainRWD, drivetrainAWD, fuelPumpHP } from './builders'
+import { engine, transmission, drivetrainRWD, drivetrainAWD, fuelPumpHP, turbo, supercharger } from './builders'
 
 const P = 'mercedes-c-class'
 const S = ['c class', 'с класс', 'c-class']
@@ -9,31 +9,46 @@ const S = ['c class', 'с класс', 'c-class']
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.5-204', 'M254', 204, ['254915']),
   fuelPumpHP(P, S, '1.5-204'),
+  turbo(P, S, '1.5-204', 'M254'),
   engine(P, S, '2.0-258', 'M254', 258, ['254920']),
   fuelPumpHP(P, S, '2.0-258'),
+  turbo(P, S, '2.0-258', 'M254'),
   engine(P, S, '1.6-156', 'M274', 156, ['274910']),
   fuelPumpHP(P, S, '1.6-156'),
+  turbo(P, S, '1.6-156', 'M274'),
   engine(P, S, '2.0-184', 'M274', 184, ['274920']),
   fuelPumpHP(P, S, '2.0-184'),
+  turbo(P, S, '2.0-184', 'M274'),
   engine(P, S, '2.0-204', 'M264', 204, ['264920']),
   fuelPumpHP(P, S, '2.0-204'),
+  turbo(P, S, '2.0-204', 'M264'),
   engine(P, S, '2.0-249', 'M264', 249, ['264920']),
   fuelPumpHP(P, S, '2.0-249'),
+  turbo(P, S, '2.0-249', 'M264'),
   engine(P, S, '3.0-367', 'M276', 367, ['276823']),
   fuelPumpHP(P, S, '3.0-367'),
+  turbo(P, S, '3.0-367', 'M276', undefined, 'left'),
+  turbo(P, S, '3.0-367', 'M276', undefined, 'right'),
   engine(P, S, '4.0-510', 'M177', 510, ['177980']),
   fuelPumpHP(P, S, '4.0-510'),
+  turbo(P, S, '4.0-510', 'M177', undefined, 'left'),
+  turbo(P, S, '4.0-510', 'M177', undefined, 'right'),
   engine(P, S, '1.8-156', 'M271', 156, ['271910']),
+  supercharger(P, S, '1.8-156', 'M271'),
   engine(P, S, '1.8-184', 'M271', 184, ['271820']),
   fuelPumpHP(P, S, '1.8-184'),
+  supercharger(P, S, '1.8-184', 'M271'),
   engine(P, S, '1.8-204', 'M271', 204, ['271860']),
   fuelPumpHP(P, S, '1.8-204'),
+  supercharger(P, S, '1.8-204', 'M271'),
   engine(P, S, '2.5-204', 'M272', 204, ['272922']),
   engine(P, S, '3.0-231', 'M272', 231, ['272947']),
   engine(P, S, '3.5-272', 'M272', 272, ['272948']),
   engine(P, S, '6.2-457', 'M156', 457, ['156985']),
   engine(P, S, '1.8-143', 'M271', 143, ['271946']),
+  supercharger(P, S, '1.8-143', 'M271'),
   engine(P, S, '1.8-163', 'M271', 163, ['271948']),
+  supercharger(P, S, '1.8-163', 'M271'),
   engine(P, S, '2.6-170', 'M112', 170, ['112912']),
   engine(P, S, '3.2-218', 'M112', 218, ['112946']),
   engine(P, S, '1.8-129', 'M111', 129, ['111920']),

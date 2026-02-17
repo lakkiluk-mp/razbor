@@ -1,7 +1,7 @@
-import { BodyType } from '@prisma/client'
+import { BodyType, PartCategory } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, drivetrainAWD, fuelPumpHP, injectorsDiesel } from './builders'
+import { engine, transmission, drivetrainAWD, fuelPumpHP, injectorsDiesel, turbo } from './builders'
 
 const P = 'porsche-cayenne'
 const S = ['cayenne', 'кайен']
@@ -12,13 +12,35 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '3.6-290', 'M55.01', 290, ['95510093701']),
   engine(P, S, '4.5-340', 'M48.00', 340, ['94810094800']),
   engine(P, S, '4.5-450', 'M48.50', 450, ['94810095042']),
+  turbo(P, S, '4.5-450', 'M48.50', undefined, 'left'),
+  turbo(P, S, '4.5-450', 'M48.50', undefined, 'right'),
   engine(P, S, '4.8-385', 'M48.01', 385, ['94810094860']),
   fuelPumpHP(P, S, '4.8-385'),
   engine(P, S, '4.8-500', 'M48.51', 500, ['94810095160']),
   fuelPumpHP(P, S, '4.8-500'),
-  engine(P, S, '3.0d-240', 'M05.9D', 240),
+  turbo(P, S, '4.8-500', 'M48.51', undefined, 'left'),
+  turbo(P, S, '4.8-500', 'M48.51', undefined, 'right'),
+  {
+    name: 'Двигатель 3.0d M05.9D (240 л.с.)',
+    slug: `${P}-engine-3-0d-240`,
+    category: 'engine' as PartCategory,
+    schematicZoneCode: 'engine',
+    searchQueries: [
+      `двигатель CAS ${S[0]}`,
+      `двигатель CASA ${S[0]}`,
+      `двигатель 3.0d M05.9D ${S[0]}`,
+      `двигатель CAS ${S[1]}`,
+      `двигатель 3.0d ${S[0]}`,
+      `двигатель 3.0d ${S[1]}`,
+      `мотор 3.0d ${S[0]}`,
+      `двигатель ${S[0]}`,
+      `двигатель ${S[1]}`,
+    ],
+    configGroup: 'engine:3.0d-240',
+  } as PartData,
   fuelPumpHP(P, S, '3.0d-240'),
   injectorsDiesel(P, S, '3.0d-240'),
+  turbo(P, S, '3.0d-240', 'M05.9D'),
 
   // === 92A engines (958 base + restyling merged) ===
   engine(P, S, '3.6-300', 'M55.02', 300, ['95810095501']),
@@ -26,22 +48,34 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   fuelPumpHP(P, S, '4.8-400'),
   engine(P, S, '4.8-500-turbo', 'M48.52', 500, ['94810095200']),
   fuelPumpHP(P, S, '4.8-500-turbo'),
+  turbo(P, S, '4.8-500-turbo', 'M48.52', undefined, 'left'),
+  turbo(P, S, '4.8-500-turbo', 'M48.52', undefined, 'right'),
   engine(P, S, '3.0d-245', 'MCR.CA', 245, ['95810101121']),
   fuelPumpHP(P, S, '3.0d-245'),
   injectorsDiesel(P, S, '3.0d-245'),
+  turbo(P, S, '3.0d-245', 'MCR.CA'),
   engine(P, S, '4.1d-382', 'MCU.DB', 382, ['95810095700']),
   fuelPumpHP(P, S, '4.1d-382'),
   injectorsDiesel(P, S, '4.1d-382'),
+  turbo(P, S, '4.1d-382', 'MCU.DB', undefined, 'left'),
+  turbo(P, S, '4.1d-382', 'MCU.DB', undefined, 'right'),
 
   // === PO536 engines (E3 base + restyling merged) ===
   engine(P, S, '3.0-340', 'MDC.BE', 340, ['95810002201']),
   fuelPumpHP(P, S, '3.0-340'),
+  turbo(P, S, '3.0-340', 'MDC.BE'),
   engine(P, S, '2.9-440', 'MDC.AB', 440, ['PAC100032']),
   fuelPumpHP(P, S, '2.9-440'),
+  turbo(P, S, '2.9-440', 'MDC.AB', undefined, 'left'),
+  turbo(P, S, '2.9-440', 'MDC.AB', undefined, 'right'),
   engine(P, S, '4.0-460', 'MDC.UA', 460, ['95810002100']),
   fuelPumpHP(P, S, '4.0-460'),
+  turbo(P, S, '4.0-460', 'MDC.UA', undefined, 'left'),
+  turbo(P, S, '4.0-460', 'MDC.UA', undefined, 'right'),
   engine(P, S, '4.0-550', 'MDC.UB', 550),
   fuelPumpHP(P, S, '4.0-550'),
+  turbo(P, S, '4.0-550', 'MDC.UB', undefined, 'left'),
+  turbo(P, S, '4.0-550', 'MDC.UB', undefined, 'right'),
 
   // === КПП ===
   transmission(P, S, 'at6', 'Tiptronic 6-ступ (09D)', ['09D300037G']),

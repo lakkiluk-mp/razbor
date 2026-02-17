@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, drivetrainAWD, fuelPumpHP, injectorsDiesel } from './builders'
+import { engine, transmission, drivetrainAWD, fuelPumpHP, injectorsDiesel, turbo, supercharger } from './builders'
 
 const P = 'audi-q5'
 const S = ['q5', 'ку5', 'q 5']
@@ -10,39 +10,50 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   // === 8R Petrol engines ===
   engine(P, S, '2.0-180', 'CDNB', 180, ['06H100031R']),
   fuelPumpHP(P, S, '2.0-180'),
+  turbo(P, S, '2.0-180', 'CDNB'),
   engine(P, S, '2.0-211', 'CDNC', 211, ['06H100035H']),
   fuelPumpHP(P, S, '2.0-211'),
+  turbo(P, S, '2.0-211', 'CDNC'),
   engine(P, S, '2.0-225', 'CNCD', 225, ['06L100032L']),
   fuelPumpHP(P, S, '2.0-225'),
+  turbo(P, S, '2.0-225', 'CNCD'),
   engine(P, S, '2.0-230', 'CNCE', 230, ['CNCE']),
   fuelPumpHP(P, S, '2.0-230'),
+  turbo(P, S, '2.0-230', 'CNCE'),
   engine(P, S, '3.2-270', 'CALB', 270, ['06E100031L']),
   fuelPumpHP(P, S, '3.2-270'),
   engine(P, S, '3.0-272', 'CTUC', 272, ['06E100036A']),
   fuelPumpHP(P, S, '3.0-272'),
+  supercharger(P, S, '3.0-272', 'CTUC'),
 
   // === 8R Diesel engines ===
   engine(P, S, '2.0d-170', 'CAHA', 170, ['03L100036C']),
   fuelPumpHP(P, S, '2.0d-170'),
   injectorsDiesel(P, S, '2.0d-170'),
+  turbo(P, S, '2.0d-170', 'CAHA'),
   engine(P, S, '2.0d-177', 'CGLC', 177, ['CGLC']),
   fuelPumpHP(P, S, '2.0d-177'),
   injectorsDiesel(P, S, '2.0d-177'),
+  turbo(P, S, '2.0d-177', 'CGLC'),
   engine(P, S, '3.0d-240', 'CCWA', 240, ['CCWA']),
   fuelPumpHP(P, S, '3.0d-240'),
   injectorsDiesel(P, S, '3.0d-240'),
+  turbo(P, S, '3.0d-240', 'CCWA'),
   engine(P, S, '3.0d-245', 'CDUD', 245, ['CDUD']),
   fuelPumpHP(P, S, '3.0d-245'),
   injectorsDiesel(P, S, '3.0d-245'),
+  turbo(P, S, '3.0d-245', 'CDUD'),
 
   // === FY Petrol engines ===
   engine(P, S, '2.0-249', 'DAXB', 249, ['06L100032T']),
   fuelPumpHP(P, S, '2.0-249'),
+  turbo(P, S, '2.0-249', 'DAXB'),
 
   // === FY Diesel engines ===
   engine(P, S, '2.0d-190', 'DETA', 190, ['DETA']),
   fuelPumpHP(P, S, '2.0d-190'),
   injectorsDiesel(P, S, '2.0d-190'),
+  turbo(P, S, '2.0d-190', 'DETA'),
   // === Transmissions ===
   transmission(P, S, 'mt', 'МКПП 6-ступ (0A6)', ['0A6']),
   transmission(P, S, 'robot', 'S-tronic 7-ступ (DL501)', ['0B5']),
