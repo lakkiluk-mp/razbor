@@ -7,7 +7,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { formatPrice } from '@razbor/shared'
 import { ExternalLink } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 interface PriceSource {
   source: string
@@ -110,6 +110,7 @@ export function PriceDetailsDrawer({
   onOpenChange,
 }: PriceDetailsDrawerProps) {
   const navigate = useNavigate()
+  const location = useLocation()
   const sourcesWithSearchUrl = price?.sources?.filter((s) => isValidUrl(s.searchUrl)) ?? []
   const hasSearchUrls = sourcesWithSearchUrl.length > 0
 
@@ -194,7 +195,7 @@ export function PriceDetailsDrawer({
                   <span className="text-sm text-zinc-400">Ссылки на поиск</span>
                   <p className="text-xs text-zinc-500 mt-0.5">Исходная выдача до фильтрации</p>
                   <div className="relative mt-2 bg-zinc-800/50 rounded-xl px-4 py-5">
-                    <div className="blur-md pointer-events-none select-none flex items-center gap-2">
+                    <div className="blur-md pointer-events-none select-none flex items-center gap-2 mt-2">
                       {sourcesWithSearchUrl.map((s) => (
                         <div
                           key={s.source}
@@ -211,7 +212,7 @@ export function PriceDetailsDrawer({
                         className="bg-amber-500 hover:bg-amber-600 text-zinc-950 font-medium text-sm h-8 px-4"
                         onClick={() => {
                           onOpenChange(false)
-                          navigate('/subscribe')
+                          navigate('/subscribe', { state: { returnTo: location.pathname + location.search } })
                         }}
                       >
                         Разблокировать

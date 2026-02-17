@@ -27,6 +27,7 @@ export function PaymentPage() {
   const [cooldown, setCooldown] = useState(0)
 
   const plan = (location.state as { plan?: string } | null)?.plan
+  const returnTo = (location.state as { returnTo?: string } | null)?.returnTo
   const planConfig = plan ? SUBSCRIPTION_PLANS[plan as keyof typeof SUBSCRIPTION_PLANS] : null
 
   useEffect(() => {
@@ -49,7 +50,7 @@ export function PaymentPage() {
         queryClient.invalidateQueries({ queryKey: ['me'] })
         queryClient.invalidateQueries({ queryKey: ['mySubscription'] })
         queryClient.invalidateQueries({ queryKey: ['usageInfo'] })
-        navigate('/payment/success', { replace: true })
+        navigate('/payment/success', { replace: true, state: { returnTo } })
       }
     },
     onError: (err: unknown) => {
@@ -65,8 +66,8 @@ export function PaymentPage() {
     queryClient.invalidateQueries({ queryKey: ['me'] })
     queryClient.invalidateQueries({ queryKey: ['mySubscription'] })
     queryClient.invalidateQueries({ queryKey: ['usageInfo'] })
-    navigate('/payment/success', { replace: true })
-  }, [queryClient, navigate])
+    navigate('/payment/success', { replace: true, state: { returnTo } })
+  }, [queryClient, navigate, returnTo])
 
   const handleWidgetFail = useCallback(() => {
     setWidgetFailed(true)
@@ -83,25 +84,25 @@ export function PaymentPage() {
   useEffect(() => {
     const tg = window.Telegram?.WebApp
     if (!tg) return
-    const handleBack = () => navigate('/subscribe', { replace: true })
+    const handleBack = () => navigate('/subscribe', { replace: true, state: { returnTo } })
     tg.BackButton.show()
     tg.BackButton.onClick(handleBack)
     return () => {
       tg.BackButton.offClick(handleBack)
       tg.BackButton.hide()
     }
-  }, [navigate])
+  }, [navigate, returnTo])
 
   useEffect(() => {
     if (!plan) {
-      navigate('/subscribe', { replace: true })
+      navigate('/subscribe', { replace: true, state: { returnTo } })
       return
     }
     if (!hasFired.current) {
       hasFired.current = true
       mutate(plan)
     }
-  }, [plan, navigate, mutate])
+  }, [plan, navigate, mutate, returnTo])
 
   const handleRetry = () => {
     hasFired.current = false

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
 import { pluralCredits, PLAN_LABELS } from '@razbor/shared'
@@ -23,6 +23,12 @@ const POLLING_TIMEOUT = 30000
 
 export function PaymentSuccessPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const rawReturnTo = (location.state as { returnTo?: string } | null)?.returnTo
+  const returnTo =
+    rawReturnTo && rawReturnTo.startsWith('/') && !rawReturnTo.startsWith('//')
+      ? rawReturnTo
+      : undefined
   const [timedOut, setTimedOut] = useState(false)
 
   useEffect(() => {
@@ -143,12 +149,30 @@ export function PaymentSuccessPage() {
           </div>
         )}
 
-        <Button
-          onClick={() => navigate('/', { replace: true })}
-          className="w-full h-14 bg-amber-500 hover:bg-amber-600 text-zinc-900 text-base font-semibold rounded-2xl"
-        >
-          Начать расчёт
-        </Button>
+        {returnTo ? (
+          <div className="space-y-3 w-full">
+            <Button
+              onClick={() => navigate(returnTo, { replace: true })}
+              className="w-full h-14 bg-amber-500 hover:bg-amber-600 text-zinc-900 text-base font-semibold rounded-2xl"
+            >
+              Вернуться к расчёту
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/', { replace: true })}
+              className="w-full h-14 border-zinc-700 text-zinc-300 hover:bg-zinc-800 rounded-2xl"
+            >
+              На главную
+            </Button>
+          </div>
+        ) : (
+          <Button
+            onClick={() => navigate('/', { replace: true })}
+            className="w-full h-14 bg-amber-500 hover:bg-amber-600 text-zinc-900 text-base font-semibold rounded-2xl"
+          >
+            Начать расчёт
+          </Button>
+        )}
       </div>
     </div>
   )

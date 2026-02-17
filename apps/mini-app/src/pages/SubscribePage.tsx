@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Crown, Sparkles, AlertTriangle, CreditCard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -64,7 +64,9 @@ const PLAN_BADGES: Record<string, string> = {
 
 export function SubscribePage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const queryClient = useQueryClient()
+  const returnTo = (location.state as { returnTo?: string } | null)?.returnTo
   const [selectedPlan, setSelectedPlan] = useState('weekly')
   const [showPlans, setShowPlans] = useState(false)
   const [cancelDrawerOpen, setCancelDrawerOpen] = useState(false)
@@ -383,7 +385,7 @@ export function SubscribePage() {
 
       <div className="mt-auto">
         <Button
-          onClick={() => navigate('/payment', { state: { plan: selectedPlan } })}
+          onClick={() => navigate('/payment', { state: { plan: selectedPlan, returnTo } })}
           className="w-full h-14 bg-amber-500 hover:bg-amber-600 text-zinc-900 text-base font-semibold rounded-2xl"
         >
           Оформить подписку {selectedPlanData ? `${selectedPlanData.price} ₽` : ''}
