@@ -8,11 +8,25 @@ export interface SchematicZone {
   type: string
 }
 
+export interface PriceSource {
+  source: string
+  min: number
+  max: number
+  minPriceUrl?: string | null
+  maxPriceUrl?: string | null
+  searchUrl?: string | null
+  sampleSize: number
+}
+
 export interface Price {
   median: number
   min: number
   max: number
   count: number
+  minPriceUrl?: string | null
+  maxPriceUrl?: string | null
+  medianPriceUrl?: string | null
+  sources?: PriceSource[] | null
 }
 
 export interface Part {

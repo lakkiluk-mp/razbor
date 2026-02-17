@@ -15,6 +15,145 @@ export type Scalars = {
   DateTime: { input: string; output: string; }
 };
 
+export type AdminCalculation = {
+  __typename?: 'AdminCalculation';
+  brandName: Maybe<Scalars['String']['output']>;
+  createdAt: Maybe<Scalars['DateTime']['output']>;
+  damagedZonesCount: Maybe<Scalars['Int']['output']>;
+  generationName: Maybe<Scalars['String']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  modelName: Maybe<Scalars['String']['output']>;
+  totalPrice: Maybe<Scalars['Int']['output']>;
+  userId: Maybe<Scalars['String']['output']>;
+  userName: Maybe<Scalars['String']['output']>;
+  userUsername: Maybe<Scalars['String']['output']>;
+};
+
+export type AdminCalculationsList = {
+  __typename?: 'AdminCalculationsList';
+  items: Maybe<Array<AdminCalculation>>;
+  totalCount: Maybe<Scalars['Int']['output']>;
+};
+
+export type AdminPayment = {
+  __typename?: 'AdminPayment';
+  amount: Maybe<Scalars['Int']['output']>;
+  createdAt: Maybe<Scalars['DateTime']['output']>;
+  currency: Maybe<Scalars['String']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  isRecurring: Maybe<Scalars['Boolean']['output']>;
+  status: Maybe<Scalars['String']['output']>;
+  userId: Maybe<Scalars['String']['output']>;
+  userName: Maybe<Scalars['String']['output']>;
+  userUsername: Maybe<Scalars['String']['output']>;
+  yooPaymentId: Maybe<Scalars['String']['output']>;
+};
+
+export type AdminPaymentsList = {
+  __typename?: 'AdminPaymentsList';
+  items: Maybe<Array<AdminPayment>>;
+  totalCount: Maybe<Scalars['Int']['output']>;
+};
+
+export type AdminStats = {
+  __typename?: 'AdminStats';
+  activeSubscriptions: Maybe<Scalars['Int']['output']>;
+  calculationsToday: Maybe<Scalars['Int']['output']>;
+  newUsersToday: Maybe<Scalars['Int']['output']>;
+  totalCalculations: Maybe<Scalars['Int']['output']>;
+  totalRevenue: Maybe<Scalars['Int']['output']>;
+  totalUsers: Maybe<Scalars['Int']['output']>;
+};
+
+export type AdminSubscription = {
+  __typename?: 'AdminSubscription';
+  cancelAtPeriodEnd: Maybe<Scalars['Boolean']['output']>;
+  createdAt: Maybe<Scalars['DateTime']['output']>;
+  credits: Maybe<Scalars['Int']['output']>;
+  creditsTotal: Maybe<Scalars['Int']['output']>;
+  currentPeriodEnd: Maybe<Scalars['DateTime']['output']>;
+  currentPeriodStart: Maybe<Scalars['DateTime']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  plan: Maybe<SubscriptionPlan>;
+  status: Maybe<SubscriptionStatus>;
+  userId: Maybe<Scalars['String']['output']>;
+  userName: Maybe<Scalars['String']['output']>;
+  userUsername: Maybe<Scalars['String']['output']>;
+};
+
+export type AdminSubscriptionsList = {
+  __typename?: 'AdminSubscriptionsList';
+  items: Maybe<Array<AdminSubscription>>;
+  totalCount: Maybe<Scalars['Int']['output']>;
+};
+
+export type AdminTelegramPayment = {
+  __typename?: 'AdminTelegramPayment';
+  amount: Maybe<Scalars['Int']['output']>;
+  calculationsCount: Maybe<Scalars['Int']['output']>;
+  createdAt: Maybe<Scalars['DateTime']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  telegramPaymentId: Maybe<Scalars['String']['output']>;
+  userId: Maybe<Scalars['String']['output']>;
+  userName: Maybe<Scalars['String']['output']>;
+  userUsername: Maybe<Scalars['String']['output']>;
+};
+
+export type AdminTelegramPaymentsList = {
+  __typename?: 'AdminTelegramPaymentsList';
+  items: Maybe<Array<AdminTelegramPayment>>;
+  totalCount: Maybe<Scalars['Int']['output']>;
+};
+
+export type AdminUsageLog = {
+  __typename?: 'AdminUsageLog';
+  action: Maybe<Scalars['String']['output']>;
+  createdAt: Maybe<Scalars['DateTime']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  metadata: Maybe<Scalars['String']['output']>;
+};
+
+export type AdminUser = {
+  __typename?: 'AdminUser';
+  activeSubscription: Maybe<Scalars['Boolean']['output']>;
+  createdAt: Maybe<Scalars['DateTime']['output']>;
+  firstName: Maybe<Scalars['String']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  isPremium: Maybe<Scalars['Boolean']['output']>;
+  lastName: Maybe<Scalars['String']['output']>;
+  telegramId: Maybe<Scalars['String']['output']>;
+  totalCalculations: Maybe<Scalars['Int']['output']>;
+  totalPayments: Maybe<Scalars['Int']['output']>;
+  trialCredits: Maybe<Scalars['Int']['output']>;
+  username: Maybe<Scalars['String']['output']>;
+};
+
+export type AdminUserDetail = {
+  __typename?: 'AdminUserDetail';
+  activeSubscription: Maybe<Scalars['Boolean']['output']>;
+  calculations: Maybe<Array<AdminCalculation>>;
+  createdAt: Maybe<Scalars['DateTime']['output']>;
+  firstName: Maybe<Scalars['String']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  isPremium: Maybe<Scalars['Boolean']['output']>;
+  lastName: Maybe<Scalars['String']['output']>;
+  recentUsageLogs: Maybe<Array<AdminUsageLog>>;
+  subscriptions: Maybe<Array<AdminSubscription>>;
+  telegramId: Maybe<Scalars['String']['output']>;
+  telegramPayments: Maybe<Array<AdminTelegramPayment>>;
+  totalCalculations: Maybe<Scalars['Int']['output']>;
+  totalPayments: Maybe<Scalars['Int']['output']>;
+  trialCredits: Maybe<Scalars['Int']['output']>;
+  username: Maybe<Scalars['String']['output']>;
+  yooPayments: Maybe<Array<AdminPayment>>;
+};
+
+export type AdminUsersList = {
+  __typename?: 'AdminUsersList';
+  items: Maybe<Array<AdminUser>>;
+  totalCount: Maybe<Scalars['Int']['output']>;
+};
+
 export type BodyType =
   | 'coupe'
   | 'crossover'
@@ -134,6 +273,7 @@ export type Mutation = {
   cancelSubscription: Maybe<SubscriptionInfo>;
   createSubscription: Maybe<CreateSubscriptionResult>;
   removePaymentMethod: Maybe<Scalars['Boolean']['output']>;
+  resumeSubscription: Maybe<SubscriptionInfo>;
 };
 
 
@@ -210,6 +350,13 @@ export type Price = {
 
 export type Query = {
   __typename?: 'Query';
+  adminCalculations: Maybe<AdminCalculationsList>;
+  adminPayments: Maybe<AdminPaymentsList>;
+  adminStats: Maybe<AdminStats>;
+  adminSubscriptions: Maybe<AdminSubscriptionsList>;
+  adminTelegramPayments: Maybe<AdminTelegramPaymentsList>;
+  adminUser: Maybe<AdminUserDetail>;
+  adminUsers: Maybe<AdminUsersList>;
   brand: Maybe<Brand>;
   brands: Maybe<Array<Brand>>;
   generation: Maybe<Generation>;
@@ -223,6 +370,44 @@ export type Query = {
   schematicZones: Maybe<Array<SchematicZone>>;
   subscriptionPlans: Maybe<Array<SubscriptionPlanInfo>>;
   usageInfo: Maybe<UsageInfo>;
+};
+
+
+export type QueryAdminCalculationsArgs = {
+  limit: InputMaybe<Scalars['Int']['input']>;
+  offset: InputMaybe<Scalars['Int']['input']>;
+  userId: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type QueryAdminPaymentsArgs = {
+  limit: InputMaybe<Scalars['Int']['input']>;
+  offset: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryAdminSubscriptionsArgs = {
+  limit: InputMaybe<Scalars['Int']['input']>;
+  offset: InputMaybe<Scalars['Int']['input']>;
+  status: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryAdminTelegramPaymentsArgs = {
+  limit: InputMaybe<Scalars['Int']['input']>;
+  offset: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryAdminUserArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdminUsersArgs = {
+  limit: InputMaybe<Scalars['Int']['input']>;
+  offset: InputMaybe<Scalars['Int']['input']>;
+  search: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -279,6 +464,7 @@ export type SourcePrice = {
   min: Maybe<Scalars['Int']['output']>;
   minPriceUrl: Maybe<Scalars['String']['output']>;
   sampleSize: Maybe<Scalars['Int']['output']>;
+  searchUrl: Maybe<Scalars['String']['output']>;
   source: Maybe<Scalars['String']['output']>;
 };
 
@@ -359,6 +545,11 @@ export type CancelSubscriptionMutationVariables = Exact<{ [key: string]: never; 
 
 
 export type CancelSubscriptionMutation = { __typename?: 'Mutation', cancelSubscription: { __typename?: 'SubscriptionInfo', id: string | null, status: SubscriptionStatus | null, cancelAtPeriodEnd: boolean | null, currentPeriodEnd: string | null, daysRemaining: number | null } | null };
+
+export type ResumeSubscriptionMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ResumeSubscriptionMutation = { __typename?: 'Mutation', resumeSubscription: { __typename?: 'SubscriptionInfo', id: string | null, status: SubscriptionStatus | null, cancelAtPeriodEnd: boolean | null, currentPeriodEnd: string | null, daysRemaining: number | null } | null };
 
 export type RemovePaymentMethodMutationVariables = Exact<{
   paymentMethodId: Scalars['ID']['input'];

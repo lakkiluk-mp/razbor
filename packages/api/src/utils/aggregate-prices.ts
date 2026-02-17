@@ -8,6 +8,7 @@ function buildSourcePriceData(p: Price): SourcePriceData {
     max: p.maxPrice,
     minPriceUrl: p.minPriceUrl,
     maxPriceUrl: p.maxPriceUrl,
+    searchUrl: p.searchUrl,
     sampleSize: p.sampleSize,
   }
 }

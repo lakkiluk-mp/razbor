@@ -1,5 +1,6 @@
 import { useSearchParams, Link, useNavigate } from 'react-router-dom'
 import { useCallback, useMemo, useState, useEffect, useRef } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Info, HelpCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -10,15 +11,28 @@ import {
   AccordionContent,
 } from '@/components/ui/accordion'
 import { cn } from '@/lib/utils'
+import { fetchGraphQL, queries } from '@/lib/graphql-client'
 import type { CalculationPart } from '@razbor/hooks'
 import { CALCULATION_PARTS_KEY } from '@/lib/constants'
 import { PriceDetailsDrawer } from '@/components/features/price-details-drawer'
 import { PartsSearch } from '@/components/features/parts-search'
 import { groupPartsByCategory } from '@/lib/category-groups'
 
+interface MeResponse {
+  me: {
+    id: string
+    isPremium: boolean
+  }
+}
+
 export function ResultPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  const { data: meData } = useQuery({
+    queryKey: ['me'],
+    queryFn: () => fetchGraphQL<MeResponse>(queries.me),
+  })
+  const isPremium = meData?.me?.isPremium ?? false
   const [excludedParts, setExcludedParts] = useState<Set<string>>(new Set())
   const [parts, setParts] = useState<CalculationPart[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
@@ -34,6 +48,15 @@ export function ResultPage() {
       minPriceUrl?: string | null
       maxPriceUrl?: string | null
       medianPriceUrl?: string | null
+      sources?: Array<{
+        source: string
+        min: number
+        max: number
+        minPriceUrl?: string | null
+        maxPriceUrl?: string | null
+        searchUrl?: string | null
+        sampleSize: number
+      }> | null
     } | null
   } | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -239,7 +262,9 @@ export function ResultPage() {
                                           setSelectedPart({
                                             name: item.part.name,
                                             oemCode: item.part.oemCode,
-                                            price: item.part.price ?? null,
+                                            price: item.part.price
+                                              ? { ...item.part.price, sources: item.part.price.sources ?? null }
+                                              : null,
                                           })
                                           setDrawerOpen(true)
                                         }}
@@ -309,6 +334,7 @@ export function ResultPage() {
         partName={selectedPart?.name || ''}
         oemCode={selectedPart?.oemCode}
         price={selectedPart?.price || null}
+        isSubscribed={isPremium}
         open={drawerOpen}
         onOpenChange={setDrawerOpen}
       />

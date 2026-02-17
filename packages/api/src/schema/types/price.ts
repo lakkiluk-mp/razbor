@@ -6,6 +6,7 @@ export interface SourcePriceData {
   max: number
   minPriceUrl: string | null
   maxPriceUrl: string | null
+  searchUrl: string | null
   sampleSize: number
 }
 
@@ -30,6 +31,7 @@ builder.objectType(SourcePriceType, {
     max: t.exposeInt('max'),
     minPriceUrl: t.string({ nullable: true, resolve: (sp) => sp.minPriceUrl }),
     maxPriceUrl: t.string({ nullable: true, resolve: (sp) => sp.maxPriceUrl }),
+    searchUrl: t.string({ nullable: true, resolve: (sp) => sp.searchUrl }),
     sampleSize: t.exposeInt('sampleSize'),
   }),
 })

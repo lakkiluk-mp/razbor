@@ -90,6 +90,7 @@ export const queries = {
               max
               minPriceUrl
               maxPriceUrl
+              searchUrl
               sampleSize
             }
           }
@@ -141,6 +142,7 @@ export const queries = {
               max
               minPriceUrl
               maxPriceUrl
+              searchUrl
               sampleSize
             }
           }
@@ -485,6 +487,7 @@ export const mutations = {
                 max
                 minPriceUrl
                 maxPriceUrl
+                searchUrl
                 sampleSize
               }
             }

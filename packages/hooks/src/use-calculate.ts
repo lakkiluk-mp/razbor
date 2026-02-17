@@ -35,6 +35,7 @@ export interface CalculationPart {
         max: number
         minPriceUrl?: string | null
         maxPriceUrl?: string | null
+        searchUrl?: string | null
         sampleSize: number
       }> | null
     } | null
