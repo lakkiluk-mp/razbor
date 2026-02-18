@@ -63,13 +63,11 @@ const server = createServer(async (req, res) => {
 
     try {
       await bot.handleUpdate(update as Parameters<typeof bot.handleUpdate>[0])
-      res.writeHead(200, { 'Content-Type': 'application/json' })
-      res.end(JSON.stringify({ ok: true }))
     } catch (err) {
       console.error('Bot webhook error:', err)
-      res.writeHead(500, { 'Content-Type': 'application/json' })
-      res.end(JSON.stringify({ error: 'Internal error' }))
     }
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    res.end(JSON.stringify({ ok: true }))
     return
   }
 
