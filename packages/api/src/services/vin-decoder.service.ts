@@ -1,6 +1,6 @@
 import type { PrismaClient } from '@razbor/db'
 import { VIN_BRAND_MAPPINGS } from './vin-mappings'
-import type { VinBrandMapping, VinModelMapping, VinGenCode } from './vin-mappings'
+import type { VinBrandMapping, VinModelMapping, VinGenCode, VinVariantConfig } from './vin-mappings'
 
 const VIN_YEAR_CODES: Record<string, number> = {
   '1': 2001, '2': 2002, '3': 2003, '4': 2004, '5': 2005,
@@ -93,6 +93,13 @@ function extractTransmissions(vin: string, model: VinModelMapping): string[] {
   return model.transmissionCodes.mapping[code] ?? []
 }
 
+function extractVariant(vin: string, model: VinModelMapping): VinVariantConfig | null {
+  if (!model.variantCodes) return null
+  const [start, end] = model.variantCodes.position
+  const code = vin.substring(start, end).toUpperCase()
+  return model.variantCodes.mapping[code] ?? null
+}
+
 function filterByAvailable(suggested: string[], available: string[]): string[] {
   if (suggested.length === 0) return []
   const set = new Set(available)
@@ -161,6 +168,9 @@ export async function decodeVin(
 
   // 1. Ищем brand по WMI
   const brandMappings = findBrandMappings(wmi)
+  if (brandMappings.some(bm => bm.skipYearParsing)) {
+    result.year = null
+  }
   const brandSlug = brandMappings[0]?.brandSlug ?? WMI_TO_BRAND[wmi]
 
   if (!brandSlug) {
@@ -272,17 +282,29 @@ export async function decodeVin(
 
     const availableConfigs = await getAvailableConfigs(matchedGeneration.id, prisma)
 
-    const vinEngines = extractEngines(cleanVin, matchedModel)
-    const filteredEngines = filterByAvailable(vinEngines, availableConfigs)
-    result.suggestedConfigs.engines = filteredEngines
+    const variant = extractVariant(cleanVin, matchedModel)
 
-    const vinTransmissions = extractTransmissions(cleanVin, matchedModel)
-    const filteredTransmissions = filterByAvailable(vinTransmissions, availableConfigs)
-    result.suggestedConfigs.transmissions = filteredTransmissions
+    if (variant) {
+      if (variant.engines) {
+        result.suggestedConfigs.engines = filterByAvailable(variant.engines, availableConfigs)
+      }
+      if (variant.transmissions) {
+        result.suggestedConfigs.transmissions = filterByAvailable(variant.transmissions, availableConfigs)
+      }
+      if (variant.drivetrains) {
+        result.suggestedConfigs.drivetrains = filterByAvailable(variant.drivetrains, availableConfigs)
+      }
+    } else {
+      const vinEngines = extractEngines(cleanVin, matchedModel)
+      result.suggestedConfigs.engines = filterByAvailable(vinEngines, availableConfigs)
+
+      const vinTransmissions = extractTransmissions(cleanVin, matchedModel)
+      result.suggestedConfigs.transmissions = filterByAvailable(vinTransmissions, availableConfigs)
+    }
 
     result.needsSelection.engine = result.suggestedConfigs.engines.length !== 1
     result.needsSelection.transmission = result.suggestedConfigs.transmissions.length !== 1
-    result.needsSelection.drivetrain = true
+    result.needsSelection.drivetrain = result.suggestedConfigs.drivetrains.length !== 1
 
     const allTransmissions = availableConfigs.filter(c => c.startsWith('transmission:'))
     if (allTransmissions.length === 1 && result.suggestedConfigs.transmissions.length === 0) {
@@ -291,7 +313,7 @@ export async function decodeVin(
     }
 
     const drivetrains = availableConfigs.filter(c => c.startsWith('drivetrain:'))
-    if (drivetrains.length === 1) {
+    if (drivetrains.length === 1 && result.suggestedConfigs.drivetrains.length === 0) {
       result.suggestedConfigs.drivetrains = drivetrains
       result.needsSelection.drivetrain = false
     }

@@ -3,6 +3,12 @@ export interface VinGenCode {
   bodyType: string
 }
 
+export interface VinVariantConfig {
+  engines?: string[]
+  transmissions?: string[]
+  drivetrains?: string[]
+}
+
 export interface VinModelMapping {
   modelSlug: string
   modelCodes?: { position: [number, number]; codes: string[] }
@@ -10,10 +16,12 @@ export interface VinModelMapping {
   engineCodes?: { position: number; mapping: Record<string, string[]> }
   engineCodesRange?: { position: [number, number]; mapping: Record<string, string[]> }
   transmissionCodes?: { position: number; mapping: Record<string, string[]> }
+  variantCodes?: { position: [number, number]; mapping: Record<string, VinVariantConfig> }
 }
 
 export interface VinBrandMapping {
   wmi: string[]
   brandSlug: string
   models: VinModelMapping[]
+  skipYearParsing?: boolean
 }

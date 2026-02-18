@@ -409,22 +409,30 @@ export function VinInput({ brands = [] }: VinInputProps) {
               <ChevronRight className="w-5 h-5 text-zinc-500 shrink-0" />
             </button>
           ) : (
-            <div className="flex items-center gap-2 bg-zinc-900 rounded-xl px-3 py-2.5">
+            <button
+              type="button"
+              onClick={() => navigate(`/${result!.brand!.slug}`)}
+              className="w-full flex items-center gap-2.5 bg-zinc-900 hover:bg-zinc-800 active:scale-[0.98] rounded-xl px-3 py-2.5 transition-all"
+            >
               <Car className="w-4 h-4 text-amber-500 shrink-0" />
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-xs font-medium text-zinc-100">
-                  {result!.brand!.name}
-                </span>
-                {result!.model && (
+              <div className="flex-1 min-w-0 text-left">
+                <div className="flex flex-wrap items-center gap-1.5">
                   <span className="text-xs font-medium text-zinc-100">
-                    {result!.model.name}
+                    {result!.brand!.name}
                   </span>
-                )}
-                {result!.year && (
-                  <span className="text-xs text-zinc-500">{result!.year} г.</span>
-                )}
+                  {result!.model && (
+                    <span className="text-xs font-medium text-zinc-100">
+                      {result!.model.name}
+                    </span>
+                  )}
+                  {result!.year && (
+                    <span className="text-xs text-zinc-500">{result!.year} г.</span>
+                  )}
+                </div>
+                <p className="text-[10px] text-zinc-500 mt-0.5">Не удалось определить модель — выберите вручную</p>
               </div>
-            </div>
+              <ChevronRight className="w-4 h-4 text-zinc-500 shrink-0" />
+            </button>
           )}
 
           {showGenPicker && (
@@ -444,11 +452,6 @@ export function VinInput({ brands = [] }: VinInputProps) {
             </div>
           )}
 
-          {showInfo && !result!.generation && result!.availableGenerations.length === 0 && !result!.model && (
-            <p className="text-xs text-zinc-500 px-1">
-              Выберите модель вручную ниже
-            </p>
-          )}
         </div>
       )}
     </div>
