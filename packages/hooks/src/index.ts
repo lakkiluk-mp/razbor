@@ -39,6 +39,32 @@ export type {
 export { useUsageInfo } from './use-usage-info'
 export type { UsageInfo, UsageInfoResponse } from './use-usage-info'
 
+export interface VinDecodeResult {
+  success: boolean
+  vin: string
+  year: number | null
+  brand: { slug: string; name: string } | null
+  model: { slug: string; name: string } | null
+  generation: { id: string; slug: string; name: string; bodyType: string } | null
+  suggestedConfigs: {
+    engines: string[]
+    transmissions: string[]
+    drivetrains: string[]
+  }
+  availableGenerations: Array<{ id: string; slug: string; name: string }>
+  needsSelection: {
+    generation: boolean
+    engine: boolean
+    transmission: boolean
+    drivetrain: boolean
+  }
+  error: string | null
+}
+
+export interface DecodeVinResponse {
+  decodeVin: VinDecodeResult
+}
+
 export { useCalculate } from './use-calculate'
 export type {
   CalculateInput,

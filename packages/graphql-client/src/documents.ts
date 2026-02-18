@@ -436,6 +436,46 @@ export const queries = {
       }
     }
   `,
+  decodeVin: `
+    query DecodeVin($vin: String!) {
+      decodeVin(vin: $vin) {
+        success
+        vin
+        year
+        brand {
+          slug
+          name
+        }
+        model {
+          slug
+          name
+        }
+        generation {
+          id
+          slug
+          name
+          bodyType
+        }
+        suggestedConfigs {
+          engines
+          transmissions
+          drivetrains
+        }
+        availableGenerations {
+          id
+          slug
+          name
+        }
+        needsSelection {
+          generation
+          engine
+          transmission
+          drivetrain
+        }
+        error
+      }
+    }
+  `,
   adminCalculations: `
     query AdminCalculations($limit: Int, $offset: Int, $userId: ID) {
       adminCalculations(limit: $limit, offset: $offset, userId: $userId) {

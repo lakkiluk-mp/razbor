@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
@@ -17,6 +17,7 @@ export function ConfigPage() {
     generationSlug: string
   }>()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   const { data: generationData, isLoading: isLoadingGeneration, isError: isErrorGeneration } = useQuery({
     queryKey: ['generation', brandSlug, modelSlug, generationSlug],
@@ -59,10 +60,33 @@ export function ConfigPage() {
       return
     }
 
-    setSelectedEngine(configs.engines[0]?.configGroup ?? null)
-    setSelectedTransmission(configs.transmissions[0]?.configGroup ?? null)
-    setSelectedDrivetrain(configs.drivetrains[0]?.configGroup ?? null)
-  }, [configs, generation, navigate])
+    const vinEngines = searchParams.getAll('engine')
+    const vinTransmissions = searchParams.getAll('transmission')
+    const vinDrivetrains = searchParams.getAll('drivetrain')
+    const isVin = vinEngines.length > 0 || vinTransmissions.length > 0 || vinDrivetrains.length > 0
+
+    const availableEngines = new Set(configs.engines.map(e => e.configGroup))
+    const availableTransmissions = new Set(configs.transmissions.map(t => t.configGroup))
+    const availableDrivetrains = new Set(configs.drivetrains.map(d => d.configGroup))
+
+    const matchedEngine = vinEngines.find(e => availableEngines.has(e))
+    const matchedTransmission = vinTransmissions.find(t => availableTransmissions.has(t))
+    const matchedDrivetrain = vinDrivetrains.find(d => availableDrivetrains.has(d))
+
+    const fallbackEngine = isVin ? null : configs.engines[0]?.configGroup ?? null
+    const fallbackTransmission = isVin ? null : configs.transmissions[0]?.configGroup ?? null
+    const fallbackDrivetrain = isVin ? null : configs.drivetrains[0]?.configGroup ?? null
+
+    setSelectedEngine(
+      matchedEngine ?? (configs.engines.length === 1 ? configs.engines[0]?.configGroup ?? null : fallbackEngine)
+    )
+    setSelectedTransmission(
+      matchedTransmission ?? (configs.transmissions.length === 1 ? configs.transmissions[0]?.configGroup ?? null : fallbackTransmission)
+    )
+    setSelectedDrivetrain(
+      matchedDrivetrain ?? (configs.drivetrains.length === 1 ? configs.drivetrains[0]?.configGroup ?? null : fallbackDrivetrain)
+    )
+  }, [configs, generation, navigate, searchParams])
 
   useEffect(() => {
     if (!isLoadingGeneration && !generation) {
@@ -102,7 +126,16 @@ export function ConfigPage() {
     return null
   }
 
+  const fromVin = searchParams.has('engine') || searchParams.has('transmission') || searchParams.has('drivetrain')
+
+  const missingSelections: string[] = []
+  if (configs.engines.length > 0 && !selectedEngine) missingSelections.push('двигатель')
+  if (configs.transmissions.length > 0 && !selectedTransmission) missingSelections.push('трансмиссию')
+  if (configs.drivetrains.length > 0 && !selectedDrivetrain) missingSelections.push('привод')
+  const isComplete = missingSelections.length === 0
+
   const handleNext = () => {
+    if (!isComplete) return
     const params = new URLSearchParams()
     if (selectedEngine) params.set('engine', selectedEngine)
     if (selectedTransmission) params.set('transmission', selectedTransmission)
@@ -203,9 +236,17 @@ export function ConfigPage() {
       </div>
 
       <div className="px-4 pb-8">
+        {!isComplete && (
+          <p className="text-zinc-500 text-sm text-center mb-2">
+            {fromVin
+              ? `Не удалось определить ${missingSelections.join(', ')} по VIN — выберите вручную`
+              : `Выберите ${missingSelections.join(', ')}`}
+          </p>
+        )}
         <Button
           onClick={handleNext}
-          className="w-full h-14 bg-amber-500 hover:bg-amber-500 text-zinc-900 text-base font-semibold rounded-2xl"
+          disabled={!isComplete}
+          className="w-full h-14 bg-amber-500 hover:bg-amber-500 text-zinc-900 text-base font-semibold rounded-2xl disabled:opacity-40"
         >
           ДАЛЕЕ
         </Button>
