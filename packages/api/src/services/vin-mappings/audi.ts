@@ -1,7 +1,7 @@
 import type { VinBrandMapping } from './types'
 
-export const audiMapping: VinBrandMapping = {
-  wmi: ['WAU', 'WUA', 'WA1'],
+export const audiEuMapping: VinBrandMapping = {
+  wmi: ['WAU', 'WUA'],
   brandSlug: 'audi',
   models: [
     {
@@ -12,6 +12,35 @@ export const audiMapping: VinBrandMapping = {
         mapping: {
           '8R': { slug: '8r', bodyType: 'crossover' },
           FY: { slug: 'fy', bodyType: 'crossover' },
+        },
+      },
+    },
+  ],
+}
+
+export const audiUsMapping: VinBrandMapping = {
+  wmi: ['WA1'],
+  brandSlug: 'audi',
+  models: [
+    {
+      modelSlug: 'q5',
+      modelCodes: { position: [6, 8], codes: ['FP', 'FY'] },
+      generationCodes: {
+        position: [6, 8],
+        mapping: {
+          FY: { slug: 'fy', bodyType: 'crossover' },
+        },
+      },
+      engineCodes: {
+        position: 4,
+        mapping: {
+          K: ['engine:3.2-270'],
+          F: ['engine:2.0-211', 'engine:2.0-225', 'engine:2.0-230'],
+          G: ['engine:3.0-272'],
+          M: ['engine:3.0d-240', 'engine:3.0d-245'],
+          N: ['engine:2.0-249'],
+          A: ['engine:2.0-249'],
+          B: ['engine:2.0-249'],
         },
       },
     },
