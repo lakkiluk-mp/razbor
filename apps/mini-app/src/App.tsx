@@ -17,6 +17,8 @@ import { SubscribePage } from '@/pages/SubscribePage'
 import { PaymentPage } from '@/pages/PaymentPage'
 import { PaymentSuccessPage } from '@/pages/PaymentSuccessPage'
 import { TelegramRequired } from '@/components/TelegramRequired'
+import { OffersPage } from '@/pages/static/OffersPage'
+import { PrivacyPage } from '@/pages/static/PrivacyPage'
 import { AdminGuard } from '@/components/admin/admin-guard'
 import { AdminLayout } from '@/components/admin/admin-layout'
 import { AdminDashboard } from '@/pages/admin/AdminDashboard'
@@ -64,6 +66,10 @@ export function App() {
     sessionStorage.setItem('web-bypass', '1')
   }
   const webBypass = allowWebAccess && sessionStorage.getItem('web-bypass') === '1'
+
+  const pathname = window.location.pathname
+  if (pathname === '/offers') return <OffersPage />
+  if (pathname === '/privacy') return <PrivacyPage />
 
   if (!isDev && !isTelegram && !webBypass) {
     return <TelegramRequired />
