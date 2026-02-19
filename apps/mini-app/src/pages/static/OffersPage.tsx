@@ -1,4 +1,5 @@
-const BOT_URL = 'https://t.me/vrazbore_support_bot'
+const BOT_URL = 'https://t.me/vrazbore_bot'
+const SUPPORT_BOT_URL = 'https://t.me/vrazbore_support_bot'
 const SITE_URL = 'https://vrazbore.tech'
 const EMAIL = 'mf.postika@gmail.com'
 
@@ -253,10 +254,10 @@ export function OffersPage() {
               6.3. Пользователь может обратиться за технической поддержкой
               через Telegram-бот{' '}
               <a
-                href={BOT_URL}
+                href={SUPPORT_BOT_URL}
                 className="text-blue-400 hover:text-blue-300 underline"
               >
-                @vrazbore_bot
+                @vrazbore_support_bot
               </a>{' '}
               или по email{' '}
               <a
@@ -339,10 +340,10 @@ export function OffersPage() {
               8.2. Для получения возврата Пользователь должен обратиться через
               Telegram-бот{' '}
               <a
-                href={BOT_URL}
+                href={SUPPORT_BOT_URL}
                 className="text-blue-400 hover:text-blue-300 underline"
               >
-                @vrazbore_bot
+                @vrazbore_support_bot
               </a>{' '}
               или по email{' '}
               <a
@@ -440,10 +441,10 @@ export function OffersPage() {
             <p className="mt-2">
               12.2. Претензия направляется через Telegram-бот{' '}
               <a
-                href={BOT_URL}
+                href={SUPPORT_BOT_URL}
                 className="text-blue-400 hover:text-blue-300 underline"
               >
-                @vrazbore_bot
+                @vrazbore_support_bot
               </a>{' '}
               или на email{' '}
               <a
@@ -516,10 +517,10 @@ export function OffersPage() {
             <p className="mt-1">
               Поддержка:{' '}
               <a
-                href={BOT_URL}
+                href={SUPPORT_BOT_URL}
                 className="text-blue-400 hover:text-blue-300 underline"
               >
-                Telegram-бот @vrazbore_bot
+                Telegram-бот @vrazbore_support_bot
               </a>
             </p>
           </section>

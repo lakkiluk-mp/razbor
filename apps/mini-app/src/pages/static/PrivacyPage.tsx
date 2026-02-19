@@ -1,4 +1,5 @@
-const BOT_URL = 'https://t.me/vrazbore_support_bot'
+const BOT_URL = 'https://t.me/vrazbore_bot'
+const SUPPORT_BOT_URL = 'https://t.me/vrazbore_support_bot'
 const SITE_URL = 'https://vrazbore.tech'
 const EMAIL = 'mf.postika@gmail.com'
 
@@ -192,10 +193,10 @@ export function PrivacyPage() {
             <p className="mt-3">
               Для реализации прав обратитесь через Telegram-бот{' '}
               <a
-                href={BOT_URL}
+                href={SUPPORT_BOT_URL}
                 className="text-blue-400 hover:text-blue-300 underline"
               >
-                @vrazbore_bot
+                @vrazbore_support_bot
               </a>{' '}
               или по email{' '}
               <a
@@ -236,10 +237,10 @@ export function PrivacyPage() {
               Если у вас возникли вопросы по политике конфиденциальности,
               свяжитесь с нами через Telegram-бот{' '}
               <a
-                href={BOT_URL}
+                href={SUPPORT_BOT_URL}
                 className="text-blue-400 hover:text-blue-300 underline"
               >
-                @vrazbore_bot
+                @vrazbore_support_bot
               </a>{' '}
               или по email{' '}
               <a
