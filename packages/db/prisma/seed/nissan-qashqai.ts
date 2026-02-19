@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, fuelPumpHP, transmission, drivetrainFWD, drivetrainAWD } from './builders'
+import { engine, fuelPumpHP, transmission, ecuTransmission, drivetrainFWD, drivetrainAWD } from './builders'
 
 const P = 'nissan-qashqai'
 const S = ['nissan qashqai', 'ниссан кашкай', 'кашкай', 'qashqai']
@@ -14,8 +14,11 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   transmission(P, S, 'mt5', 'МКПП 5-ступ'),
   transmission(P, S, 'mt6', 'МКПП 6-ступ', ['32010JD200']),
   transmission(P, S, 'cvt-jf015e', 'Вариатор (Jatco JF015E)', ['JF015E']),
+  ecuTransmission(P, S, 'cvt-jf015e'),
   transmission(P, S, 'cvt-jf011e', 'Вариатор (Jatco JF011E)', ['JF011E']),
+  ecuTransmission(P, S, 'cvt-jf011e'),
   transmission(P, S, 'cvt-jf016e', 'Вариатор (Jatco JF016E)', ['JF016E']),
+  ecuTransmission(P, S, 'cvt-jf016e'),
   ...drivetrainFWD(P, S),
   ...drivetrainAWD(P, S),
 ]

@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, fuelPumpHP, injectorsDiesel, transmission, drivetrainFWD, turbo } from './builders'
+import { engine, fuelPumpHP, injectorsDiesel, transmission, ecuTransmission, drivetrainFWD, turbo, intercooler } from './builders'
 
 const P = 'opel-astra'
 const S = ['opel astra', 'опель астра', 'астра', 'astra']
@@ -15,22 +15,28 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   fuelPumpHP(P, S, '1.9d-120'),
   injectorsDiesel(P, S, '1.9d-120'),
   turbo(P, S, '1.9d-120', 'Z19DTL'),
+  intercooler(P, S, '1.9d-120'),
   engine(P, S, '1.9d-150', 'Z19DTH', 150),
   fuelPumpHP(P, S, '1.9d-150'),
   injectorsDiesel(P, S, '1.9d-150'),
   turbo(P, S, '1.9d-150', 'Z19DTH'),
+  intercooler(P, S, '1.9d-150'),
 
   engine(P, S, '1.4-100', 'A14XER', 100),
   engine(P, S, '1.4t-140', 'A14NET', 140),
   fuelPumpHP(P, S, '1.4t-140'),
   turbo(P, S, '1.4t-140', 'A14NET'),
+  intercooler(P, S, '1.4t-140'),
   engine(P, S, '1.6-115', 'A16XER', 115),
 
   transmission(P, S, 'mt5', 'МКПП 5-ступ (F17)', ['55565138']),
   transmission(P, S, 'mt6', 'МКПП 6-ступ (M32)', ['55192042']),
   transmission(P, S, 'at4', 'АКПП 4-ступ (Aisin AF17)'),
+  ecuTransmission(P, S, 'at4'),
   transmission(P, S, 'robot', 'Робот Easytronic'),
+  ecuTransmission(P, S, 'robot'),
   transmission(P, S, 'at6', 'АКПП 6-ступ (6T30/6T40)'),
+  ecuTransmission(P, S, 'at6'),
 
   ...drivetrainFWD(P, S),
 ]

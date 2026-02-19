@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, drivetrainFWD, fuelPumpHP } from './builders'
+import { engine, transmission, ecuTransmission, drivetrainFWD, fuelPumpHP } from './builders'
 
 const P = 'toyota-camry'
 const S = ['toyota camry', 'тойота камри', 'камри', 'camry']
@@ -23,10 +23,15 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   // КПП
   transmission(P, S, 'mt5', 'МКПП 5-ступ E351'),
   transmission(P, S, 'at5', 'АКПП 5-ступ U250E', ['3050033460']),
+  ecuTransmission(P, S, 'at5'),
   transmission(P, S, 'at6-u660e', 'АКПП 6-ступ U660E'),
+  ecuTransmission(P, S, 'at6-u660e'),
   transmission(P, S, 'at6-u760e', 'АКПП 6-ступ U760E', ['3050033770']),
+  ecuTransmission(P, S, 'at6-u760e'),
   transmission(P, S, 'cvt', 'Direct Shift-CVT K120', ['3040012760']),
+  ecuTransmission(P, S, 'cvt'),
   transmission(P, S, 'at8', 'АКПП 8-ступ'),
+  ecuTransmission(P, S, 'at8'),
 
   // ТНВД (D-4S двигатели)
   fuelPumpHP(P, S, '2.0-150-6ar'),

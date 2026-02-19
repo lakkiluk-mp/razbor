@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, fuelPumpHP, transmission, drivetrainFWD, turbo } from './builders'
+import { engine, fuelPumpHP, transmission, ecuTransmission, drivetrainFWD, turbo, intercooler } from './builders'
 
 const P = 'skoda-rapid'
 const S = ['skoda rapid', 'шкода рапид', 'рапид', 'rapid']
@@ -12,12 +12,14 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.4-122', 'CAXA', 122, ['03C100038P']),
   fuelPumpHP(P, S, '1.4-122'),
   turbo(P, S, '1.4-122', 'CAXA'),
+  intercooler(P, S, '1.4-122'),
   engine(P, S, '1.6-105', 'CFNA', 105, ['03C100038F']),
 
   // EA211 engines (Gen 1 mid + Gen 2)
   engine(P, S, '1.4-125', 'CZCA', 125, ['04E100033B']),
   fuelPumpHP(P, S, '1.4-125'),
   turbo(P, S, '1.4-125', 'CZCA'),
+  intercooler(P, S, '1.4-125'),
   engine(P, S, '1.6-90', 'CFW', 90),
   engine(P, S, '1.6-110', 'CWVA', 110, ['04E100037C']),
 
@@ -25,7 +27,9 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   transmission(P, S, 'mt5', 'МКПП 5-ступ MQ200', ['02T300046R']),
   transmission(P, S, 'mt6', 'МКПП 6-ступ MQ200'),
   transmission(P, S, 'at6', 'АКПП 6-ступ (Aisin 09G)', ['09G300034']),
+  ecuTransmission(P, S, 'at6'),
   transmission(P, S, 'dsg', 'DSG-7 DQ200 (робот)', ['0AM300048']),
+  ecuTransmission(P, S, 'dsg'),
 
   // Привод — только FWD
   ...drivetrainFWD(P, S),

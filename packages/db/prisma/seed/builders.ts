@@ -222,6 +222,49 @@ export function supercharger(
   }
 }
 
+export function intercooler(
+  prefix: string,
+  searchNames: string[],
+  engineConfig: string,
+): PartData {
+  const slugConfig = engineConfig.replace(/\./g, '-')
+  return {
+    name: 'Интеркулер',
+    slug: `${prefix}-intercooler-${slugConfig}`,
+    category: 'cooling' as PartCategory,
+    schematicZoneCode: null,
+    searchQueries: [
+      ...searchNames.map((n) => `интеркулер ${n}`),
+      ...searchNames.map((n) => `интеркуллер ${n}`),
+      ...searchNames.map((n) => `радиатор интеркулера ${n}`),
+    ],
+    configGroup: `engine:${engineConfig}`,
+  }
+}
+
+export function ecuTransmission(
+  prefix: string,
+  searchNames: string[],
+  transmissionConfig: string,
+): PartData {
+  const slugConfig = transmissionConfig.replace(/\./g, '-')
+  return {
+    name: 'ЭБУ коробки',
+    slug: `${prefix}-ecu-transmission-${slugConfig}`,
+    category: 'electrical' as PartCategory,
+    schematicZoneCode: null,
+    searchQueries: [
+      ...searchNames.map((n) => `блок управления акпп ${n}`),
+      ...searchNames.map((n) => `эбу акпп ${n}`),
+      ...searchNames.map((n) => `блок управления коробкой ${n}`),
+      ...searchNames.map((n) => `блок управления вариатором ${n}`),
+      ...searchNames.map((n) => `блок управления роботом ${n}`),
+      ...searchNames.map((n) => `tcm ${n}`),
+    ],
+    configGroup: `transmission:${transmissionConfig}`,
+  }
+}
+
 export function drivetrainAWD(
   prefix: string,
   searchNames: string[],

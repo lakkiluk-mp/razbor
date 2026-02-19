@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, drivetrainFWD } from './builders'
+import { engine, transmission, ecuTransmission, drivetrainFWD } from './builders'
 
 const P = 'renault-logan'
 const S = ['renault logan', 'рено логан', 'логан']
@@ -13,7 +13,9 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.6-113', 'H4M', 113, ['8201583992']),
   transmission(P, S, 'mt', 'МКПП 5-ступ', ['320100676R', '320103500R', '320103334R']),
   transmission(P, S, 'at', 'АКПП 4-ступ', ['8201114873']),
+  ecuTransmission(P, S, 'at'),
   transmission(P, S, 'amt', 'АМТ (робот)'),
+  ecuTransmission(P, S, 'amt'),
   // Привод — только FWD
   ...drivetrainFWD(P, S),
 ]

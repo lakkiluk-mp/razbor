@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, fuelPumpHP, injectorsDiesel, transmission, drivetrainFWD, turbo } from './builders'
+import { engine, fuelPumpHP, injectorsDiesel, transmission, ecuTransmission, drivetrainFWD, turbo, intercooler } from './builders'
 
 const P = 'ford-focus'
 const S = ['ford focus', 'форд фокус', 'фокус']
@@ -19,6 +19,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   fuelPumpHP(P, S, '1.8d-115'),
   injectorsDiesel(P, S, '1.8d-115'),
   turbo(P, S, '1.8d-115', 'KKDA'),
+  intercooler(P, S, '1.8d-115'),
   engine(P, S, '2.0-145', 'AODA', 145),
 
   engine(P, S, '1.6-85', 'XTDA', 85),
@@ -27,18 +28,23 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.5t-150', 'M8DA', 150),
   fuelPumpHP(P, S, '1.5t-150'),
   turbo(P, S, '1.5t-150', 'M8DA'),
+  intercooler(P, S, '1.5t-150'),
   engine(P, S, '2.0-150', 'XQDA', 150),
   fuelPumpHP(P, S, '2.0-150'),
   engine(P, S, '2.0d-140', 'UFDB', 140),
   fuelPumpHP(P, S, '2.0d-140'),
   injectorsDiesel(P, S, '2.0d-140'),
   turbo(P, S, '2.0d-140', 'UFDB'),
+  intercooler(P, S, '2.0d-140'),
 
   transmission(P, S, 'mt5', 'МКПП 5-ступ (IB5)'),
   transmission(P, S, 'mt6', 'МКПП 6-ступ (MMT6)'),
   transmission(P, S, 'at4', 'АКПП 4-ступ (4F27E)'),
+  ecuTransmission(P, S, 'at4'),
   transmission(P, S, 'amt', 'PowerShift 6-ступ (DPS6)'),
+  ecuTransmission(P, S, 'amt'),
   transmission(P, S, 'at6', 'АКПП 6-ступ (6F35)'),
+  ecuTransmission(P, S, 'at6'),
 
   ...drivetrainFWD(P, S),
 ]

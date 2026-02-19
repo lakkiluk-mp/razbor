@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, fuelPumpHP, transmission, drivetrainFWD, turbo } from './builders'
+import { engine, fuelPumpHP, transmission, ecuTransmission, drivetrainFWD, turbo, intercooler } from './builders'
 
 const P = 'volkswagen-polo'
 const S = ['volkswagen polo', 'фольксваген поло', 'поло', 'polo', 'vw polo']
@@ -17,12 +17,15 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.4-125', 'CZCA', 125, ['04E100033B']),
   fuelPumpHP(P, S, '1.4-125'),
   turbo(P, S, '1.4-125', 'CZCA'),
+  intercooler(P, S, '1.4-125'),
 
   // КПП
   transmission(P, S, 'mt5', 'МКПП 5-ступ MQ200', ['02T300046R']),
   transmission(P, S, 'mt6', 'МКПП 6-ступ MQ200'),
   transmission(P, S, 'at6', 'АКПП 6-ступ (Aisin 09G)', ['09G300034']),
+  ecuTransmission(P, S, 'at6'),
   transmission(P, S, 'dsg', 'DSG-7 DQ200 (робот)', ['0AM300048']),
+  ecuTransmission(P, S, 'dsg'),
 
   // Привод — только FWD
   ...drivetrainFWD(P, S),

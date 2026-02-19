@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, drivetrainFWD } from './builders'
+import { engine, transmission, ecuTransmission, drivetrainFWD } from './builders'
 
 const P = 'hyundai-solaris'
 const S = ['hyundai solaris', 'хёндай солярис', 'хендай солярис', 'солярис']
@@ -18,8 +18,10 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   // КПП
   transmission(P, S, 'mt5', 'МКПП 5-ступ'),
   transmission(P, S, 'at4', 'АКПП 4-ступ', ['4500023160']),
+  ecuTransmission(P, S, 'at4'),
   transmission(P, S, 'mt6', 'МКПП 6-ступ'),
   transmission(P, S, 'at6', 'АКПП 6-ступ', ['4500002F730']),
+  ecuTransmission(P, S, 'at6'),
 
   // Привод — только FWD
   ...drivetrainFWD(P, S),

@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, drivetrainFWD } from './builders'
+import { engine, transmission, ecuTransmission, drivetrainFWD } from './builders'
 
 const P = 'lada-granta'
 const S = ['lada granta', 'лада гранта', 'гранта', 'granta']
@@ -12,7 +12,9 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.6-106', 'ВАЗ-21129', 106, ['21129']),
   transmission(P, S, 'mt', 'МКПП 5-ступ'),
   transmission(P, S, 'at', 'АКПП 4-ступ (Jatco JF414E)', ['JF414E']),
+  ecuTransmission(P, S, 'at'),
   transmission(P, S, 'amt', 'Робот (АМТ 2182)'),
+  ecuTransmission(P, S, 'amt'),
   ...drivetrainFWD(P, S),
 ]
 

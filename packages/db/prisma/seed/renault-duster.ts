@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, fuelPumpHP, injectorsDiesel, transmission, drivetrainFWD, drivetrainAWD, turbo } from './builders'
+import { engine, fuelPumpHP, injectorsDiesel, transmission, ecuTransmission, drivetrainFWD, drivetrainAWD, turbo, intercooler } from './builders'
 
 const P = 'renault-duster'
 const S = ['renault duster', 'рено дастер', 'дастер']
@@ -12,15 +12,19 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   fuelPumpHP(P, S, '1.5-109'),
   injectorsDiesel(P, S, '1.5-109'),
   turbo(P, S, '1.5-109', 'K9K'),
+  intercooler(P, S, '1.5-109'),
   engine(P, S, '1.6-113', 'H4M', 113, ['8201583992']),
   engine(P, S, '2.0-143', 'F4R', 143, ['100017527R']),
   engine(P, S, '1.3-149', 'H5Ht', 149, ['100011218R']),
   fuelPumpHP(P, S, '1.3-149'),
   turbo(P, S, '1.3-149', 'H5Ht'),
+  intercooler(P, S, '1.3-149'),
   transmission(P, S, 'mt', 'МКПП 5-ступ', ['320100676R', '320103500R', '320103334R', '320109037R']),
   transmission(P, S, 'at', 'АКПП 4-ступ', ['8201114873']),
+  ecuTransmission(P, S, 'at'),
   transmission(P, S, 'mt6', 'МКПП 6-ступ TL8', ['320108363R']),
   transmission(P, S, 'cvt', 'Вариатор (CVT)', ['320107637R']),
+  ecuTransmission(P, S, 'cvt'),
   ...drivetrainFWD(P, S),
   ...drivetrainAWD(P, S),
 ]

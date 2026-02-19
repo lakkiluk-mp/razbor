@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, drivetrainFWD } from './builders'
+import { engine, transmission, ecuTransmission, drivetrainFWD } from './builders'
 
 const P = 'kia-rio'
 const S = ['kia rio', 'киа рио', 'рио']
@@ -29,7 +29,9 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   transmission(P, S, 'mt5', 'МКПП 5-ступ'),
   transmission(P, S, 'mt6', 'МКПП 6-ступ'),
   transmission(P, S, 'at4', 'АКПП 4-ступ'),
+  ecuTransmission(P, S, 'at4'),
   transmission(P, S, 'at6', 'АКПП 6-ступ'),
+  ecuTransmission(P, S, 'at6'),
 
   // Привод — только FWD
   ...drivetrainFWD(P, S),

@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, drivetrainRWD, drivetrainAWD, fuelPumpHP, injectorsDiesel, turbo } from './builders'
+import { engine, transmission, ecuTransmission, drivetrainRWD, drivetrainAWD, fuelPumpHP, injectorsDiesel, turbo, intercooler } from './builders'
 
 const P = 'bmw-5-series'
 const S = ['5 series', '5 серия', '5 серии', 'бмв 5']
@@ -17,6 +17,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   fuelPumpHP(P, S, '3.0d-193'),
   injectorsDiesel(P, S, '3.0d-193'),
   turbo(P, S, '3.0d-193', 'M57D30'),
+  intercooler(P, S, '3.0d-193'),
 
   // === E60 engines (MPI — без ТНВД) ===
   engine(P, S, '2.5-218', 'N52B25', 218, ['N52B25']),
@@ -27,40 +28,50 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   fuelPumpHP(P, S, '3.0t-272'),
   turbo(P, S, '3.0t-272', 'N54B30', undefined, 'left'),
   turbo(P, S, '3.0t-272', 'N54B30', undefined, 'right'),
+  intercooler(P, S, '3.0t-272'),
 
   // E60 diesel (ТНВД + форсунки)
   engine(P, S, '3.0d-231', 'M57D30', 231, ['M57D30']),
   fuelPumpHP(P, S, '3.0d-231'),
   injectorsDiesel(P, S, '3.0d-231'),
   turbo(P, S, '3.0d-231', 'M57D30'),
+  intercooler(P, S, '3.0d-231'),
 
   // === F10 engines (все GDI — ТНВД) ===
   engine(P, S, '2.0t-184', 'N20B20', 184, ['N20B20']),
   fuelPumpHP(P, S, '2.0t-184'),
   turbo(P, S, '2.0t-184', 'N20B20'),
+  intercooler(P, S, '2.0t-184'),
   engine(P, S, '2.0t-245', 'N20B20', 245, ['N20B20']),
   fuelPumpHP(P, S, '2.0t-245'),
   turbo(P, S, '2.0t-245', 'N20B20'),
+  intercooler(P, S, '2.0t-245'),
   engine(P, S, '3.0t-306', 'N55B30', 306, ['N55B30']),
   fuelPumpHP(P, S, '3.0t-306'),
   turbo(P, S, '3.0t-306', 'N55B30'),
+  intercooler(P, S, '3.0t-306'),
   engine(P, S, '4.4t-407', 'N63B44', 407, ['N63B44']),
   fuelPumpHP(P, S, '4.4t-407'),
   turbo(P, S, '4.4t-407', 'N63B44', undefined, 'left'),
   turbo(P, S, '4.4t-407', 'N63B44', undefined, 'right'),
+  intercooler(P, S, '4.4t-407'),
 
   // F10 diesel (ТНВД + форсунки)
   engine(P, S, '3.0d-245', 'N57D30', 245, ['N57D30']),
   fuelPumpHP(P, S, '3.0d-245'),
   injectorsDiesel(P, S, '3.0d-245'),
   turbo(P, S, '3.0d-245', 'N57D30'),
+  intercooler(P, S, '3.0d-245'),
 
   // === Transmissions ===
   transmission(P, S, 'mt5', 'МКПП 5-ступ'),
   transmission(P, S, 'at5', 'АКПП 5-ступ ZF 5HP19', ['5HP19']),
+  ecuTransmission(P, S, 'at5'),
   transmission(P, S, 'mt6', 'МКПП 6-ступ'),
   transmission(P, S, 'at6', 'АКПП 6-ступ ZF 6HP19', ['6HP19']),
+  ecuTransmission(P, S, 'at6'),
   transmission(P, S, 'at8', 'АКПП 8-ступ ZF 8HP45', ['8HP45']),
+  ecuTransmission(P, S, 'at8'),
 
   // === Drivetrain ===
   ...drivetrainRWD(P, S),

@@ -85,6 +85,9 @@ export function getBaseParts(slugPrefix: string, searchNames: string[]): PartDat
     p('comfort-module', 'Блок комфорта', 'electrical', null),
     p('ecu', 'ЭБУ двигателя', 'electrical', null),
     p('battery', 'Аккумулятор', 'electrical', null),
+    p('alternator', 'Генератор', 'electrical', null),
+    p('starter', 'Стартер', 'electrical', null),
+    p('ac-compressor', 'Компрессор кондиционера', 'other', null),
     p('steering-rack', 'Рулевая рейка', 'suspension', null),
 
     p('rear-beam', 'Балка задняя', 'suspension', null),
