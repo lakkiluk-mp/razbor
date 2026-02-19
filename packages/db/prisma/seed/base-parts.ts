@@ -1,8 +1,9 @@
 import { PartCategory } from '@prisma/client'
 import type { PartData } from './types'
 
-function q(partName: string, searchNames: string[]): string[] {
-  return searchNames.map((name) => `${partName} ${name}`)
+function q(partName: string | string[], searchNames: string[]): string[] {
+  const names = Array.isArray(partName) ? partName : [partName]
+  return names.flatMap((n) => searchNames.map((name) => `${n} ${name}`))
 }
 
 function part(
@@ -13,7 +14,7 @@ function part(
   category: PartCategory,
   schematicZoneCode: string | null,
   configGroup?: string | null,
-  customSearchName?: string,
+  customSearchName?: string | string[],
 ): PartData {
   return {
     name,
@@ -32,7 +33,7 @@ export function getBaseParts(slugPrefix: string, searchNames: string[]): PartDat
     category: PartCategory,
     schematicZoneCode: string | null,
     configGroup?: string | null,
-    customSearchName?: string,
+    customSearchName?: string | string[],
   ) => part(slugPrefix, searchNames, slug, name, category, schematicZoneCode, configGroup, customSearchName)
 
   return [
@@ -83,7 +84,7 @@ export function getBaseParts(slugPrefix: string, searchNames: string[]): PartDat
 
     p('fuse-box', 'Блок предохранителей', 'electrical', null),
     p('comfort-module', 'Блок комфорта', 'electrical', null),
-    p('ecu', 'ЭБУ двигателя', 'electrical', null),
+    p('ecu', 'ЭБУ двигателя', 'electrical', null, null, ['эбу двигателя', 'блок управления двигателем']),
     p('battery', 'Аккумулятор', 'electrical', null),
     p('ac-compressor', 'Компрессор кондиционера', 'other', null),
     p('steering-rack', 'Рулевая рейка', 'suspension', null),

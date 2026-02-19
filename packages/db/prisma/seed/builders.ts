@@ -126,6 +126,7 @@ export function starter(
   prefix: string,
   searchNames: string[],
   engineConfig: string,
+  engineCode?: string,
 ): PartData {
   const slugConfig = engineConfig.replace(/\./g, '-')
   const vol = engineConfig.replace(/-\d+\w*$/, '')
@@ -135,6 +136,7 @@ export function starter(
     category: 'electrical' as PartCategory,
     schematicZoneCode: null,
     searchQueries: [
+      ...(engineCode ? searchNames.map((n) => `стартер ${engineCode} ${n}`) : []),
       ...searchNames.map((n) => `стартер ${vol} ${n}`),
       ...searchNames.map((n) => `стартер ${n}`),
     ],
@@ -146,6 +148,7 @@ export function alternator(
   prefix: string,
   searchNames: string[],
   engineConfig: string,
+  engineCode?: string,
 ): PartData {
   const slugConfig = engineConfig.replace(/\./g, '-')
   const vol = engineConfig.replace(/-\d+\w*$/, '')
@@ -155,6 +158,7 @@ export function alternator(
     category: 'electrical' as PartCategory,
     schematicZoneCode: null,
     searchQueries: [
+      ...(engineCode ? searchNames.map((n) => `генератор ${engineCode} ${n}`) : []),
       ...searchNames.map((n) => `генератор ${vol} ${n}`),
       ...searchNames.map((n) => `генератор ${n}`),
     ],
@@ -224,7 +228,7 @@ export function turbo(
   return {
     name: `${namePrefix} ${engineCode}`,
     slug: `${prefix}-turbo${sideSuffix}-${slugConfig}`,
-    category: 'other' as PartCategory,
+    category: 'engine' as PartCategory,
     schematicZoneCode: null,
     searchQueries: [
       ...oem,
@@ -251,7 +255,7 @@ export function supercharger(
   return {
     name: `Компрессор (нагнетатель) ${engineCode}`,
     slug: `${prefix}-supercharger-${slugConfig}`,
-    category: 'other' as PartCategory,
+    category: 'engine' as PartCategory,
     schematicZoneCode: null,
     searchQueries: [
       ...searchNames.map((n) => `компрессор ${engineCode} ${n}`),
@@ -302,6 +306,7 @@ export function ecuTransmission(
     category: 'electrical' as PartCategory,
     schematicZoneCode: null,
     searchQueries: [
+      ...(isDsg ? searchNames.map((n) => `мехатроник ${n}`) : []),
       ...searchNames.map((n) => `блок управления ${typeSearch} ${n}`),
       ...searchNames.map((n) => `эбу ${typeShort} ${n}`),
       ...searchNames.map((n) => `блок управления коробкой ${n}`),

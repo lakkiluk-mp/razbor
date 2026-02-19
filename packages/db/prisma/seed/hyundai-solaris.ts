@@ -8,18 +8,18 @@ const S = ['hyundai solaris', 'хёндай солярис', 'хендай со�
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.4-107', 'G4FA', 107, ['211012BW01']),
-  starter(P, S, '1.4-107'),
-  alternator(P, S, '1.4-107'),
+  starter(P, S, '1.4-107', 'G4FA'),
+  alternator(P, S, '1.4-107', 'G4FA'),
   engine(P, S, '1.6-123', 'G4FC', 123, ['211012BW02']),
-  starter(P, S, '1.6-123'),
-  alternator(P, S, '1.6-123'),
+  starter(P, S, '1.6-123', 'G4FC'),
+  alternator(P, S, '1.6-123', 'G4FC'),
 
   engine(P, S, '1.4-100', 'G4LC', 100),
-  starter(P, S, '1.4-100'),
-  alternator(P, S, '1.4-100'),
+  starter(P, S, '1.4-100', 'G4LC'),
+  alternator(P, S, '1.4-100', 'G4LC'),
   engine(P, S, '1.6-123g', 'G4FG', 123),
-  starter(P, S, '1.6-123g'),
-  alternator(P, S, '1.6-123g'),
+  starter(P, S, '1.6-123g', 'G4FG'),
+  alternator(P, S, '1.6-123g', 'G4FG'),
 
   // КПП
   transmission(P, S, 'mt5', 'МКПП 5-ступ'),
