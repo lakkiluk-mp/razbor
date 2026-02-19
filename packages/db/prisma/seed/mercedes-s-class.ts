@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, ecuTransmission, drivetrainRWD, drivetrainAWD, fuelPumpHP, turbo, intercooler } from './builders'
+import { engine, starter, alternator, transmission, ecuTransmission, drivetrainRWD, drivetrainAWD, fuelPumpHP, turbo, intercooler } from './builders'
 
 const P = 'mercedes-s-class'
 const S = ['s class', 'с класс', 's-class']
@@ -9,26 +9,52 @@ const S = ['s class', 'с класс', 's-class']
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   // W140 engines (MPI — без ТНВД)
   engine(P, S, '2.8-193', 'M104', 193, ['104944']),
+  starter(P, S, '2.8-193'),
+  alternator(P, S, '2.8-193'),
   engine(P, S, '3.2-231', 'M104', 231, ['104994']),
+  starter(P, S, '3.2-231'),
+  alternator(P, S, '3.2-231'),
   engine(P, S, '4.2-279', 'M119', 279, ['119971']),
+  starter(P, S, '4.2-279'),
+  alternator(P, S, '4.2-279'),
   engine(P, S, '5.0-320', 'M119', 320, ['119980']),
+  starter(P, S, '5.0-320'),
+  alternator(P, S, '5.0-320'),
 
   // W220 engines (MPI — без ТНВД)
   engine(P, S, '3.2-224', 'M112', 224, ['112944']),
+  starter(P, S, '3.2-224'),
+  alternator(P, S, '3.2-224'),
   engine(P, S, '3.7-245', 'M112', 245, ['112973']),
+  starter(P, S, '3.7-245'),
+  alternator(P, S, '3.7-245'),
   engine(P, S, '4.3-279', 'M113', 279, ['113941']),
+  starter(P, S, '4.3-279'),
+  alternator(P, S, '4.3-279'),
   engine(P, S, '5.0-306', 'M113', 306, ['113960']),
+  starter(P, S, '5.0-306'),
+  alternator(P, S, '5.0-306'),
 
   // W221 engines
   engine(P, S, '3.5-272', 'M272', 272, ['272948']),
+  starter(P, S, '3.5-272'),
+  alternator(P, S, '3.5-272'),
   engine(P, S, '4.7-340', 'M273', 340, ['273923']),
+  starter(P, S, '4.7-340'),
+  alternator(P, S, '4.7-340'),
   engine(P, S, '5.5-388', 'M273', 388, ['273961']),
+  starter(P, S, '5.5-388'),
+  alternator(P, S, '5.5-388'),
   engine(P, S, '3.5-306', 'M276', 306, ['276957']),
+  starter(P, S, '3.5-306'),
+  alternator(P, S, '3.5-306'),
   fuelPumpHP(P, S, '3.5-306'),
   turbo(P, S, '3.5-306', 'M276', 'A2760900300', 'left'),
   turbo(P, S, '3.5-306', 'M276', 'A2760900400', 'right'),
   intercooler(P, S, '3.5-306'),
   engine(P, S, '4.7-435', 'M278', 435, ['278929']),
+  starter(P, S, '4.7-435'),
+  alternator(P, S, '4.7-435'),
   fuelPumpHP(P, S, '4.7-435'),
   turbo(P, S, '4.7-435', 'M278', 'A2780903580', 'left'),
   turbo(P, S, '4.7-435', 'M278', 'A2780901880', 'right'),

@@ -1,22 +1,38 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, ecuTransmission, drivetrainFWD, fuelPumpHP, turbo, intercooler } from './builders'
+import { engine, starter, alternator, transmission, ecuTransmission, drivetrainFWD, fuelPumpHP, turbo, intercooler } from './builders'
 
 const P = 'mazda-6'
 const S = ['mazda 6', 'мазда 6']
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.8-120', 'L8', 120, ['L82902300']),
+  starter(P, S, '1.8-120'),
+  alternator(P, S, '1.8-120'),
   engine(P, S, '2.0-141', 'LF', 141, ['LF1702300']),
+  starter(P, S, '2.0-141'),
+  alternator(P, S, '2.0-141'),
   engine(P, S, '2.0-147', 'LF', 147, ['LF1702300']),
+  starter(P, S, '2.0-147'),
+  alternator(P, S, '2.0-147'),
   engine(P, S, '2.3-166', 'L3', 166),
+  starter(P, S, '2.3-166'),
+  alternator(P, S, '2.3-166'),
   engine(P, S, '2.5-170', 'L5', 170),
+  starter(P, S, '2.5-170'),
+  alternator(P, S, '2.5-170'),
   engine(P, S, '2.0-150', 'SKYACTIV-G', 150, ['PEY502300']),
+  starter(P, S, '2.0-150'),
+  alternator(P, S, '2.0-150'),
   fuelPumpHP(P, S, '2.0-150'),
   engine(P, S, '2.5-192', 'SKYACTIV-G', 192, ['PYZC02300']),
+  starter(P, S, '2.5-192'),
+  alternator(P, S, '2.5-192'),
   fuelPumpHP(P, S, '2.5-192'),
   engine(P, S, '2.5t-231', 'Turbo SKYACTIV-G', 231, ['PYZE02300']),
+  starter(P, S, '2.5t-231'),
+  alternator(P, S, '2.5t-231'),
   fuelPumpHP(P, S, '2.5t-231'),
   turbo(P, S, '2.5t-231', 'SKYACTIV-G'),
   intercooler(P, S, '2.5t-231'),

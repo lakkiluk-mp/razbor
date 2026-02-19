@@ -1,24 +1,35 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, ecuTransmission, drivetrainFWD, fuelPumpHP } from './builders'
+import { engine, starter, alternator, transmission, ecuTransmission, drivetrainFWD, fuelPumpHP } from './builders'
 
 const P = 'toyota-camry'
 const S = ['toyota camry', 'тойота камри', 'камри', 'camry']
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
-  // XV40 engines
   engine(P, S, '2.4-167', '2AZ-FE', 167, ['1900028D00']),
+  starter(P, S, '2.4-167'),
+  alternator(P, S, '2.4-167'),
   engine(P, S, '3.5-277', '2GR-FE V6', 277, ['190000P090']),
+  starter(P, S, '3.5-277'),
+  alternator(P, S, '3.5-277'),
 
-  // XV50 engines
   engine(P, S, '2.0-150-6ar', '6AR-FSE', 150),
+  starter(P, S, '2.0-150-6ar'),
+  alternator(P, S, '2.0-150-6ar'),
   engine(P, S, '2.5-181', '2AR-FE', 181, ['190000V010']),
+  starter(P, S, '2.5-181'),
+  alternator(P, S, '2.5-181'),
 
-  // XV70 engines
   engine(P, S, '2.0-150-m20a', 'M20A-FKS', 150, ['190003Y280']),
+  starter(P, S, '2.0-150-m20a'),
+  alternator(P, S, '2.0-150-m20a'),
   engine(P, S, '2.5-200', 'A25A-FKS', 200, ['19000F0010']),
+  starter(P, S, '2.5-200'),
+  alternator(P, S, '2.5-200'),
   engine(P, S, '3.5-249', '2GR-FKS V6', 249, ['190000P440']),
+  starter(P, S, '3.5-249'),
+  alternator(P, S, '3.5-249'),
 
   // КПП
   transmission(P, S, 'mt5', 'МКПП 5-ступ E351'),

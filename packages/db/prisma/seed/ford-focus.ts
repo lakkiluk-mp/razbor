@@ -1,37 +1,67 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, fuelPumpHP, injectorsDiesel, transmission, ecuTransmission, drivetrainFWD, turbo, intercooler } from './builders'
+import { engine, starter, alternator, fuelPumpHP, injectorsDiesel, transmission, ecuTransmission, drivetrainFWD, turbo, intercooler } from './builders'
 
 const P = 'ford-focus'
 const S = ['ford focus', 'форд фокус', 'фокус']
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.6-100z', 'FYDA', 100),
+  starter(P, S, '1.6-100z'),
+  alternator(P, S, '1.6-100z'),
   engine(P, S, '1.8-115', 'EYDB', 115),
+  starter(P, S, '1.8-115'),
+  alternator(P, S, '1.8-115'),
   engine(P, S, '2.0-130', 'EDDB', 130),
+  starter(P, S, '2.0-130'),
+  alternator(P, S, '2.0-130'),
 
   engine(P, S, '1.4-80', 'ASDA', 80),
+  starter(P, S, '1.4-80'),
+  alternator(P, S, '1.4-80'),
   engine(P, S, '1.6-100', 'SHDA', 100),
+  starter(P, S, '1.6-100'),
+  alternator(P, S, '1.6-100'),
   engine(P, S, '1.6-115', 'HXDA', 115),
+  starter(P, S, '1.6-115'),
+  alternator(P, S, '1.6-115'),
   engine(P, S, '1.8-125', 'QQDB', 125),
+  starter(P, S, '1.8-125'),
+  alternator(P, S, '1.8-125'),
   engine(P, S, '1.8d-115', 'KKDA', 115),
+  starter(P, S, '1.8d-115'),
+  alternator(P, S, '1.8d-115'),
   fuelPumpHP(P, S, '1.8d-115'),
   injectorsDiesel(P, S, '1.8d-115'),
   turbo(P, S, '1.8d-115', 'KKDA'),
   intercooler(P, S, '1.8d-115'),
   engine(P, S, '2.0-145', 'AODA', 145),
+  starter(P, S, '2.0-145'),
+  alternator(P, S, '2.0-145'),
 
   engine(P, S, '1.6-85', 'XTDA', 85),
+  starter(P, S, '1.6-85'),
+  alternator(P, S, '1.6-85'),
   engine(P, S, '1.6-105', 'IQDA', 105),
+  starter(P, S, '1.6-105'),
+  alternator(P, S, '1.6-105'),
   engine(P, S, '1.6-125', 'PNDA', 125),
+  starter(P, S, '1.6-125'),
+  alternator(P, S, '1.6-125'),
   engine(P, S, '1.5t-150', 'M8DA', 150),
+  starter(P, S, '1.5t-150'),
+  alternator(P, S, '1.5t-150'),
   fuelPumpHP(P, S, '1.5t-150'),
   turbo(P, S, '1.5t-150', 'M8DA'),
   intercooler(P, S, '1.5t-150'),
   engine(P, S, '2.0-150', 'XQDA', 150),
+  starter(P, S, '2.0-150'),
+  alternator(P, S, '2.0-150'),
   fuelPumpHP(P, S, '2.0-150'),
   engine(P, S, '2.0d-140', 'UFDB', 140),
+  starter(P, S, '2.0d-140'),
+  alternator(P, S, '2.0d-140'),
   fuelPumpHP(P, S, '2.0d-140'),
   injectorsDiesel(P, S, '2.0d-140'),
   turbo(P, S, '2.0d-140', 'UFDB'),

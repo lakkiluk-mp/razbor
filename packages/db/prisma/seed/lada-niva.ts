@@ -2,14 +2,18 @@ import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { isSharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, drivetrainAWD } from './builders'
+import { engine, starter, alternator, transmission, drivetrainAWD } from './builders'
 
 const P = 'lada-niva'
 const S = ['lada niva', 'лада нива', 'нива', 'niva']
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.7-83', 'ВАЗ-21214', 83, ['21214']),
+  starter(P, S, '1.7-83'),
+  alternator(P, S, '1.7-83'),
   engine(P, S, '1.7-79', 'ВАЗ-21213', 79, ['21213']),
+  starter(P, S, '1.7-79'),
+  alternator(P, S, '1.7-79'),
   transmission(P, S, 'mt', 'МКПП 5-ступ'),
   ...drivetrainAWD(P, S),
   {
@@ -45,6 +49,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
 const EXCLUDE_PARTS = [
   'Подрамник задний',
   'Блок комфорта',
+  'Компрессор кондиционера',
   'Дверная карта задняя левая',
   'Дверная карта задняя правая',
   'Дверная карта передняя левая',

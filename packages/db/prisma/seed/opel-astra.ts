@@ -1,33 +1,49 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, fuelPumpHP, injectorsDiesel, transmission, ecuTransmission, drivetrainFWD, turbo, intercooler } from './builders'
+import { engine, starter, alternator, fuelPumpHP, injectorsDiesel, transmission, ecuTransmission, drivetrainFWD, turbo, intercooler } from './builders'
 
 const P = 'opel-astra'
 const S = ['opel astra', 'опель астра', 'астра', 'astra']
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.4-90', 'Z14XEP', 90),
+  starter(P, S, '1.4-90'),
+  alternator(P, S, '1.4-90'),
   engine(P, S, '1.6-115z', 'Z16XER', 115),
+  starter(P, S, '1.6-115z'),
+  alternator(P, S, '1.6-115z'),
   engine(P, S, '1.8-140', 'Z18XER', 140, ['93185848']),
+  starter(P, S, '1.8-140'),
+  alternator(P, S, '1.8-140'),
 
   engine(P, S, '1.9d-120', 'Z19DTL', 120),
+  starter(P, S, '1.9d-120'),
+  alternator(P, S, '1.9d-120'),
   fuelPumpHP(P, S, '1.9d-120'),
   injectorsDiesel(P, S, '1.9d-120'),
   turbo(P, S, '1.9d-120', 'Z19DTL'),
   intercooler(P, S, '1.9d-120'),
   engine(P, S, '1.9d-150', 'Z19DTH', 150),
+  starter(P, S, '1.9d-150'),
+  alternator(P, S, '1.9d-150'),
   fuelPumpHP(P, S, '1.9d-150'),
   injectorsDiesel(P, S, '1.9d-150'),
   turbo(P, S, '1.9d-150', 'Z19DTH'),
   intercooler(P, S, '1.9d-150'),
 
   engine(P, S, '1.4-100', 'A14XER', 100),
+  starter(P, S, '1.4-100'),
+  alternator(P, S, '1.4-100'),
   engine(P, S, '1.4t-140', 'A14NET', 140),
+  starter(P, S, '1.4t-140'),
+  alternator(P, S, '1.4t-140'),
   fuelPumpHP(P, S, '1.4t-140'),
   turbo(P, S, '1.4t-140', 'A14NET'),
   intercooler(P, S, '1.4t-140'),
   engine(P, S, '1.6-115', 'A16XER', 115),
+  starter(P, S, '1.6-115'),
+  alternator(P, S, '1.6-115'),
 
   transmission(P, S, 'mt5', 'МКПП 5-ступ (F17)', ['55565138']),
   transmission(P, S, 'mt6', 'МКПП 6-ступ (M32)', ['55192042']),

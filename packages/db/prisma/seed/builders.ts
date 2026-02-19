@@ -122,6 +122,46 @@ export function drivetrainRWD(
   ]
 }
 
+export function starter(
+  prefix: string,
+  searchNames: string[],
+  engineConfig: string,
+): PartData {
+  const slugConfig = engineConfig.replace(/\./g, '-')
+  const vol = engineConfig.replace(/-\d+\w*$/, '')
+  return {
+    name: 'Стартер',
+    slug: `${prefix}-starter-${slugConfig}`,
+    category: 'electrical' as PartCategory,
+    schematicZoneCode: null,
+    searchQueries: [
+      ...searchNames.map((n) => `стартер ${vol} ${n}`),
+      ...searchNames.map((n) => `стартер ${n}`),
+    ],
+    configGroup: `engine:${engineConfig}`,
+  }
+}
+
+export function alternator(
+  prefix: string,
+  searchNames: string[],
+  engineConfig: string,
+): PartData {
+  const slugConfig = engineConfig.replace(/\./g, '-')
+  const vol = engineConfig.replace(/-\d+\w*$/, '')
+  return {
+    name: 'Генератор',
+    slug: `${prefix}-alternator-${slugConfig}`,
+    category: 'electrical' as PartCategory,
+    schematicZoneCode: null,
+    searchQueries: [
+      ...searchNames.map((n) => `генератор ${vol} ${n}`),
+      ...searchNames.map((n) => `генератор ${n}`),
+    ],
+    configGroup: `engine:${engineConfig}`,
+  }
+}
+
 export function fuelPumpHP(
   prefix: string,
   searchNames: string[],
@@ -228,12 +268,14 @@ export function intercooler(
   engineConfig: string,
 ): PartData {
   const slugConfig = engineConfig.replace(/\./g, '-')
+  const vol = engineConfig.replace(/-\d+\w*$/, '')
   return {
     name: 'Интеркулер',
     slug: `${prefix}-intercooler-${slugConfig}`,
     category: 'cooling' as PartCategory,
     schematicZoneCode: null,
     searchQueries: [
+      ...searchNames.map((n) => `интеркулер ${vol} ${n}`),
       ...searchNames.map((n) => `интеркулер ${n}`),
       ...searchNames.map((n) => `интеркуллер ${n}`),
       ...searchNames.map((n) => `радиатор интеркулера ${n}`),
@@ -248,17 +290,21 @@ export function ecuTransmission(
   transmissionConfig: string,
 ): PartData {
   const slugConfig = transmissionConfig.replace(/\./g, '-')
+  const isCvt = transmissionConfig.startsWith('cvt')
+  const isRobot = transmissionConfig.startsWith('amt') || transmissionConfig.startsWith('robot')
+  const isDsg = transmissionConfig.startsWith('dsg')
+  const typeName = isCvt ? 'ЭБУ вариатора' : isRobot ? 'ЭБУ робота' : isDsg ? 'ЭБУ DSG' : 'ЭБУ АКПП'
+  const typeSearch = isCvt ? 'вариатором' : isRobot ? 'роботом' : isDsg ? 'дсг' : 'акпп'
+  const typeShort = isCvt ? 'вариатор' : isRobot ? 'робот' : isDsg ? 'dsg' : 'акпп'
   return {
-    name: 'ЭБУ коробки',
+    name: typeName,
     slug: `${prefix}-ecu-transmission-${slugConfig}`,
     category: 'electrical' as PartCategory,
     schematicZoneCode: null,
     searchQueries: [
-      ...searchNames.map((n) => `блок управления акпп ${n}`),
-      ...searchNames.map((n) => `эбу акпп ${n}`),
+      ...searchNames.map((n) => `блок управления ${typeSearch} ${n}`),
+      ...searchNames.map((n) => `эбу ${typeShort} ${n}`),
       ...searchNames.map((n) => `блок управления коробкой ${n}`),
-      ...searchNames.map((n) => `блок управления вариатором ${n}`),
-      ...searchNames.map((n) => `блок управления роботом ${n}`),
       ...searchNames.map((n) => `tcm ${n}`),
     ],
     configGroup: `transmission:${transmissionConfig}`,

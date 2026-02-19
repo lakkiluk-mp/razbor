@@ -1,16 +1,24 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, ecuTransmission, drivetrainFWD } from './builders'
+import { engine, starter, alternator, transmission, ecuTransmission, drivetrainFWD } from './builders'
 
 const P = 'renault-logan'
 const S = ['renault logan', 'рено логан', 'логан']
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.4-75', 'K7J', 75, ['6001549085']),
+  starter(P, S, '1.4-75'),
+  alternator(P, S, '1.4-75'),
   engine(P, S, '1.6-k7m', 'K7M', 82, ['8201109282', '100015193R']),
+  starter(P, S, '1.6-k7m'),
+  alternator(P, S, '1.6-k7m'),
   engine(P, S, '1.6-k4m', 'K4M', 102, ['8201315743', '6001549002']),
+  starter(P, S, '1.6-k4m'),
+  alternator(P, S, '1.6-k4m'),
   engine(P, S, '1.6-113', 'H4M', 113, ['8201583992']),
+  starter(P, S, '1.6-113'),
+  alternator(P, S, '1.6-113'),
   transmission(P, S, 'mt', 'МКПП 5-ступ', ['320100676R', '320103500R', '320103334R']),
   transmission(P, S, 'at', 'АКПП 4-ступ', ['8201114873']),
   ecuTransmission(P, S, 'at'),

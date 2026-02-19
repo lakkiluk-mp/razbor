@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, ecuTransmission, drivetrainAWD, fuelPumpHP, injectorsDiesel, turbo, intercooler, supercharger } from './builders'
+import { engine, starter, alternator, transmission, ecuTransmission, drivetrainAWD, fuelPumpHP, injectorsDiesel, turbo, intercooler, supercharger } from './builders'
 
 const P = 'audi-q5'
 const S = ['q5', 'ку5', 'q 5']
@@ -9,45 +9,65 @@ const S = ['q5', 'ку5', 'q 5']
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   // === 8R Petrol engines ===
   engine(P, S, '2.0-180', 'CDNB', 180, ['06H100031R']),
+  starter(P, S, '2.0-180'),
+  alternator(P, S, '2.0-180'),
   fuelPumpHP(P, S, '2.0-180'),
   turbo(P, S, '2.0-180', 'CDNB'),
   intercooler(P, S, '2.0-180'),
   engine(P, S, '2.0-211', 'CDNC', 211, ['06H100035H']),
+  starter(P, S, '2.0-211'),
+  alternator(P, S, '2.0-211'),
   fuelPumpHP(P, S, '2.0-211'),
   turbo(P, S, '2.0-211', 'CDNC'),
   intercooler(P, S, '2.0-211'),
   engine(P, S, '2.0-225', 'CNCD', 225, ['06L100032L']),
+  starter(P, S, '2.0-225'),
+  alternator(P, S, '2.0-225'),
   fuelPumpHP(P, S, '2.0-225'),
   turbo(P, S, '2.0-225', 'CNCD'),
   intercooler(P, S, '2.0-225'),
   engine(P, S, '2.0-230', 'CNCE', 230, ['CNCE']),
+  starter(P, S, '2.0-230'),
+  alternator(P, S, '2.0-230'),
   fuelPumpHP(P, S, '2.0-230'),
   turbo(P, S, '2.0-230', 'CNCE'),
   intercooler(P, S, '2.0-230'),
   engine(P, S, '3.2-270', 'CALB', 270, ['06E100031L']),
+  starter(P, S, '3.2-270'),
+  alternator(P, S, '3.2-270'),
   fuelPumpHP(P, S, '3.2-270'),
   engine(P, S, '3.0-272', 'CTUC', 272, ['06E100036A']),
+  starter(P, S, '3.0-272'),
+  alternator(P, S, '3.0-272'),
   fuelPumpHP(P, S, '3.0-272'),
   supercharger(P, S, '3.0-272', 'CTUC'),
   intercooler(P, S, '3.0-272'),
 
   // === 8R Diesel engines ===
   engine(P, S, '2.0d-170', 'CAHA', 170, ['03L100036C']),
+  starter(P, S, '2.0d-170'),
+  alternator(P, S, '2.0d-170'),
   fuelPumpHP(P, S, '2.0d-170'),
   injectorsDiesel(P, S, '2.0d-170'),
   turbo(P, S, '2.0d-170', 'CAHA'),
   intercooler(P, S, '2.0d-170'),
   engine(P, S, '2.0d-177', 'CGLC', 177, ['CGLC']),
+  starter(P, S, '2.0d-177'),
+  alternator(P, S, '2.0d-177'),
   fuelPumpHP(P, S, '2.0d-177'),
   injectorsDiesel(P, S, '2.0d-177'),
   turbo(P, S, '2.0d-177', 'CGLC'),
   intercooler(P, S, '2.0d-177'),
   engine(P, S, '3.0d-240', 'CCWA', 240, ['CCWA']),
+  starter(P, S, '3.0d-240'),
+  alternator(P, S, '3.0d-240'),
   fuelPumpHP(P, S, '3.0d-240'),
   injectorsDiesel(P, S, '3.0d-240'),
   turbo(P, S, '3.0d-240', 'CCWA'),
   intercooler(P, S, '3.0d-240'),
   engine(P, S, '3.0d-245', 'CDUD', 245, ['CDUD']),
+  starter(P, S, '3.0d-245'),
+  alternator(P, S, '3.0d-245'),
   fuelPumpHP(P, S, '3.0d-245'),
   injectorsDiesel(P, S, '3.0d-245'),
   turbo(P, S, '3.0d-245', 'CDUD'),
@@ -55,12 +75,16 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
 
   // === FY Petrol engines ===
   engine(P, S, '2.0-249', 'DAXB', 249, ['06L100032T']),
+  starter(P, S, '2.0-249'),
+  alternator(P, S, '2.0-249'),
   fuelPumpHP(P, S, '2.0-249'),
   turbo(P, S, '2.0-249', 'DAXB'),
   intercooler(P, S, '2.0-249'),
 
   // === FY Diesel engines ===
   engine(P, S, '2.0d-190', 'DETA', 190, ['DETA']),
+  starter(P, S, '2.0d-190'),
+  alternator(P, S, '2.0d-190'),
   fuelPumpHP(P, S, '2.0d-190'),
   injectorsDiesel(P, S, '2.0d-190'),
   turbo(P, S, '2.0d-190', 'DETA'),

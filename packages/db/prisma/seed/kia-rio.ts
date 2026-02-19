@@ -1,29 +1,45 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, ecuTransmission, drivetrainFWD } from './builders'
+import { engine, starter, alternator, transmission, ecuTransmission, drivetrainFWD } from './builders'
 
 const P = 'kia-rio'
 const S = ['kia rio', 'киа рио', 'рио']
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
-  // DC engines (1 поколение, 2000-2005)
   engine(P, S, '1.3-84', 'A3E', 84),
+  starter(P, S, '1.3-84'),
+  alternator(P, S, '1.3-84'),
   engine(P, S, '1.5-95', 'A5E', 95),
+  starter(P, S, '1.5-95'),
+  alternator(P, S, '1.5-95'),
   engine(P, S, '1.5-108', 'A5D', 108),
+  starter(P, S, '1.5-108'),
+  alternator(P, S, '1.5-108'),
 
-  // JB engines (2 поколение, 2005-2011)
   engine(P, S, '1.4-97', 'G4EE', 97),
+  starter(P, S, '1.4-97'),
+  alternator(P, S, '1.4-97'),
   engine(P, S, '1.6-112', 'G4ED', 112),
+  starter(P, S, '1.6-112'),
+  alternator(P, S, '1.6-112'),
 
-  // QB engines (3 поколение, 2011-2017)
   engine(P, S, '1.4-107', 'G4FA', 107),
+  starter(P, S, '1.4-107'),
+  alternator(P, S, '1.4-107'),
   engine(P, S, '1.6-123', 'G4FC', 123),
+  starter(P, S, '1.6-123'),
+  alternator(P, S, '1.6-123'),
   engine(P, S, '1.6-138', 'G4FD', 138),
+  starter(P, S, '1.6-138'),
+  alternator(P, S, '1.6-138'),
 
-  // FB engines (4 поколение, 2016-2022)
   engine(P, S, '1.4-100', 'G4LC', 100),
+  starter(P, S, '1.4-100'),
+  alternator(P, S, '1.4-100'),
   engine(P, S, '1.6-123g', 'G4FG', 123),
+  starter(P, S, '1.6-123g'),
+  alternator(P, S, '1.6-123g'),
 
   // КПП
   transmission(P, S, 'mt5', 'МКПП 5-ступ'),

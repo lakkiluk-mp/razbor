@@ -1,19 +1,25 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, ecuTransmission, drivetrainFWD } from './builders'
+import { engine, starter, alternator, transmission, ecuTransmission, drivetrainFWD } from './builders'
 
 const P = 'hyundai-solaris'
 const S = ['hyundai solaris', 'хёндай солярис', 'хендай солярис', 'солярис']
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
-  // Gen 1 (RB) engines
   engine(P, S, '1.4-107', 'G4FA', 107, ['211012BW01']),
+  starter(P, S, '1.4-107'),
+  alternator(P, S, '1.4-107'),
   engine(P, S, '1.6-123', 'G4FC', 123, ['211012BW02']),
+  starter(P, S, '1.6-123'),
+  alternator(P, S, '1.6-123'),
 
-  // Gen 2 (HCr) engines
   engine(P, S, '1.4-100', 'G4LC', 100),
+  starter(P, S, '1.4-100'),
+  alternator(P, S, '1.4-100'),
   engine(P, S, '1.6-123g', 'G4FG', 123),
+  starter(P, S, '1.6-123g'),
+  alternator(P, S, '1.6-123g'),
 
   // КПП
   transmission(P, S, 'mt5', 'МКПП 5-ступ'),

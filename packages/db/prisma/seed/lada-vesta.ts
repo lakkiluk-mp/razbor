@@ -1,16 +1,24 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, ecuTransmission, drivetrainFWD } from './builders'
+import { engine, starter, alternator, transmission, ecuTransmission, drivetrainFWD } from './builders'
 
 const P = 'lada-vesta'
 const S = ['lada vesta', 'лада веста', 'веста', 'vesta']
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.6-106', 'ВАЗ-21129', 106, ['21129']),
+  starter(P, S, '1.6-106'),
+  alternator(P, S, '1.6-106'),
   engine(P, S, '1.6-90', 'ВАЗ-11182', 90, ['11182']),
+  starter(P, S, '1.6-90'),
+  alternator(P, S, '1.6-90'),
   engine(P, S, '1.8-122', 'ВАЗ-21179', 122, ['21179']),
+  starter(P, S, '1.8-122'),
+  alternator(P, S, '1.8-122'),
   engine(P, S, '1.6-113', 'H4M', 113, ['8201583992']),
+  starter(P, S, '1.6-113'),
+  alternator(P, S, '1.6-113'),
   transmission(P, S, 'mt', 'МКПП 5-ступ'),
   transmission(P, S, 'cvt', 'Вариатор (Jatco JF015E)', ['JF015E']),
   ecuTransmission(P, S, 'cvt'),

@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, fuelPumpHP, transmission, ecuTransmission, drivetrainFWD, turbo, intercooler } from './builders'
+import { engine, starter, alternator, fuelPumpHP, transmission, ecuTransmission, drivetrainFWD, turbo, intercooler } from './builders'
 
 const P = 'volkswagen-polo'
 const S = ['volkswagen polo', 'фольксваген поло', 'поло', 'polo', 'vw polo']
@@ -9,12 +9,21 @@ const S = ['volkswagen polo', 'фольксваген поло', 'поло', 'po
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   // EA111 engines (Mk5 only)
   engine(P, S, '1.6-85', 'CFNB', 85),
+  starter(P, S, '1.6-85'),
+  alternator(P, S, '1.6-85'),
   engine(P, S, '1.6-105', 'CFNA', 105, ['03C100038F']),
+  starter(P, S, '1.6-105'),
+  alternator(P, S, '1.6-105'),
 
-  // EA211 engines (Mk5 mid + Mk6)
   engine(P, S, '1.6-90', 'CFW', 90),
+  starter(P, S, '1.6-90'),
+  alternator(P, S, '1.6-90'),
   engine(P, S, '1.6-110', 'CWVA', 110, ['04E100037C']),
+  starter(P, S, '1.6-110'),
+  alternator(P, S, '1.6-110'),
   engine(P, S, '1.4-125', 'CZCA', 125, ['04E100033B']),
+  starter(P, S, '1.4-125'),
+  alternator(P, S, '1.4-125'),
   fuelPumpHP(P, S, '1.4-125'),
   turbo(P, S, '1.4-125', 'CZCA'),
   intercooler(P, S, '1.4-125'),

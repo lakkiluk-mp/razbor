@@ -1,21 +1,31 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, fuelPumpHP, injectorsDiesel, transmission, ecuTransmission, drivetrainFWD, drivetrainAWD, turbo, intercooler } from './builders'
+import { engine, starter, alternator, fuelPumpHP, injectorsDiesel, transmission, ecuTransmission, drivetrainFWD, drivetrainAWD, turbo, intercooler } from './builders'
 
 const P = 'renault-duster'
 const S = ['renault duster', 'рено дастер', 'дастер']
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   engine(P, S, '1.6-k4m', 'K4M', 102, ['8201315743', '6001549002']),
+  starter(P, S, '1.6-k4m'),
+  alternator(P, S, '1.6-k4m'),
   engine(P, S, '1.5-109', 'K9K', 109, ['100015299R']),
+  starter(P, S, '1.5-109'),
+  alternator(P, S, '1.5-109'),
   fuelPumpHP(P, S, '1.5-109'),
   injectorsDiesel(P, S, '1.5-109'),
   turbo(P, S, '1.5-109', 'K9K'),
   intercooler(P, S, '1.5-109'),
   engine(P, S, '1.6-113', 'H4M', 113, ['8201583992']),
+  starter(P, S, '1.6-113'),
+  alternator(P, S, '1.6-113'),
   engine(P, S, '2.0-143', 'F4R', 143, ['100017527R']),
+  starter(P, S, '2.0-143'),
+  alternator(P, S, '2.0-143'),
   engine(P, S, '1.3-149', 'H5Ht', 149, ['100011218R']),
+  starter(P, S, '1.3-149'),
+  alternator(P, S, '1.3-149'),
   fuelPumpHP(P, S, '1.3-149'),
   turbo(P, S, '1.3-149', 'H5Ht'),
   intercooler(P, S, '1.3-149'),

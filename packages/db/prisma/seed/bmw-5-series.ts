@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, transmission, ecuTransmission, drivetrainRWD, drivetrainAWD, fuelPumpHP, injectorsDiesel, turbo, intercooler } from './builders'
+import { engine, starter, alternator, transmission, ecuTransmission, drivetrainRWD, drivetrainAWD, fuelPumpHP, injectorsDiesel, turbo, intercooler } from './builders'
 
 const P = 'bmw-5-series'
 const S = ['5 series', '5 серия', '5 серии', 'бмв 5']
@@ -9,11 +9,19 @@ const S = ['5 series', '5 серия', '5 серии', 'бмв 5']
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   // === E39 engines (MPI — без ТНВД) ===
   engine(P, S, '2.8-193', 'M52B28', 193, ['M52B28']),
+  starter(P, S, '2.8-193'),
+  alternator(P, S, '2.8-193'),
   engine(P, S, '2.5-192', 'M54B25', 192, ['M54B25']),
+  starter(P, S, '2.5-192'),
+  alternator(P, S, '2.5-192'),
   engine(P, S, '3.0-231', 'M54B30', 231, ['M54B30']),
+  starter(P, S, '3.0-231'),
+  alternator(P, S, '3.0-231'),
 
   // E39 diesel (ТНВД + форсунки)
   engine(P, S, '3.0d-193', 'M57D30', 193, ['M57D30']),
+  starter(P, S, '3.0d-193'),
+  alternator(P, S, '3.0d-193'),
   fuelPumpHP(P, S, '3.0d-193'),
   injectorsDiesel(P, S, '3.0d-193'),
   turbo(P, S, '3.0d-193', 'M57D30'),
@@ -21,10 +29,16 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
 
   // === E60 engines (MPI — без ТНВД) ===
   engine(P, S, '2.5-218', 'N52B25', 218, ['N52B25']),
+  starter(P, S, '2.5-218'),
+  alternator(P, S, '2.5-218'),
   engine(P, S, '3.0-258', 'N52B30', 258, ['N52B30']),
+  starter(P, S, '3.0-258'),
+  alternator(P, S, '3.0-258'),
 
   // E60 GDI turbo (ТНВД)
   engine(P, S, '3.0t-272', 'N54B30', 272, ['N54B30']),
+  starter(P, S, '3.0t-272'),
+  alternator(P, S, '3.0t-272'),
   fuelPumpHP(P, S, '3.0t-272'),
   turbo(P, S, '3.0t-272', 'N54B30', undefined, 'left'),
   turbo(P, S, '3.0t-272', 'N54B30', undefined, 'right'),
@@ -32,6 +46,8 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
 
   // E60 diesel (ТНВД + форсунки)
   engine(P, S, '3.0d-231', 'M57D30', 231, ['M57D30']),
+  starter(P, S, '3.0d-231'),
+  alternator(P, S, '3.0d-231'),
   fuelPumpHP(P, S, '3.0d-231'),
   injectorsDiesel(P, S, '3.0d-231'),
   turbo(P, S, '3.0d-231', 'M57D30'),
@@ -39,18 +55,26 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
 
   // === F10 engines (все GDI — ТНВД) ===
   engine(P, S, '2.0t-184', 'N20B20', 184, ['N20B20']),
+  starter(P, S, '2.0t-184'),
+  alternator(P, S, '2.0t-184'),
   fuelPumpHP(P, S, '2.0t-184'),
   turbo(P, S, '2.0t-184', 'N20B20'),
   intercooler(P, S, '2.0t-184'),
   engine(P, S, '2.0t-245', 'N20B20', 245, ['N20B20']),
+  starter(P, S, '2.0t-245'),
+  alternator(P, S, '2.0t-245'),
   fuelPumpHP(P, S, '2.0t-245'),
   turbo(P, S, '2.0t-245', 'N20B20'),
   intercooler(P, S, '2.0t-245'),
   engine(P, S, '3.0t-306', 'N55B30', 306, ['N55B30']),
+  starter(P, S, '3.0t-306'),
+  alternator(P, S, '3.0t-306'),
   fuelPumpHP(P, S, '3.0t-306'),
   turbo(P, S, '3.0t-306', 'N55B30'),
   intercooler(P, S, '3.0t-306'),
   engine(P, S, '4.4t-407', 'N63B44', 407, ['N63B44']),
+  starter(P, S, '4.4t-407'),
+  alternator(P, S, '4.4t-407'),
   fuelPumpHP(P, S, '4.4t-407'),
   turbo(P, S, '4.4t-407', 'N63B44', undefined, 'left'),
   turbo(P, S, '4.4t-407', 'N63B44', undefined, 'right'),
@@ -58,6 +82,8 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
 
   // F10 diesel (ТНВД + форсунки)
   engine(P, S, '3.0d-245', 'N57D30', 245, ['N57D30']),
+  starter(P, S, '3.0d-245'),
+  alternator(P, S, '3.0d-245'),
   fuelPumpHP(P, S, '3.0d-245'),
   injectorsDiesel(P, S, '3.0d-245'),
   turbo(P, S, '3.0d-245', 'N57D30'),
