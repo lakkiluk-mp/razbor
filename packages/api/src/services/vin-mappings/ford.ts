@@ -1,23 +1,61 @@
 import type { VinBrandMapping } from './types'
 
-export const fordMapping: VinBrandMapping = {
-  wmi: ['WF0'],
+export const fordEuMapping: VinBrandMapping = {
+  wmi: ['WF0', 'X9F'],
+  brandSlug: 'ford',
+  yearPosition: 10,
+  models: [
+    {
+      modelSlug: 'focus',
+      modelCodes: { position: [3, 4], codes: ['K'] },
+      generationCodes: {
+        position: [3, 4],
+        mapping: {
+          K: { slug: 'cb8', bodyType: 'hatchback' },
+        },
+      },
+    },
+    {
+      modelSlug: 'focus',
+      modelCodes: { position: [3, 4], codes: ['P'] },
+      generationCodes: {
+        position: [3, 4],
+        mapping: {
+          P: { slug: 'cb4', bodyType: 'sedan' },
+        },
+      },
+    },
+    {
+      modelSlug: 'focus',
+      modelCodes: { position: [3, 4], codes: ['3', 'D', 'W'] },
+      generationCodes: {
+        position: [3, 4],
+        mapping: {
+          '3': { slug: 'dfw', bodyType: 'hatchback' },
+          D: { slug: 'dfw', bodyType: 'sedan' },
+          W: { slug: 'dfw', bodyType: 'wagon' },
+        },
+      },
+    },
+    {
+      modelSlug: 'focus',
+    },
+  ],
+}
+
+export const fordUsMapping: VinBrandMapping = {
+  wmi: ['1FA', '3FA', '2FA'],
   brandSlug: 'ford',
   models: [
     {
       modelSlug: 'focus',
+      modelCodes: { position: [3, 5], codes: ['DP', 'CP', 'BP', 'AP'] },
       engineCodes: {
-        position: 7,
+        position: 6,
         mapping: {
-          '1': ['engine:1.6-85', 'engine:1.6-100', 'engine:1.6-100z'],
-          '5': ['engine:1.6-125', 'engine:1.6-115'],
-          '9': ['engine:1.5t-150'],
-          P: ['engine:2.0-145', 'engine:2.0-150'],
-          N: ['engine:2.0-145', 'engine:2.0-150'],
-          U: ['engine:2.0-150'],
-          '3': ['engine:1.4-80'],
-          '7': ['engine:1.8-125', 'engine:1.8-115'],
-          D: ['engine:1.8d-115', 'engine:2.0d-140'],
+          F: ['engine:2.0-150', 'engine:2.0-145'],
+          D: ['engine:1.6-85', 'engine:1.6-105'],
+          '8': ['engine:1.6-125'],
         },
       },
     },

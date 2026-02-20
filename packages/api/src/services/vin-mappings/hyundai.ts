@@ -6,12 +6,12 @@ export const hyundaiRuMapping: VinBrandMapping = {
   models: [
     {
       modelSlug: 'solaris',
-      modelCodes: { position: [3, 4], codes: ['C'] },
+      modelCodes: { position: [3, 4], codes: ['K'] },
       engineCodes: {
         position: 7,
         mapping: {
-          C: ['engine:1.4-107'],
-          D: ['engine:1.6-123'],
+          C: ['engine:1.6-123g', 'engine:1.6-123'],
+          D: ['engine:1.4-100', 'engine:1.4-107'],
           '6': ['engine:1.6-123g'],
         },
       },

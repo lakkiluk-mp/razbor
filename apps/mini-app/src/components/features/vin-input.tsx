@@ -14,7 +14,7 @@ const WMI_BRANDS: Record<string, string> = {
   WP0: 'Porsche', WP1: 'Porsche',
   WVW: 'Volkswagen', WV2: 'Volkswagen', XW8: 'Volkswagen / Skoda',
   TMB: 'Skoda',
-  WF0: 'Ford', WFO: 'Ford',
+  WF0: 'Ford', WFO: 'Ford', X9F: 'Ford',
   KNA: 'Kia', KNC: 'Kia', KNE: 'Kia',
   KMH: 'Hyundai', KMJ: 'Hyundai', TME: 'Hyundai', NLH: 'Hyundai', Z94: 'Hyundai',
   XTA: 'Lada', XTK: 'Lada',
@@ -87,14 +87,18 @@ interface PartialHint {
   year: number | null
 }
 
+const FORD_EU_WMI = ['WF0', 'X9F']
+
 function getPartialHint(vin: string): PartialHint {
   const hint: PartialHint = { brand: null, year: null }
   if (vin.length >= 3) {
-    hint.brand = WMI_BRANDS[vin.substring(0, 3)] ?? null
-  }
-  if (vin.length >= 10) {
-    const yearChar = vin[9]
-    if (yearChar) hint.year = VIN_YEAR_CODES[yearChar] ?? null
+    const wmi = vin.substring(0, 3)
+    hint.brand = WMI_BRANDS[wmi] ?? null
+    const yearIdx = FORD_EU_WMI.includes(wmi) ? 10 : 9
+    if (vin.length > yearIdx) {
+      const yearChar = vin[yearIdx]
+      if (yearChar) hint.year = VIN_YEAR_CODES[yearChar] ?? null
+    }
   }
   return hint
 }
@@ -429,7 +433,7 @@ export function VinInput({ brands = [] }: VinInputProps) {
                     <span className="text-xs text-zinc-500">{result!.year} г.</span>
                   )}
                 </div>
-                <p className="text-[10px] text-zinc-500 mt-0.5">Не удалось определить модель — выберите вручную</p>
+                <p className="text-[10px] text-zinc-500 mt-0.5">Не удалось определить поколение — выберите вручную</p>
               </div>
               <ChevronRight className="w-4 h-4 text-zinc-500 shrink-0" />
             </button>

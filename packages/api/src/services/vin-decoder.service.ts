@@ -46,8 +46,8 @@ for (const bm of VIN_BRAND_MAPPINGS) {
 // VIN PARSING
 // ---------------------------------------------------------------------------
 
-function parseVinYear(vin: string): number | null {
-  const code = vin[9]?.toUpperCase()
+function parseVinYear(vin: string, position = 9): number | null {
+  const code = vin[position]?.toUpperCase()
   return code ? VIN_YEAR_CODES[code] ?? null : null
 }
 
@@ -164,12 +164,14 @@ export async function decodeVin(
   }
 
   const wmi = parseWmi(cleanVin)
-  result.year = parseVinYear(cleanVin)
 
   // 1. Ищем brand по WMI
   const brandMappings = findBrandMappings(wmi)
   if (brandMappings.some(bm => bm.skipYearParsing)) {
     result.year = null
+  } else {
+    const yearPos = brandMappings.find(bm => bm.yearPosition !== undefined)?.yearPosition ?? 9
+    result.year = parseVinYear(cleanVin, yearPos)
   }
   const brandSlug = brandMappings[0]?.brandSlug ?? WMI_TO_BRAND[wmi]
 
@@ -218,6 +220,14 @@ export async function decodeVin(
         }
       }
       if (matchedModel) break
+    }
+  }
+
+  // Если модель нашлась в маппинге другого бренда (например Kia vs Hyundai на Z94) — обновляем brand
+  if (matchedBrandMapping && matchedBrandMapping.brandSlug !== result.brand?.slug) {
+    const altBrand = await prisma.brand.findUnique({ where: { slug: matchedBrandMapping.brandSlug } })
+    if (altBrand) {
+      result.brand = { slug: altBrand.slug, name: altBrand.name }
     }
   }
 

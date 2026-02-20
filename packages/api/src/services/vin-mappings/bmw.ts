@@ -1,7 +1,7 @@
 import type { VinBrandMapping } from './types'
 
 export const bmwMapping: VinBrandMapping = {
-  wmi: ['WBA', 'WBS', 'WBY', 'WBM'],
+  wmi: ['WBA', 'WBS', 'WBY', 'WBM', 'X4X'],
   brandSlug: 'bmw',
   models: [
     {

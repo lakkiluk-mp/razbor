@@ -24,4 +24,5 @@ export interface VinBrandMapping {
   brandSlug: string
   models: VinModelMapping[]
   skipYearParsing?: boolean
+  yearPosition?: number
 }

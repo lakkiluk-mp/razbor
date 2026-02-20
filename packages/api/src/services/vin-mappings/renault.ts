@@ -35,6 +35,7 @@ export const renaultMapping: VinBrandMapping = {
         position: [5, 7],
         mapping: {
           RB: ['engine:1.6-k4m'],
+          RD: ['engine:1.5-109'],
           RE: ['engine:1.5-109'],
           RH: ['engine:1.6-113'],
           R4: ['engine:2.0-143'],
