@@ -6,7 +6,7 @@ export const vwRuMapping: VinBrandMapping = {
   models: [
     {
       modelSlug: 'polo',
-      modelCodes: { position: [6, 8], codes: ['6R', 'AW', 'BZ'] },
+      modelCodes: { position: [6, 8], codes: ['6R', '61', 'AW', 'BZ'] },
     },
   ],
 }
@@ -17,7 +17,7 @@ export const vwDeMapping: VinBrandMapping = {
   models: [
     {
       modelSlug: 'polo',
-      modelCodes: { position: [6, 8], codes: ['6R', 'AW', 'BZ'] },
+      modelCodes: { position: [6, 8], codes: ['6R', '61', 'AW', 'BZ'] },
     },
   ],
 }

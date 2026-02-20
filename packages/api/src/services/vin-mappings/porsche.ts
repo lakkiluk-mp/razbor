@@ -34,5 +34,9 @@ export const porscheMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'cayenne',
+      modelCodes: { position: [6, 8], codes: ['9P', '9Y'] },
+    },
   ],
 }

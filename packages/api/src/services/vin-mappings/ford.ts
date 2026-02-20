@@ -17,11 +17,13 @@ export const fordEuMapping: VinBrandMapping = {
     },
     {
       modelSlug: 'focus',
-      modelCodes: { position: [3, 4], codes: ['P'] },
+      modelCodes: { position: [3, 4], codes: ['P', '4', 'H'] },
       generationCodes: {
         position: [3, 4],
         mapping: {
           P: { slug: 'cb4', bodyType: 'sedan' },
+          '4': { slug: 'cb4', bodyType: 'hatchback' },
+          H: { slug: 'cb4', bodyType: 'hatchback' },
         },
       },
     },

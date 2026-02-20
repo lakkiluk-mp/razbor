@@ -7,6 +7,22 @@ export const toyotaRuMapping: VinBrandMapping = {
   models: [
     {
       modelSlug: 'camry',
+      modelCodes: { position: [4, 5], codes: ['E'] },
+      generationCodes: {
+        position: [3, 4],
+        mapping: {
+          B: { slug: 'xv40', bodyType: 'sedan' },
+        },
+      },
+      engineCodes: {
+        position: 4,
+        mapping: {
+          E: ['engine:2.4-167'],
+        },
+      },
+    },
+    {
+      modelSlug: 'camry',
       generationCodes: {
         position: [3, 4],
         mapping: {

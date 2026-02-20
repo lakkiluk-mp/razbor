@@ -10,8 +10,8 @@ export const renaultMapping: VinBrandMapping = {
       engineCodesRange: {
         position: [5, 7],
         mapping: {
-          RA: ['engine:1.6-k7m'],
-          RB: ['engine:1.6-k4m'],
+          RA: ['engine:1.4-k7j', 'engine:1.6-k7m'],
+          RB: ['engine:1.4-k7j', 'engine:1.6-k4m'],
           RH: ['engine:1.6-113'],
           R4: ['engine:2.0-143'],
         },
@@ -22,6 +22,7 @@ export const renaultMapping: VinBrandMapping = {
           '4': ['transmission:mt'],
           '5': ['transmission:mt'],
           '6': ['transmission:mt'],
+          H: ['transmission:mt5'],
           '1': ['transmission:at'],
           '2': ['transmission:at'],
           C: ['transmission:amt'],
@@ -48,6 +49,7 @@ export const renaultMapping: VinBrandMapping = {
           '4': ['transmission:mt'],
           '5': ['transmission:mt'],
           '6': ['transmission:mt6'],
+          G: ['transmission:mt5'],
           '1': ['transmission:at'],
           C: ['transmission:cvt'],
         },
