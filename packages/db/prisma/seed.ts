@@ -166,6 +166,7 @@ async function seedModel(seedData: ModelSeed) {
           where: { slug: partOrRef.slug },
           update: {
             name: partOrRef.name,
+            category: partOrRef.category as 'body' | 'optics' | 'glass' | 'engine' | 'transmission' | 'suspension' | 'interior' | 'electrical' | 'cooling' | 'other',
             searchQueries: partOrRef.searchQueries || [],
             configGroup: partOrRef.configGroup ?? null,
           },

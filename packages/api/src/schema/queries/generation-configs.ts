@@ -89,8 +89,8 @@ builder.queryField('generationConfigs', (t) =>
       const regularPriceMap = aggregatePrices(regularPrices)
       const sharedPriceMap = aggregatePrices(sharedPrices)
 
-      const engines: ConfigOptionData[] = []
-      const transmissions: ConfigOptionData[] = []
+      const engineMap = new Map<string, { name: string; price: number }>()
+      const transmissionMap = new Map<string, { name: string; price: number }>()
       const drivetrainMap = new Map<string, { name: string; totalPrice: number }>()
 
       const drivetrainLabels: Record<string, string> = {
@@ -107,9 +107,17 @@ builder.queryField('generationConfigs', (t) =>
         const price = partPriceMap.get(part.id)?.median ?? 0
 
         if (part.configGroup.startsWith('engine:') && part.category === 'engine') {
-          engines.push({ configGroup: part.configGroup, name: part.name, price })
+          const existing = engineMap.get(part.configGroup)
+          if (!existing) {
+            engineMap.set(part.configGroup, { name: part.name, price })
+          } else if (!existing.name.startsWith('Двигатель') && part.name.startsWith('Двигатель')) {
+            existing.name = part.name
+            existing.price = price
+          }
         } else if (part.configGroup.startsWith('transmission:') && part.category === 'transmission') {
-          transmissions.push({ configGroup: part.configGroup, name: part.name, price })
+          if (!transmissionMap.has(part.configGroup)) {
+            transmissionMap.set(part.configGroup, { name: part.name, price })
+          }
         } else if (part.configGroup.startsWith('drivetrain:')) {
           const existing = drivetrainMap.get(part.configGroup)
           if (existing) {
@@ -123,6 +131,16 @@ builder.queryField('generationConfigs', (t) =>
         }
       }
 
+      const engines = Array.from(engineMap.entries()).map(([configGroup, data]) => ({
+        configGroup,
+        name: data.name,
+        price: data.price,
+      }))
+      const transmissions = Array.from(transmissionMap.entries()).map(([configGroup, data]) => ({
+        configGroup,
+        name: data.name,
+        price: data.price,
+      }))
       const drivetrains = Array.from(drivetrainMap.entries()).map(([configGroup, data]) => ({
         configGroup,
         name: data.name,

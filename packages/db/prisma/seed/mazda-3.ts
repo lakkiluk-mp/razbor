@@ -11,9 +11,9 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   starter(P, S, '1.6-105'),
   alternator(P, S, '1.6-105'),
 
-  engine(P, S, '2.0-150', 'LF', 150, ['LF1702300']),
-  starter(P, S, '2.0-150'),
-  alternator(P, S, '2.0-150'),
+  engine(P, S, '2.0-lf-150', 'LF', 150, ['LF1702300']),
+  starter(P, S, '2.0-lf-150'),
+  alternator(P, S, '2.0-lf-150'),
 
   engine(P, S, '1.5-120', 'SKYACTIV-G', 120),
   starter(P, S, '1.5-120'),
@@ -62,7 +62,7 @@ const generations: GenerationData[] = [
     isActive: true,
     availableConfigs: [
       'engine:1.6-105',
-      'engine:2.0-150',
+      'engine:2.0-lf-150',
       'transmission:mt5',
       'transmission:at5',
       'drivetrain:fwd',
@@ -77,7 +77,7 @@ const generations: GenerationData[] = [
     isActive: true,
     availableConfigs: [
       'engine:1.6-105',
-      'engine:2.0-150',
+      'engine:2.0-lf-150',
       'transmission:mt5',
       'transmission:at4',
       'drivetrain:fwd',
