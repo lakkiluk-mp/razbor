@@ -5,7 +5,62 @@ export const mazdaMapping: VinBrandMapping = {
   brandSlug: 'mazda',
   models: [
     {
+      modelSlug: 'mazda3',
+      modelCodes: {
+        position: [3, 5],
+        codes: ['BK', 'BL', 'BM'],
+      },
+      generationCodes: {
+        position: [3, 5],
+        mapping: {
+          BK: { slug: 'bk', bodyType: 'hatchback' },
+          BL: { slug: 'bl', bodyType: 'hatchback' },
+          BM: { slug: 'bm', bodyType: 'hatchback' },
+        },
+      },
+      engineCodes: {
+        position: 7,
+        mapping: {
+          F: ['engine:2.0-150'],
+          G: ['engine:2.0-150'],
+          '7': ['engine:2.0-150'],
+          '8': ['engine:2.0-150'],
+          P: ['engine:2.0-150'],
+        },
+      },
+    },
+    {
+      modelSlug: 'cx-5',
+      modelCodes: {
+        position: [3, 5],
+        codes: ['KE', 'KF'],
+      },
+      generationCodes: {
+        position: [3, 5],
+        mapping: {
+          KE: { slug: 'ke', bodyType: 'crossover' },
+          KF: { slug: 'kf', bodyType: 'crossover' },
+        },
+      },
+      engineCodes: {
+        position: 7,
+        mapping: {
+          '7': ['engine:2.0-150'],
+          '8': ['engine:2.0-150'],
+          P: ['engine:2.0-150'],
+          '5': ['engine:2.5-192'],
+          '6': ['engine:2.5-192'],
+          '9': ['engine:2.5-192'],
+          D: ['engine:2.2d-175'],
+        },
+      },
+    },
+    {
       modelSlug: 'mazda6',
+      modelCodes: {
+        position: [3, 5],
+        codes: ['GG', 'GY', 'GH', 'GW', 'GJ', 'GL'],
+      },
       generationCodes: {
         position: [3, 5],
         mapping: {

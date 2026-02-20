@@ -60,7 +60,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'мотор 2.5T SKYACTIV',
       'двигатель SKYACTIV-G Turbo',
     ],
-    usedBy: ['mazda-6', 'mazda-cx-5', 'mazda-cx-9'],
+    usedBy: ['mazda-6', 'mazda-cx-9'],
   },
 
   // ========================================

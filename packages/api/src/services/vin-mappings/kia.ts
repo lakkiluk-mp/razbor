@@ -67,5 +67,31 @@ export const kiaMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'optima',
+      modelCodes: { position: [3, 5], codes: ['TF', 'JF'] },
+      generationCodes: {
+        position: [3, 5],
+        mapping: {
+          TF: { slug: 'tf', bodyType: 'sedan' },
+          JF: { slug: 'jf', bodyType: 'sedan' },
+        },
+      },
+      engineCodes: {
+        position: 7,
+        mapping: {
+          B: ['engine:2.0-150', 'engine:2.0-150g'],
+          D: ['engine:2.4-180', 'engine:2.4-188'],
+          C: ['engine:2.0t-245'],
+        },
+      },
+      transmissionCodes: {
+        position: 8,
+        mapping: {
+          A: ['transmission:mt6'],
+          B: ['transmission:at6'],
+        },
+      },
+    },
   ],
 }
