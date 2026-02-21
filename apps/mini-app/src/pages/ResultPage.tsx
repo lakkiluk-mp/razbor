@@ -136,7 +136,6 @@ export function ResultPage() {
   useEffect(() => {
     if (!isInitializedRef.current && groupedParts.length > 0 && !searchQuery.trim()) {
       isInitializedRef.current = true
-      setOpenAccordions([groupedParts[0]!.key])
     }
   }, [groupedParts, searchQuery])
 
