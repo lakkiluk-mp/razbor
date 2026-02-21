@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { CreditCard } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { fetchGraphQL, mutations } from '@/lib/graphql-client'
 import { PLAN_LABELS, SUBSCRIPTION_PLANS, pluralCredits } from '@razbor/shared'
 import { useYooKassaWidget } from '@/hooks/use-yookassa-widget'
+
+type PaymentMethod = 'bank_card' | 'sberbank'
 
 interface CreateSubscriptionResponse {
   createSubscription: {
@@ -25,6 +28,8 @@ export function PaymentPage() {
   const [confirmationToken, setConfirmationToken] = useState<string | null>(null)
   const [widgetFailed, setWidgetFailed] = useState(false)
   const [cooldown, setCooldown] = useState(0)
+  const [isActiveSubscription, setIsActiveSubscription] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null)
 
   const plan = (location.state as { plan?: string } | null)?.plan
   const returnTo = (location.state as { returnTo?: string } | null)?.returnTo
@@ -54,6 +59,11 @@ export function PaymentPage() {
       }
     },
     onError: (err: unknown) => {
+      const code = (err as Error & { code?: string }).code
+      if (code === 'ACTIVE_SUBSCRIPTION') {
+        setIsActiveSubscription(true)
+        return
+      }
       const msg = err instanceof Error ? err.message : String(err)
       const match = msg.match(/через (\d+) сек/)
       if (match) {
@@ -74,9 +84,15 @@ export function PaymentPage() {
     setConfirmationToken(null)
   }, [])
 
+  const paymentMethodsArray = useMemo(
+    () => (paymentMethod ? [paymentMethod] : undefined),
+    [paymentMethod],
+  )
+
   const { isReady, error: widgetError } = useYooKassaWidget({
     confirmationToken,
     containerId: PAYMENT_CONTAINER_ID,
+    paymentMethods: paymentMethodsArray,
     onSuccess: handleWidgetSuccess,
     onFail: handleWidgetFail,
   })
@@ -96,20 +112,67 @@ export function PaymentPage() {
   useEffect(() => {
     if (!plan) {
       navigate('/subscribe', { replace: true, state: { returnTo } })
-      return
     }
-    if (!hasFired.current) {
+  }, [plan, navigate, returnTo])
+
+  const handleSelectMethod = (method: PaymentMethod) => {
+    setPaymentMethod(method)
+    if (plan && !hasFired.current) {
       hasFired.current = true
       mutate(plan)
     }
-  }, [plan, navigate, mutate, returnTo])
+  }
+
+  const cancelMutation = useMutation({
+    mutationFn: () => fetchGraphQL(mutations.cancelSubscription),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['mySubscription'] })
+      queryClient.invalidateQueries({ queryKey: ['me'] })
+      setIsActiveSubscription(false)
+      reset()
+      if (plan) mutate(plan)
+    },
+  })
 
   const handleRetry = () => {
     hasFired.current = false
     setConfirmationToken(null)
     setWidgetFailed(false)
+    setPaymentMethod(null)
     reset()
-    if (plan) mutate(plan)
+  }
+
+  if (isActiveSubscription) {
+    return (
+      <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center p-4">
+        <div className="text-center max-w-sm space-y-4">
+          <div className="w-16 h-16 mx-auto rounded-full bg-amber-500/20 flex items-center justify-center">
+            <span className="text-amber-500 text-2xl font-bold">!</span>
+          </div>
+          <h1 className="text-xl font-bold">Подписка уже активна</h1>
+          <p className="text-zinc-400 text-sm">
+            Отмените текущую подписку, чтобы оформить новую. Оставшиеся оценки будут заменены новым тарифом.
+          </p>
+          <Button
+            onClick={() => cancelMutation.mutate()}
+            disabled={cancelMutation.isPending}
+            className="w-full h-14 bg-amber-500 hover:bg-amber-600 text-zinc-900 text-base font-semibold rounded-2xl"
+          >
+            {cancelMutation.isPending ? 'Отмена подписки...' : 'Отменить и оформить новую'}
+          </Button>
+          {cancelMutation.isError && (
+            <p className="text-red-400 text-sm">Не удалось отменить. Попробуйте позже.</p>
+          )}
+          <Button
+            onClick={() => navigate('/subscribe', { replace: true, state: { returnTo } })}
+            variant="ghost"
+            className="w-full h-12 text-zinc-400 text-sm"
+          >
+            Назад
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   if (isError) {
@@ -158,6 +221,49 @@ export function PaymentPage() {
           >
             {isPending ? 'Обработка...' : 'Попробовать снова'}
           </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!paymentMethod) {
+    return (
+      <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col px-4 pt-4 pb-6">
+        <h1 className="text-2xl font-bold mb-2">Способ оплаты</h1>
+        {planConfig && plan && (
+          <p className="text-zinc-400 text-sm mb-6">
+            {PLAN_LABELS[plan] ?? plan} &middot; {planConfig.price} &#8381;
+          </p>
+        )}
+        <div className="space-y-3">
+          <button
+            type="button"
+            onClick={() => handleSelectMethod('bank_card')}
+            disabled={isPending}
+            className="w-full bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 rounded-2xl p-4 flex items-center gap-4 transition-colors"
+          >
+            <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">
+              <CreditCard className="w-6 h-6 text-amber-500" />
+            </div>
+            <div className="text-left">
+              <p className="text-zinc-100 font-semibold">Банковская карта</p>
+              <p className="text-zinc-400 text-sm">Visa, Mastercard, МИР</p>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSelectMethod('sberbank')}
+            disabled={isPending}
+            className="w-full bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 rounded-2xl p-4 flex items-center gap-4 transition-colors"
+          >
+            <div className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center shrink-0">
+              <span className="text-green-500 text-lg font-bold">S</span>
+            </div>
+            <div className="text-left">
+              <p className="text-zinc-100 font-semibold">SberPay</p>
+              <p className="text-zinc-400 text-sm">Оплата через СберБанк</p>
+            </div>
+          </button>
         </div>
       </div>
     )

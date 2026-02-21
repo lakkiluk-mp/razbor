@@ -6,6 +6,7 @@ const POLL_TIMEOUT = 10_000
 interface UseYooKassaWidgetParams {
   confirmationToken: string | null
   containerId: string
+  paymentMethods?: string[]
   onSuccess: () => void
   onFail: () => void
 }
@@ -21,6 +22,7 @@ interface UseYooKassaWidgetResult {
 export function useYooKassaWidget({
   confirmationToken,
   containerId,
+  paymentMethods,
   onSuccess,
   onFail,
 }: UseYooKassaWidgetParams): UseYooKassaWidgetResult {
@@ -44,6 +46,7 @@ export function useYooKassaWidget({
             control_primary: '#F59E0B',
             background: '#18181b',
           },
+          ...(paymentMethods?.length && { payment_methods: paymentMethods }),
         },
         error_callback: (err) => setError(String(err)),
       })
@@ -64,7 +67,7 @@ export function useYooKassaWidget({
           setIsLoading(false)
         })
     },
-    [],
+    [paymentMethods],
   )
 
   useEffect(() => {
