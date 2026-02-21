@@ -8,7 +8,6 @@ declare global {
           control_primary?: string
           background?: string
         }
-        payment_methods?: string[]
       }
       error_callback?: (error: unknown) => void
     }) => {
