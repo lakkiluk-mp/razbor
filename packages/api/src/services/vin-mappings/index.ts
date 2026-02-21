@@ -2,7 +2,7 @@ import type { VinBrandMapping } from './types'
 import { mazdaMapping } from './mazda'
 import { ladaMapping } from './lada'
 import { hyundaiRuMapping, hyundaiKrMapping } from './hyundai'
-import { kiaMapping, kiaRuMapping } from './kia'
+import { kiaMapping, kiaRuMapping, kiaEuMapping } from './kia'
 import { renaultMapping } from './renault'
 import { fordEuMapping, fordUsMapping } from './ford'
 import { toyotaRuMapping, toyotaJpMapping } from './toyota'
@@ -24,6 +24,7 @@ export const VIN_BRAND_MAPPINGS: VinBrandMapping[] = [
   hyundaiKrMapping,
   kiaRuMapping,
   kiaMapping,
+  kiaEuMapping,
   renaultMapping,
   fordEuMapping,
   fordUsMapping,

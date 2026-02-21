@@ -100,7 +100,7 @@ export const SUBSCRIPTION_PLANS = {
     },
     {
       plan: 'monthly',
-      price: 788,
+      price: 799,
       label: '1 месяц',
       days: 30,
       credits: 25,

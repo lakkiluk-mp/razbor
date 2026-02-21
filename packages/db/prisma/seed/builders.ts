@@ -54,7 +54,8 @@ export function transmission(
   }
   const getTransmissionSearchType = (c: string): string => {
     if (c.startsWith('at')) return 'акпп'
-    if (c.startsWith('amt')) return 'ркпп'
+    if (c.startsWith('amt') || c.startsWith('robot')) return 'ркпп'
+    if (c.startsWith('cvt')) return 'вариатор'
     return 'мкпп'
   }
   const specificType = getTransmissionSearchType(config)
@@ -310,7 +311,6 @@ export function ecuTransmission(
       ...searchNames.map((n) => `блок управления ${typeSearch} ${n}`),
       ...searchNames.map((n) => `эбу ${typeShort} ${n}`),
       ...searchNames.map((n) => `блок управления коробкой ${n}`),
-      ...searchNames.map((n) => `tcm ${n}`),
     ],
     configGroup: `transmission:${transmissionConfig}`,
   }

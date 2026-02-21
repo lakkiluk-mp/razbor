@@ -197,7 +197,7 @@ describe('subscriptionPlans', () => {
     const monthly = result.data?.subscriptionPlans.find((p: { plan: string }) => p.plan === 'monthly')
     expect(monthly).toEqual({
       plan: 'monthly',
-      price: 788,
+      price: 799,
       label: '1 месяц',
       days: 30,
       credits: 25,

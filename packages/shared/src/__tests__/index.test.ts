@@ -25,7 +25,7 @@ describe('SUBSCRIPTION_PLANS', () => {
   })
 
   it('should have monthly plan with correct price', () => {
-    expect(SUBSCRIPTION_PLANS.monthly.price).toBe(788)
+    expect(SUBSCRIPTION_PLANS.monthly.price).toBe(799)
   })
 
   it('should have monthly plan with 30 days', () => {

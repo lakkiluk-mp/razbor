@@ -155,7 +155,7 @@ describe('createSubscription', () => {
       userId: 'test-user-id',
       yooPaymentId: 'yoo-switch',
       idempotencyKey: 'idem-switch',
-      amount: 788,
+      amount: 799,
       status: 'pending',
     })
 
@@ -241,7 +241,7 @@ describe('createSubscription', () => {
     )
   })
 
-  it('should pass monthly amount (788) to payment service', async () => {
+  it('should pass monthly amount (799) to payment service', async () => {
     getActiveSubscriptionMock.mockResolvedValue(null)
     prismaMock.yooPayment.findFirst.mockResolvedValue(null)
     prismaMock.yooPayment.deleteMany.mockResolvedValue({ count: 0 })
@@ -255,7 +255,7 @@ describe('createSubscription', () => {
       userId: 'test-user-id',
       yooPaymentId: 'yoo-m',
       idempotencyKey: 'idem-m',
-      amount: 788,
+      amount: 799,
       status: 'pending',
     })
 
@@ -263,7 +263,7 @@ describe('createSubscription', () => {
 
     expect(createSubscriptionPaymentMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        amount: 788,
+        amount: 799,
         plan: 'monthly',
       }),
     )

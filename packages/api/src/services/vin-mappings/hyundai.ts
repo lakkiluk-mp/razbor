@@ -23,6 +23,26 @@ export const hyundaiRuMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'creta',
+      modelCodes: { position: [3, 4], codes: ['G'] },
+      engineCodes: {
+        position: 6,
+        mapping: {
+          '1': ['engine:1.6-123'],
+          '3': ['engine:2.0-149'],
+        },
+      },
+      transmissionCodes: {
+        position: 7,
+        mapping: {
+          A: ['transmission:mt6'],
+          B: ['transmission:at6', 'transmission:cvt'],
+          C: ['transmission:mt6'],
+          D: ['transmission:at6', 'transmission:cvt'],
+        },
+      },
+    },
   ],
 }
 

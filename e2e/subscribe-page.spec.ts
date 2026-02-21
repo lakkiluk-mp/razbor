@@ -29,7 +29,7 @@ test.describe('E2E-2: Subscribe page (no active subscription)', () => {
     await expect(page.getByText('1 неделя')).toBeVisible()
     await expect(page.getByText('1 месяц')).toBeVisible()
     await expect(page.getByText('249 ₽', { exact: true })).toBeVisible()
-    await expect(page.getByText('788 ₽', { exact: true })).toBeVisible()
+    await expect(page.getByText('799 ₽', { exact: true })).toBeVisible()
   })
 
   test('weekly plan is selected by default', async ({ page }) => {
@@ -42,7 +42,7 @@ test.describe('E2E-2: Subscribe page (no active subscription)', () => {
 
   test('selecting monthly plan updates CTA button price', async ({ page }) => {
     await page.getByText('1 месяц').click()
-    await expect(page.getByRole('button', { name: /Оформить подписку 788/ })).toBeVisible()
+    await expect(page.getByRole('button', { name: /Оформить подписку 799/ })).toBeVisible()
   })
 
   test('shows plan label with credits', async ({ page }) => {

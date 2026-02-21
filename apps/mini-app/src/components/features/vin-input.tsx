@@ -15,7 +15,7 @@ const WMI_BRANDS: Record<string, string> = {
   WVW: 'Volkswagen', WV2: 'Volkswagen', XW8: 'Volkswagen / Skoda',
   TMB: 'Skoda',
   WF0: 'Ford', WFO: 'Ford', X9F: 'Ford',
-  KNA: 'Kia', KNC: 'Kia', KNE: 'Kia',
+  KNA: 'Kia', KNC: 'Kia', KNE: 'Kia', U5Y: 'Kia', XWE: 'Kia',
   KMH: 'Hyundai', KMJ: 'Hyundai', TME: 'Hyundai', NLH: 'Hyundai', Z94: 'Hyundai',
   XTA: 'Lada', XTK: 'Lada',
   JTD: 'Toyota', JTE: 'Toyota', SB1: 'Toyota',

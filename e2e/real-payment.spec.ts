@@ -172,7 +172,7 @@ test.describe.serial('Real payment flow (staging, no mocks)', () => {
     await expect(page.getByText('1 неделя')).toBeVisible()
     await expect(page.getByText('249 ₽', { exact: true })).toBeVisible()
     await expect(page.getByText('1 месяц')).toBeVisible()
-    await expect(page.getByText('788 ₽', { exact: true })).toBeVisible()
+    await expect(page.getByText('799 ₽', { exact: true })).toBeVisible()
 
     await goToPaymentAndPay(page, /Оформить подписку 249/, CARD_SUCCESS)
     await waitForPaymentResult(page)
@@ -283,9 +283,9 @@ test.describe.serial('Real payment flow (staging, no mocks)', () => {
     await expect(page.getByText('Выберите план:')).toBeVisible({ timeout: 10_000 })
 
     await page.getByText('1 месяц').click()
-    await expect(page.getByRole('button', { name: /Оформить подписку 788/ })).toBeVisible()
+    await expect(page.getByRole('button', { name: /Оформить подписку 799/ })).toBeVisible()
 
-    await goToPaymentAndPay(page, /Оформить подписку 788/, CARD_SUCCESS)
+    await goToPaymentAndPay(page, /Оформить подписку 799/, CARD_SUCCESS)
     await waitForPaymentResult(page)
 
     const sub = await pollSubscription()
