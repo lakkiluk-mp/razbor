@@ -366,7 +366,7 @@ export function SubscribePage() {
           </li>
           <li className="flex items-center gap-2 text-zinc-300">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-            Подробная детализация запчастей
+            Прямые ссылки на объявления по запчастям
           </li>
         </ul>
       </div>
