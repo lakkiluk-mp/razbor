@@ -232,13 +232,22 @@ export function SubscribePage() {
               </Button>
             </>
           ) : (
-            <Button
-              variant="outline"
-              onClick={() => setCancelDrawerOpen(true)}
-              className="w-full h-14 border-red-500/30 text-red-500 hover:bg-red-500/10 hover:text-red-500 rounded-2xl"
-            >
-              Отменить подписку
-            </Button>
+            <>
+              <Button
+                variant="outline"
+                onClick={() => setShowPlans(true)}
+                className="w-full h-14 border-zinc-700 text-zinc-300 hover:bg-zinc-800 rounded-2xl"
+              >
+                Изменить подписку
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setCancelDrawerOpen(true)}
+                className="w-full h-14 border-red-500/30 text-red-500 hover:bg-red-500/10 hover:text-red-500 rounded-2xl"
+              >
+                Отменить подписку
+              </Button>
+            </>
           )}
         </div>
 
@@ -349,7 +358,7 @@ export function SubscribePage() {
         <ul className="space-y-2">
           <li className="flex items-center gap-2 text-zinc-300">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-            До 25 расчётов в месяц
+            До 25 расчётов в месячной подписке
           </li>
           <li className="flex items-center gap-2 text-zinc-300">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
@@ -358,10 +367,6 @@ export function SubscribePage() {
           <li className="flex items-center gap-2 text-zinc-300">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
             Подробная детализация запчастей
-          </li>
-          <li className="flex items-center gap-2 text-zinc-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-            Поддержка всех марок
           </li>
         </ul>
       </div>
