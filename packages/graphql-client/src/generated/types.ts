@@ -359,6 +359,7 @@ export type Query = {
   adminUsers: Maybe<AdminUsersList>;
   brand: Maybe<Brand>;
   brands: Maybe<Array<Brand>>;
+  decodeVin: Maybe<VinDecodeResult>;
   generation: Maybe<Generation>;
   generationById: Maybe<Generation>;
   generationConfigs: Maybe<GenerationConfigs>;
@@ -413,6 +414,11 @@ export type QueryAdminUsersArgs = {
 
 export type QueryBrandArgs = {
   slug: Scalars['String']['input'];
+};
+
+
+export type QueryDecodeVinArgs = {
+  vin: Scalars['String']['input'];
 };
 
 
@@ -520,6 +526,62 @@ export type UserProfile = {
   totalCredits: Maybe<Scalars['Int']['output']>;
   trialCredits: Maybe<Scalars['Int']['output']>;
   username: Maybe<Scalars['String']['output']>;
+};
+
+export type VinAvailableGeneration = {
+  __typename?: 'VinAvailableGeneration';
+  id: Maybe<Scalars['String']['output']>;
+  name: Maybe<Scalars['String']['output']>;
+  slug: Maybe<Scalars['String']['output']>;
+};
+
+export type VinBrand = {
+  __typename?: 'VinBrand';
+  name: Maybe<Scalars['String']['output']>;
+  slug: Maybe<Scalars['String']['output']>;
+};
+
+export type VinDecodeResult = {
+  __typename?: 'VinDecodeResult';
+  availableGenerations: Maybe<Array<VinAvailableGeneration>>;
+  brand: Maybe<VinBrand>;
+  error: Maybe<Scalars['String']['output']>;
+  generation: Maybe<VinGeneration>;
+  model: Maybe<VinModel>;
+  needsSelection: Maybe<VinNeedsSelection>;
+  success: Maybe<Scalars['Boolean']['output']>;
+  suggestedConfigs: Maybe<VinSuggestedConfigs>;
+  vin: Maybe<Scalars['String']['output']>;
+  year: Maybe<Scalars['Int']['output']>;
+};
+
+export type VinGeneration = {
+  __typename?: 'VinGeneration';
+  bodyType: Maybe<Scalars['String']['output']>;
+  id: Maybe<Scalars['String']['output']>;
+  name: Maybe<Scalars['String']['output']>;
+  slug: Maybe<Scalars['String']['output']>;
+};
+
+export type VinModel = {
+  __typename?: 'VinModel';
+  name: Maybe<Scalars['String']['output']>;
+  slug: Maybe<Scalars['String']['output']>;
+};
+
+export type VinNeedsSelection = {
+  __typename?: 'VinNeedsSelection';
+  drivetrain: Maybe<Scalars['Boolean']['output']>;
+  engine: Maybe<Scalars['Boolean']['output']>;
+  generation: Maybe<Scalars['Boolean']['output']>;
+  transmission: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type VinSuggestedConfigs = {
+  __typename?: 'VinSuggestedConfigs';
+  drivetrains: Maybe<Array<Scalars['String']['output']>>;
+  engines: Maybe<Array<Scalars['String']['output']>>;
+  transmissions: Maybe<Array<Scalars['String']['output']>>;
 };
 
 export type ZoneType =

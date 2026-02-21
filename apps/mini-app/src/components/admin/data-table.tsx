@@ -1,10 +1,12 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface Column<T> {
   key: string
   header: string
   render?: (item: T) => React.ReactNode
+  sortKey?: string
+  sortable?: boolean
 }
 
 interface DataTableProps<T> {
@@ -17,6 +19,9 @@ interface DataTableProps<T> {
   totalCount?: number
   pageSize?: number
   onPageChange?: (page: number) => void
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
+  onSort?: (sortBy: string, sortOrder: 'asc' | 'desc') => void
 }
 
 export function DataTable<T>({
@@ -29,6 +34,9 @@ export function DataTable<T>({
   totalCount = 0,
   pageSize = 20,
   onPageChange,
+  sortBy,
+  sortOrder,
+  onSort,
 }: DataTableProps<T>) {
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))
   const currentPage = page + 1
@@ -55,14 +63,42 @@ export function DataTable<T>({
         <table className="w-full min-w-[600px]">
           <thead>
             <tr className="border-b border-zinc-800">
-              {columns.map((col) => (
-                <th
-                  key={col.key}
-                  className="text-left text-xs font-medium text-zinc-500 uppercase tracking-wider py-2 px-3 first:pl-0 last:pr-0"
-                >
-                  {col.header}
-                </th>
-              ))}
+              {columns.map((col) => {
+                const fieldKey = col.sortKey || col.key
+                const isActive = sortBy === fieldKey
+
+                return (
+                  <th
+                    key={col.key}
+                    className={cn(
+                      'text-left text-xs font-medium uppercase tracking-wider py-2 px-3 first:pl-0 last:pr-0 select-none',
+                      col.sortable ? 'cursor-pointer group' : '',
+                      isActive ? 'text-amber-500' : 'text-zinc-500'
+                    )}
+                    onClick={() => {
+                      if (!col.sortable || !onSort) return
+                      if (isActive) {
+                        onSort(fieldKey, sortOrder === 'asc' ? 'desc' : 'asc')
+                      } else {
+                        onSort(fieldKey, 'desc')
+                      }
+                    }}
+                  >
+                    <span className="inline-flex items-center gap-1">
+                      {col.header}
+                      {col.sortable && isActive && sortOrder === 'asc' && (
+                        <ArrowUp className="w-3.5 h-3.5" />
+                      )}
+                      {col.sortable && isActive && sortOrder === 'desc' && (
+                        <ArrowDown className="w-3.5 h-3.5" />
+                      )}
+                      {col.sortable && !isActive && (
+                        <ArrowUpDown className="w-3.5 h-3.5 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+                      )}
+                    </span>
+                  </th>
+                )
+              })}
             </tr>
           </thead>
           <tbody>

@@ -35,7 +35,7 @@
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### 1.2 Telegram-интеграция (User, Calculation, Payment)
+### 1.2 Telegram-интеграция (User, Calculation, Subscription)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -49,9 +49,8 @@
 │       │                                                         │
 │       ▼                                                         │
 │  ┌─────────────┐    ┌─────────────┐                            │
-│  │  Payment    │───▶│  Package    │                            │
-│  │  (Stars)    │    └─────────────┘                            │
-│  └─────────────┘                                                │
+│  │ Subscription│───▶│ YooPayment  │                            │
+│  └─────────────┘    └─────────────┘                            │
 │                                                                 │
 │  + PriceHistory (история изменения цен, будущее)               │
 │  + Region (региональные цены, будущее)                         │
@@ -728,57 +727,7 @@ model CalcPart {
 }
 ```
 
-### 6.3 Платежи (Telegram Stars)
-
-```prisma
-/// Пакет оценок
-model Package {
-  id          String    @id @default(cuid())
-  name        String    // "10 оценок"
-  credits     Int       // 10
-  price       Int       // Цена в Telegram Stars
-  isActive    Boolean   @default(true)
-  sortOrder   Int       @default(0)
-
-  payments    Payment[]
-
-  @@map("packages")
-}
-
-/// Платёж через Telegram Stars
-model Payment {
-  id                    String        @id @default(cuid())
-  userId                String
-  packageId             String
-
-  amount                Int           // Сумма в Stars
-  credits               Int           // Кол-во оценок
-  status                PaymentStatus @default(pending)
-
-  // Telegram Payment данные
-  telegramPaymentChargeId String?    @unique  // charge_id от Telegram
-  invoicePayload        String?               // payload для идентификации
-
-  user          User          @relation(fields: [userId], references: [id])
-  package       Package       @relation(fields: [packageId], references: [id])
-
-  createdAt     DateTime      @default(now())
-  paidAt        DateTime?
-
-  @@index([userId])
-  @@index([status])
-  @@map("payments")
-}
-
-enum PaymentStatus {
-  pending
-  succeeded
-  canceled
-  refunded
-}
-```
-
-### 6.4 Детализация цен (samples) и история
+### 6.3 Детализация цен (samples) и история
 
 ```prisma
 /// Примеры объявлений (для попапа "статистика по запчасти")
@@ -829,7 +778,7 @@ model PriceHistory {
 // 3. Оставляем максимум 10 samples на запчасть
 ```
 
-### 6.5 Региональные цены (будущее)
+### 6.4 Региональные цены (будущее)
 
 ```prisma
 /// Регион
@@ -879,7 +828,7 @@ MVP:
 Telegram Integration:
 4. users -- пользователи (Telegram auth)
 5. calculations -- история оценок
-6. payments -- платежи (Telegram Stars)
+6. subscriptions -- подписки (YooKassa)
 
 Будущее:
 7. price_history -- история цен

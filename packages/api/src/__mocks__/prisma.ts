@@ -16,7 +16,6 @@ const createMockDelegate = () => ({
 export const prismaMock = {
   user: createMockDelegate(),
   subscription: createMockDelegate(),
-  payment: createMockDelegate(),
   paymentMethod: createMockDelegate(),
   yooPayment: createMockDelegate(),
   usageLog: createMockDelegate(),
@@ -25,7 +24,6 @@ export const prismaMock = {
 } as unknown as import('@razbor/db').PrismaClient & {
   user: ReturnType<typeof createMockDelegate>
   subscription: ReturnType<typeof createMockDelegate>
-  payment: ReturnType<typeof createMockDelegate>
   paymentMethod: ReturnType<typeof createMockDelegate>
   yooPayment: ReturnType<typeof createMockDelegate>
   usageLog: ReturnType<typeof createMockDelegate>

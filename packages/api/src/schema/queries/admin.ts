@@ -5,17 +5,54 @@ import {
   AdminUserDetailType,
   AdminUsersListType,
   AdminPaymentsListType,
-  AdminTelegramPaymentsListType,
   AdminSubscriptionsListType,
   AdminCalculationsListType,
   type AdminStatsData,
   type AdminUserDetailData,
   type AdminUsersListData,
   type AdminPaymentsListData,
-  type AdminTelegramPaymentsListData,
   type AdminSubscriptionsListData,
   type AdminCalculationsListData,
 } from '../types/admin'
+
+const SORT_FIELDS = {
+  adminUsers: ['createdAt', 'firstName', 'totalCalculations'],
+  adminPayments: ['createdAt', 'amount', 'status'],
+  adminSubscriptions: ['createdAt', 'plan', 'status', 'credits', 'currentPeriodEnd'],
+  adminCalculations: ['createdAt', 'totalPrice'],
+} as const
+
+type SortOrder = 'asc' | 'desc'
+
+function parseSortOrder(sortOrder: string | null | undefined): SortOrder {
+  return sortOrder === 'asc' ? 'asc' : 'desc'
+}
+
+function validateSortField(
+  query: keyof typeof SORT_FIELDS,
+  sortBy: string | null | undefined,
+): string {
+  const whitelist = SORT_FIELDS[query] as readonly string[]
+  return sortBy && whitelist.includes(sortBy) ? sortBy : 'createdAt'
+}
+
+function buildUserOrderBy(sortBy: string | null | undefined, sortOrder: string | null | undefined) {
+  const order = parseSortOrder(sortOrder)
+  const field = validateSortField('adminUsers', sortBy)
+
+  if (field === 'totalCalculations') return { calculations: { _count: order } }
+  return { [field]: order }
+}
+
+function buildSimpleOrderBy(
+  query: keyof typeof SORT_FIELDS,
+  sortBy: string | null | undefined,
+  sortOrder: string | null | undefined,
+): Record<string, SortOrder> {
+  const order = parseSortOrder(sortOrder)
+  const field = validateSortField(query, sortBy)
+  return { [field]: order }
+}
 
 builder.queryField('adminStats', (t) =>
   t.field({
@@ -31,7 +68,6 @@ builder.queryField('adminStats', (t) =>
         totalCalculations,
         activeSubscriptions,
         yooRevenueResult,
-        telegramRevenueResult,
         newUsersToday,
         calculationsToday,
       ] = await Promise.all([
@@ -41,9 +77,6 @@ builder.queryField('adminStats', (t) =>
         ctx.prisma.yooPayment.aggregate({
           _sum: { amount: true },
           where: { status: 'succeeded' },
-        }),
-        ctx.prisma.payment.aggregate({
-          _sum: { amount: true },
         }),
         ctx.prisma.user.count({
           where: { createdAt: { gte: todayStart } },
@@ -56,9 +89,7 @@ builder.queryField('adminStats', (t) =>
       return {
         totalUsers,
         totalCalculations,
-        totalRevenue:
-          (yooRevenueResult._sum.amount ?? 0) +
-          (telegramRevenueResult._sum.amount ?? 0),
+        totalRevenue: yooRevenueResult._sum.amount ?? 0,
         activeSubscriptions,
         newUsersToday,
         calculationsToday,
@@ -74,6 +105,8 @@ builder.queryField('adminUsers', (t) =>
       limit: t.arg.int({ required: false }),
       offset: t.arg.int({ required: false }),
       search: t.arg.string({ required: false }),
+      sortBy: t.arg.string({ required: false }),
+      sortOrder: t.arg.string({ required: false }),
     },
     resolve: async (_root, args, ctx): Promise<AdminUsersListData> => {
       assertAdmin(ctx)
@@ -94,6 +127,8 @@ builder.queryField('adminUsers', (t) =>
           }
         : {}
 
+      const orderBy = buildUserOrderBy(args.sortBy, args.sortOrder)
+
       const [users, totalCount] = await Promise.all([
         ctx.prisma.user.findMany({
           where,
@@ -102,7 +137,6 @@ builder.queryField('adminUsers', (t) =>
               select: {
                 calculations: true,
                 yooPayments: true,
-                payments: true,
               },
             },
             subscriptions: {
@@ -110,7 +144,7 @@ builder.queryField('adminUsers', (t) =>
               take: 1,
             },
           },
-          orderBy: { createdAt: 'desc' },
+          orderBy,
           take: limit,
           skip: offset,
         }),
@@ -128,7 +162,7 @@ builder.queryField('adminUsers', (t) =>
           trialCredits: u.trialCredits,
           createdAt: u.createdAt,
           totalCalculations: u._count.calculations,
-          totalPayments: u._count.yooPayments + u._count.payments,
+          totalPayments: u._count.yooPayments,
           activeSubscription: u.subscriptions.length > 0,
         })),
         totalCount,
@@ -154,7 +188,6 @@ builder.queryField('adminUser', (t) =>
             select: {
               calculations: true,
               yooPayments: true,
-              payments: true,
             },
           },
           calculations: {
@@ -171,10 +204,6 @@ builder.queryField('adminUser', (t) =>
             take: 50,
           },
           yooPayments: {
-            orderBy: { createdAt: 'desc' },
-            take: 50,
-          },
-          payments: {
             orderBy: { createdAt: 'desc' },
             take: 50,
           },
@@ -200,7 +229,7 @@ builder.queryField('adminUser', (t) =>
         trialCredits: user.trialCredits,
         createdAt: user.createdAt,
         totalCalculations: user._count.calculations,
-        totalPayments: user._count.yooPayments + user._count.payments,
+        totalPayments: user._count.yooPayments,
         activeSubscription: user.subscriptions.some((s) => s.status === 'active'),
         calculations: user.calculations.map((c) => ({
           id: c.id,
@@ -222,16 +251,6 @@ builder.queryField('adminUser', (t) =>
           currency: p.currency,
           status: p.status,
           isRecurring: p.isRecurring,
-          createdAt: p.createdAt,
-          userName: user.firstName,
-          userUsername: user.username,
-        })),
-        telegramPayments: user.payments.map((p) => ({
-          id: p.id,
-          userId: p.userId,
-          telegramPaymentId: p.telegramPaymentId,
-          amount: p.amount,
-          calculationsCount: p.calculationsCount,
           createdAt: p.createdAt,
           userName: user.firstName,
           userUsername: user.username,
@@ -267,17 +286,20 @@ builder.queryField('adminPayments', (t) =>
     args: {
       limit: t.arg.int({ required: false }),
       offset: t.arg.int({ required: false }),
+      sortBy: t.arg.string({ required: false }),
+      sortOrder: t.arg.string({ required: false }),
     },
     resolve: async (_root, args, ctx): Promise<AdminPaymentsListData> => {
       assertAdmin(ctx)
 
       const limit = Math.min(Math.max(args.limit ?? 50, 1), 100)
       const offset = Math.max(args.offset ?? 0, 0)
+      const orderBy = buildSimpleOrderBy('adminPayments', args.sortBy, args.sortOrder)
 
       const [payments, totalCount] = await Promise.all([
         ctx.prisma.yooPayment.findMany({
           include: { user: { select: { firstName: true, username: true } } },
-          orderBy: { createdAt: 'desc' },
+          orderBy,
           take: limit,
           skip: offset,
         }),
@@ -303,46 +325,6 @@ builder.queryField('adminPayments', (t) =>
   })
 )
 
-builder.queryField('adminTelegramPayments', (t) =>
-  t.field({
-    type: AdminTelegramPaymentsListType,
-    args: {
-      limit: t.arg.int({ required: false }),
-      offset: t.arg.int({ required: false }),
-    },
-    resolve: async (_root, args, ctx): Promise<AdminTelegramPaymentsListData> => {
-      assertAdmin(ctx)
-
-      const limit = Math.min(Math.max(args.limit ?? 50, 1), 100)
-      const offset = Math.max(args.offset ?? 0, 0)
-
-      const [payments, totalCount] = await Promise.all([
-        ctx.prisma.payment.findMany({
-          include: { user: { select: { firstName: true, username: true } } },
-          orderBy: { createdAt: 'desc' },
-          take: limit,
-          skip: offset,
-        }),
-        ctx.prisma.payment.count(),
-      ])
-
-      return {
-        items: payments.map((p) => ({
-          id: p.id,
-          userId: p.userId,
-          telegramPaymentId: p.telegramPaymentId,
-          amount: p.amount,
-          calculationsCount: p.calculationsCount,
-          createdAt: p.createdAt,
-          userName: p.user.firstName,
-          userUsername: p.user.username,
-        })),
-        totalCount,
-      }
-    },
-  })
-)
-
 builder.queryField('adminSubscriptions', (t) =>
   t.field({
     type: AdminSubscriptionsListType,
@@ -350,6 +332,8 @@ builder.queryField('adminSubscriptions', (t) =>
       limit: t.arg.int({ required: false }),
       offset: t.arg.int({ required: false }),
       status: t.arg.string({ required: false }),
+      sortBy: t.arg.string({ required: false }),
+      sortOrder: t.arg.string({ required: false }),
     },
     resolve: async (_root, args, ctx): Promise<AdminSubscriptionsListData> => {
       assertAdmin(ctx)
@@ -361,11 +345,13 @@ builder.queryField('adminSubscriptions', (t) =>
         ? { status: args.status as 'active' | 'past_due' | 'canceled' | 'expired' }
         : {}
 
+      const orderBy = buildSimpleOrderBy('adminSubscriptions', args.sortBy, args.sortOrder)
+
       const [subscriptions, totalCount] = await Promise.all([
         ctx.prisma.subscription.findMany({
           where,
           include: { user: { select: { firstName: true, username: true } } },
-          orderBy: { createdAt: 'desc' },
+          orderBy,
           take: limit,
           skip: offset,
         }),
@@ -400,6 +386,8 @@ builder.queryField('adminCalculations', (t) =>
       limit: t.arg.int({ required: false }),
       offset: t.arg.int({ required: false }),
       userId: t.arg.id({ required: false }),
+      sortBy: t.arg.string({ required: false }),
+      sortOrder: t.arg.string({ required: false }),
     },
     resolve: async (_root, args, ctx): Promise<AdminCalculationsListData> => {
       assertAdmin(ctx)
@@ -408,6 +396,7 @@ builder.queryField('adminCalculations', (t) =>
       const offset = Math.max(args.offset ?? 0, 0)
 
       const where = args.userId ? { userId: String(args.userId) } : {}
+      const orderBy = buildSimpleOrderBy('adminCalculations', args.sortBy, args.sortOrder)
 
       const [calculations, totalCount] = await Promise.all([
         ctx.prisma.calculation.findMany({
@@ -422,7 +411,7 @@ builder.queryField('adminCalculations', (t) =>
               },
             },
           },
-          orderBy: { createdAt: 'desc' },
+          orderBy,
           take: limit,
           skip: offset,
         }),

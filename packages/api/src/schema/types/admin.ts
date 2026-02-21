@@ -92,36 +92,6 @@ builder.objectType(AdminPaymentType, {
   }),
 })
 
-export interface AdminTelegramPaymentData {
-  id: string
-  userId: string
-  telegramPaymentId: string
-  amount: number
-  calculationsCount: number
-  createdAt: Date
-  userName: string
-  userUsername: string | null
-}
-
-export const AdminTelegramPaymentType =
-  builder.objectRef<AdminTelegramPaymentData>('AdminTelegramPayment')
-
-builder.objectType(AdminTelegramPaymentType, {
-  fields: (t) => ({
-    id: t.exposeID('id'),
-    userId: t.exposeString('userId'),
-    telegramPaymentId: t.exposeString('telegramPaymentId'),
-    amount: t.exposeInt('amount'),
-    calculationsCount: t.exposeInt('calculationsCount'),
-    createdAt: t.field({
-      type: 'DateTime',
-      resolve: (parent) => parent.createdAt,
-    }),
-    userName: t.exposeString('userName'),
-    userUsername: t.exposeString('userUsername', { nullable: true }),
-  }),
-})
-
 export interface AdminSubscriptionData {
   id: string
   userId: string
@@ -236,24 +206,6 @@ builder.objectType(AdminPaymentsListType, {
   }),
 })
 
-export interface AdminTelegramPaymentsListData {
-  items: AdminTelegramPaymentData[]
-  totalCount: number
-}
-
-export const AdminTelegramPaymentsListType =
-  builder.objectRef<AdminTelegramPaymentsListData>('AdminTelegramPaymentsList')
-
-builder.objectType(AdminTelegramPaymentsListType, {
-  fields: (t) => ({
-    items: t.field({
-      type: [AdminTelegramPaymentType],
-      resolve: (parent) => parent.items,
-    }),
-    totalCount: t.exposeInt('totalCount'),
-  }),
-})
-
 export interface AdminSubscriptionsListData {
   items: AdminSubscriptionData[]
   totalCount: number
@@ -293,7 +245,6 @@ builder.objectType(AdminCalculationsListType, {
 export interface AdminUserDetailData extends AdminUserData {
   calculations: AdminCalculationData[]
   yooPayments: AdminPaymentData[]
-  telegramPayments: AdminTelegramPaymentData[]
   subscriptions: AdminSubscriptionData[]
   recentUsageLogs: AdminUsageLogData[]
 }
@@ -348,10 +299,6 @@ builder.objectType(AdminUserDetailType, {
     yooPayments: t.field({
       type: [AdminPaymentType],
       resolve: (parent) => parent.yooPayments,
-    }),
-    telegramPayments: t.field({
-      type: [AdminTelegramPaymentType],
-      resolve: (parent) => parent.telegramPayments,
     }),
     subscriptions: t.field({
       type: [AdminSubscriptionType],

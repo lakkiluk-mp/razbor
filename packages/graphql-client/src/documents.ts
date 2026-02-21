@@ -289,8 +289,8 @@ export const queries = {
     }
   `,
   adminUsers: `
-    query AdminUsers($limit: Int, $offset: Int, $search: String) {
-      adminUsers(limit: $limit, offset: $offset, search: $search) {
+    query AdminUsers($limit: Int, $offset: Int, $search: String, $sortBy: String, $sortOrder: String) {
+      adminUsers(limit: $limit, offset: $offset, search: $search, sortBy: $sortBy, sortOrder: $sortOrder) {
         items {
           id
           telegramId
@@ -346,16 +346,6 @@ export const queries = {
           userName
           userUsername
         }
-        telegramPayments {
-          id
-          userId
-          telegramPaymentId
-          amount
-          calculationsCount
-          createdAt
-          userName
-          userUsername
-        }
         subscriptions {
           id
           userId
@@ -380,8 +370,8 @@ export const queries = {
     }
   `,
   adminPayments: `
-    query AdminPayments($limit: Int, $offset: Int) {
-      adminPayments(limit: $limit, offset: $offset) {
+    query AdminPayments($limit: Int, $offset: Int, $sortBy: String, $sortOrder: String) {
+      adminPayments(limit: $limit, offset: $offset, sortBy: $sortBy, sortOrder: $sortOrder) {
         items {
           id
           userId
@@ -398,26 +388,9 @@ export const queries = {
       }
     }
   `,
-  adminTelegramPayments: `
-    query AdminTelegramPayments($limit: Int, $offset: Int) {
-      adminTelegramPayments(limit: $limit, offset: $offset) {
-        items {
-          id
-          userId
-          telegramPaymentId
-          amount
-          calculationsCount
-          createdAt
-          userName
-          userUsername
-        }
-        totalCount
-      }
-    }
-  `,
   adminSubscriptions: `
-    query AdminSubscriptions($limit: Int, $offset: Int, $status: String) {
-      adminSubscriptions(limit: $limit, offset: $offset, status: $status) {
+    query AdminSubscriptions($limit: Int, $offset: Int, $status: String, $sortBy: String, $sortOrder: String) {
+      adminSubscriptions(limit: $limit, offset: $offset, status: $status, sortBy: $sortBy, sortOrder: $sortOrder) {
         items {
           id
           userId
@@ -477,8 +450,8 @@ export const queries = {
     }
   `,
   adminCalculations: `
-    query AdminCalculations($limit: Int, $offset: Int, $userId: ID) {
-      adminCalculations(limit: $limit, offset: $offset, userId: $userId) {
+    query AdminCalculations($limit: Int, $offset: Int, $userId: ID, $sortBy: String, $sortOrder: String) {
+      adminCalculations(limit: $limit, offset: $offset, userId: $userId, sortBy: $sortBy, sortOrder: $sortOrder) {
         items {
           id
           userId

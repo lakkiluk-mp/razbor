@@ -10,7 +10,7 @@
 
 Построить систему, которая:
 - Работает как Telegram Mini App (Mobile-first)
-- Использует Telegram для авторизации и оплаты (Stars)
+- Использует Telegram для авторизации, оплату через YooKassa
 - Масштабируется от MVP до production с тысячами пользователей
 
 ### 1.2 Ключевые принципы
@@ -19,7 +19,7 @@
 |---------|----------|
 | **API First** | Бэкенд отдаёт только данные (GraphQL). UI полностью отделён |
 | **Shared Logic** | Бизнес-логика, валидация, типы -- в общих пакетах |
-| **Telegram First** | Auth через initData, оплата через Stars, UI через Mini App |
+| **Telegram First** | Auth через initData, оплата через YooKassa, UI через Mini App |
 | **Docker Everything** | Разработка и продакшен -- в контейнерах |
 
 ---
@@ -604,13 +604,6 @@ PORT=4000
 2. Mini App отправляет `initData` в каждом GraphQL запросе через заголовок `X-Telegram-Init-Data`
 3. Сервер валидирует HMAC-подпись с помощью `BOT_TOKEN`
 4. Из `initData` извлекается `user.id` и создается/находится User в БД
-
-### Оплата через Telegram Stars
-1. Клиент вызывает mutation `createInvoiceLink`
-2. Сервер создает invoice через Telegram Bot API
-3. Клиент открывает ссылку через `Telegram.WebApp.openInvoice()`
-4. Telegram обрабатывает оплату и отправляет webhook `pre_checkout_query`
-5. Сервер подтверждает оплату и начисляет кредиты
 
 ### HashRouter
 Telegram WebView не поддерживает History API, поэтому используется HashRouter.

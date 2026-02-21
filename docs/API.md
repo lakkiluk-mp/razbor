@@ -531,56 +531,6 @@ input SaveCalculationInput {
 }
 ```
 
-### 4.4 Платежи (Telegram Stars)
-
-```graphql
-type Query {
-  """
-  Доступные пакеты оценок
-  """
-  packages: [Package!]!
-
-  """
-  Мои платежи
-  """
-  myPayments: [Payment!]!
-}
-
-type Mutation {
-  """
-  Создать invoice для оплаты через Telegram Stars
-  Возвращает ссылку для открытия через Telegram.WebApp.openInvoice()
-  """
-  createInvoiceLink(packageId: ID!): CreateInvoiceLinkResult!
-}
-
-type Package {
-  id: ID!
-  name: String!
-  credits: Int!
-  price: Int!       # Цена в Telegram Stars
-}
-
-type Payment {
-  id: ID!
-  package: Package!
-  amount: Int!       # Сумма в Stars
-  status: PaymentStatus!
-  createdAt: DateTime!
-}
-
-enum PaymentStatus {
-  pending
-  succeeded
-  canceled
-  refunded
-}
-
-type CreateInvoiceLinkResult {
-  invoiceLink: String!  # URL для Telegram.WebApp.openInvoice()
-}
-```
-
 ---
 
 ## 5. Pothos Implementation

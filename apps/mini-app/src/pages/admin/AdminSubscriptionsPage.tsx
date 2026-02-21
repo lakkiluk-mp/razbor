@@ -40,14 +40,24 @@ const statusFilters = [
 export function AdminSubscriptionsPage() {
   const [page, setPage] = useState(0)
   const [statusFilter, setStatusFilter] = useState('')
+  const [sortBy, setSortBy] = useState('createdAt')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+
+  const handleSort = (field: string, order: 'asc' | 'desc') => {
+    setSortBy(field)
+    setSortOrder(order)
+    setPage(0)
+  }
 
   const { data, isLoading, isPlaceholderData } = useQuery({
-    queryKey: ['adminSubscriptions', page, statusFilter],
+    queryKey: ['adminSubscriptions', page, statusFilter, sortBy, sortOrder],
     queryFn: () =>
       fetchGraphQL<AdminSubscriptionsResponse>(queries.adminSubscriptions, {
         limit: PAGE_SIZE,
         offset: page * PAGE_SIZE,
         status: statusFilter || undefined,
+        sortBy,
+        sortOrder,
       }),
     staleTime: 30 * 1000,
     placeholderData: keepPreviousData,
@@ -60,10 +70,12 @@ export function AdminSubscriptionsPage() {
       render: (item: Subscription) =>
         item.userUsername ? `@${item.userUsername}` : item.userName || '-',
     },
-    { key: 'plan', header: 'План' },
+    { key: 'plan', header: 'План', sortable: true, sortKey: 'plan' },
     {
       key: 'status',
       header: 'Статус',
+      sortable: true,
+      sortKey: 'status',
       render: (item: Subscription) => {
         const colors: Record<string, string> = {
           active: 'text-green-500',
@@ -81,11 +93,15 @@ export function AdminSubscriptionsPage() {
     {
       key: 'credits',
       header: 'Кредиты',
+      sortable: true,
+      sortKey: 'credits',
       render: (item: Subscription) => `${item.credits}/${item.creditsTotal}`,
     },
     {
       key: 'period',
       header: 'Период',
+      sortable: true,
+      sortKey: 'currentPeriodEnd',
       render: (item: Subscription) =>
         `${formatDate(item.currentPeriodStart)} \u2014 ${formatDate(item.currentPeriodEnd)}`,
     },
@@ -134,6 +150,9 @@ export function AdminSubscriptionsPage() {
         totalCount={data?.adminSubscriptions.totalCount ?? 0}
         pageSize={PAGE_SIZE}
         onPageChange={setPage}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        onSort={handleSort}
       />
     </div>
   )

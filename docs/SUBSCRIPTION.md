@@ -10,7 +10,6 @@
 |-----------|--------|
 | Поле `User.isPremium` в БД | Есть, всегда `false` |
 | Поле `User.dailyLimit` (по умолчанию 10) | Есть, используется для дневного сброса |
-| Модель `Payment` (Telegram Stars) | Есть, не полностью работает |
 | Вкладка История (блюр для бесплатных) | Есть, кнопка = `alert('Скоро')` |
 | Бейдж Premium в профиле | Есть, кнопка = `alert('Скоро')` |
 | LimitReachedPage | Есть, показывает таймер до сброса |
@@ -28,7 +27,7 @@
 |-------|---------|------|-----------|
 | Бесплатный (пробный) | 3 всего | Бесплатно | Пожизненные, никогда не сбрасываются, только уменьшаются |
 | Недельный | 5 за период | 249 ₽ | Сгорают по истечении, сбрасываются при продлении |
-| Месячный | 25 за период | 788 ₽ | Сгорают по истечении, сбрасываются при продлении |
+| Месячный | 25 за период | 799 ₽ | Сгорают по истечении, сбрасываются при продлении |
 
 ### Правила
 
@@ -177,8 +176,6 @@ model User {
 }
 ```
 
-Старую модель `Payment` (Telegram Stars) можно удалить или пометить как устаревшую.
-
 #### Миграция
 
 ```bash
@@ -199,7 +196,7 @@ export const TRIAL_CREDITS = 3
 
 export const SUBSCRIPTION_PLANS = {
   weekly:  { price: 249, label: '1 неделя', days: 7,  credits: 5,  graceDays: 1 },
-  monthly: { price: 788, label: '1 месяц',  days: 30, credits: 25, graceDays: 3 },
+  monthly: { price: 799, label: '1 месяц',  days: 30, credits: 25, graceDays: 3 },
 } as const
 
 export type SubscriptionPlanKey = keyof typeof SUBSCRIPTION_PLANS
@@ -356,7 +353,7 @@ await useCredit(ctx.prisma, ctx.user.id)
 // Pothos тип: SubscriptionPlanInfo
 {
   plan: String         // 'weekly' | 'monthly'
-  price: Int           // 249 | 788
+  price: Int           // 249 | 799
   label: String        // '1 неделя' | '1 месяц'
   days: Int            // 7 | 30
   credits: Int         // 5 | 25
@@ -566,7 +563,7 @@ query GetUsageInfo {
 │                                     │
 │  ┌─────────────────────────────┐    │
 │  │ ○ 1 месяц          Выгодно │    │  ← бейдж
-│  │   25 расчётов       788 ₽  │    │
+│  │   25 расчётов       799 ₽  │    │
 │  └─────────────────────────────┘    │
 │                                     │
 │  ┌─────────────────────────────┐    │
@@ -630,7 +627,7 @@ query GetUsageInfo {
 │                                     │
 │  ┌─────────────────────────────┐    │
 │  │ Premium · 1 месяц           │    │
-│  │ 25 расчётов         788 ₽  │    │
+│  │ 25 расчётов         799 ₽  │    │
 │  └─────────────────────────────┘    │
 │                                     │
 │  ┌─────────────────────────────┐    │
@@ -863,7 +860,7 @@ const checkout = new YooCheckout({
 
 // Создать начальный платёж (поток через виджет)
 export async function createSubscriptionPayment(params: {
-  amount: number          // в рублях (249 или 788)
+  amount: number          // в рублях (249 или 799)
   userId: string
   plan: 'weekly' | 'monthly'
   idempotencyKey: string

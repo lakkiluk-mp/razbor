@@ -101,7 +101,7 @@ npx playwright test --ui
 | weekly.price | `249` |
 | weekly.days | `7` |
 | weekly.credits | `5` |
-| monthly.price | `788` |
+| monthly.price | `799` |
 | monthly.days | `30` |
 | monthly.credits | `25` |
 | labels (weekly / monthly) | `"1 неделя"` / `"1 месяц"` |
@@ -396,7 +396,7 @@ npx playwright test --ui
 
 | Сценарий | Результат |
 |----------|-----------|
-| Возвращает 2 плана | weekly: {249, 7, 5}, monthly: {788, 30, 25} |
+| Возвращает 2 плана | weekly: {249, 7, 5}, monthly: {799, 30, 25} |
 | Не требует авторизации | Работает для анонимного пользователя |
 
 #### myPaymentMethods (3 теста)
@@ -454,7 +454,7 @@ npx playwright test --ui
 | Недавний платёж (< 1 мин) | `"Подождите минуту перед повторной попыткой"` |
 | Удаление pending платежей | `deleteMany({ userId, status: 'pending', isRecurring: { not: true } })` |
 | Сумма weekly | `createSubscriptionPayment({ amount: 249, plan: 'weekly' })` |
-| Сумма monthly | `createSubscriptionPayment({ amount: 788, plan: 'monthly' })` |
+| Сумма monthly | `createSubscriptionPayment({ amount: 799, plan: 'monthly' })` |
 
 #### cancelSubscription (3 теста)
 
@@ -529,10 +529,10 @@ npx playwright test --ui
 | Тест | Проверка |
 |------|----------|
 | Заголовок и фичи | "Premium подписка", "До 25 расчётов в месяц", "Доступ к истории расчётов", "Подробная детализация запчастей", "Поддержка всех марок" |
-| Оба плана | "1 неделя" / "1 месяц", "249 ₽" / "788 ₽" |
+| Оба плана | "1 неделя" / "1 месяц", "249 ₽" / "799 ₽" |
 | Weekly по умолчанию | CTA содержит "249" |
 | Бейдж "Выгодно" | Отображается на monthly |
-| Выбор monthly | CTA обновляется на "788" |
+| Выбор monthly | CTA обновляется на "799" |
 | Кредиты в планах | "5 расчётов", "25 расчётов" |
 | CTA -> /payment | "Оформить подписку" ведёт на "Подготовка платежа\|Оплата" |
 | Лейбл "Выберите план:" | Отображается |
@@ -697,7 +697,7 @@ npx playwright test --ui
 | 6 | profile reflects active subscription | Профиль: "Dev User", "Premium . 1 неделя", "Осталось: N из 5" |
 | 7 | remove last payment method auto-cancels subscription | API: удаление PM -> methods=0, cancelAtPeriodEnd=true. UI: "Возобновить автопродление" |
 | 8 | cancel subscription then remove payment method | cleanupDevUser() -> нет PM, нет подписки -> "Выберите план:" |
-| 9 | monthly subscription — full payment flow | Выбор "1 месяц" -> оплата 788 ₽ -> виджет ЮKassa -> API: plan=monthly, credits=25 |
+| 9 | monthly subscription — full payment flow | Выбор "1 месяц" -> оплата 799 ₽ -> виджет ЮKassa -> API: plan=monthly, credits=25 |
 | 10 | subscription credits verified via API | API: mySubscription.credits=25, me.subscriptionCredits=25, totalCredits>=25 |
 | 11 | expire subscription via DB — profile shows no subscription | DB: status=expired -> UI: "Выберите план:", профиль: "Получите Premium" |
 | 12 | re-subscribe after expiration works | После истечения -> повторная оплата weekly -> status=active |
@@ -759,7 +759,6 @@ npx playwright test --ui
 | Race conditions при создании подписки | Конкурентное создание из двух клиентов одновременно |
 | Database constraints (FK, unique) | Prisma замокана в unit-тестах. Частично покрыто real-e2e (staging БД) |
 | Redis кэш (инвалидация, TTL) | Не покрыт тестами |
-| Telegram Stars оплата | Отдельный флоу, не связан с ЮKassa |
 | Поведение в Telegram WebView (mobile) | E2E тесты работают в обычном Chromium, а не в WebView |
 | IP Whitelist middleware | Только конфигурационное изменение |
 | Webhook retry/timeout от ЮKassa | Серверная часть retry не тестируется |

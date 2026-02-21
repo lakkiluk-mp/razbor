@@ -238,7 +238,6 @@ model User {
   trialCredits Int      @default(3)
 
   calculations   Calculation[]
-  payments       Payment[]
   usageLogs      UsageLog[]
   subscriptions  Subscription[]
   paymentMethods PaymentMethod[]
@@ -266,21 +265,6 @@ model Calculation {
   @@index([userId, createdAt])
   @@index([generationId])
   @@map("calculations")
-}
-
-model Payment {
-  id                String @id @default(cuid())
-  userId            String
-  telegramPaymentId String @unique
-  amount            Int
-  calculationsCount Int
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  @@index([userId])
-  @@map("payments")
 }
 
 model Subscription {

@@ -34,6 +34,8 @@ export function AdminUsersPage() {
   const [page, setPage] = useState(0)
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [sortBy, setSortBy] = useState('createdAt')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleSearchChange = (value: string) => {
@@ -43,6 +45,12 @@ export function AdminUsersPage() {
     searchTimeoutRef.current = setTimeout(() => setDebouncedSearch(value), 400)
   }
 
+  const handleSort = (field: string, order: 'asc' | 'desc') => {
+    setSortBy(field)
+    setSortOrder(order)
+    setPage(0)
+  }
+
   useEffect(() => {
     return () => {
       if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current)
@@ -50,12 +58,14 @@ export function AdminUsersPage() {
   }, [])
 
   const { data, isLoading, isPlaceholderData } = useQuery({
-    queryKey: ['adminUsers', page, debouncedSearch],
+    queryKey: ['adminUsers', page, debouncedSearch, sortBy, sortOrder],
     queryFn: () =>
       fetchGraphQL<AdminUsersResponse>(queries.adminUsers, {
         limit: PAGE_SIZE,
         offset: page * PAGE_SIZE,
         search: debouncedSearch || undefined,
+        sortBy,
+        sortOrder,
       }),
     staleTime: 30 * 1000,
     placeholderData: keepPreviousData,
@@ -66,6 +76,8 @@ export function AdminUsersPage() {
     {
       key: 'name',
       header: 'Имя',
+      sortable: true,
+      sortKey: 'firstName',
       render: (item: AdminUser) =>
         [item.firstName, item.lastName].filter(Boolean).join(' ') || '-',
     },
@@ -75,7 +87,7 @@ export function AdminUsersPage() {
       render: (item: AdminUser) =>
         item.username ? `@${item.username}` : '-',
     },
-    { key: 'totalCalculations', header: 'Расчётов' },
+    { key: 'totalCalculations', header: 'Расчётов', sortable: true },
     { key: 'totalPayments', header: 'Платежей' },
     {
       key: 'activeSubscription',
@@ -89,6 +101,7 @@ export function AdminUsersPage() {
     {
       key: 'createdAt',
       header: 'Регистрация',
+      sortable: true,
       render: (item: AdminUser) => formatDate(item.createdAt),
     },
   ]
@@ -116,6 +129,9 @@ export function AdminUsersPage() {
         totalCount={data?.adminUsers.totalCount ?? 0}
         pageSize={PAGE_SIZE}
         onPageChange={setPage}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        onSort={handleSort}
       />
     </div>
   )

@@ -28,13 +28,23 @@ const PAGE_SIZE = 20
 
 export function AdminPaymentsPage() {
   const [page, setPage] = useState(0)
+  const [sortBy, setSortBy] = useState('createdAt')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+
+  const handleSort = (field: string, order: 'asc' | 'desc') => {
+    setSortBy(field)
+    setSortOrder(order)
+    setPage(0)
+  }
 
   const { data, isLoading, isPlaceholderData } = useQuery({
-    queryKey: ['adminPayments', page],
+    queryKey: ['adminPayments', page, sortBy, sortOrder],
     queryFn: () =>
       fetchGraphQL<AdminPaymentsResponse>(queries.adminPayments, {
         limit: PAGE_SIZE,
         offset: page * PAGE_SIZE,
+        sortBy,
+        sortOrder,
       }),
     staleTime: 30 * 1000,
     placeholderData: keepPreviousData,
@@ -44,6 +54,8 @@ export function AdminPaymentsPage() {
     {
       key: 'createdAt',
       header: 'Дата',
+      sortable: true,
+      sortKey: 'createdAt',
       render: (item: Payment) => formatDate(item.createdAt),
     },
     {
@@ -55,6 +67,8 @@ export function AdminPaymentsPage() {
     {
       key: 'amount',
       header: 'Сумма',
+      sortable: true,
+      sortKey: 'amount',
       render: (item: Payment) => (
         <span className="text-amber-500 font-medium">{formatMoney(item.amount)}</span>
       ),
@@ -62,6 +76,8 @@ export function AdminPaymentsPage() {
     {
       key: 'status',
       header: 'Статус',
+      sortable: true,
+      sortKey: 'status',
       render: (item: Payment) => (
         <span
           className={
@@ -99,6 +115,9 @@ export function AdminPaymentsPage() {
         totalCount={data?.adminPayments.totalCount ?? 0}
         pageSize={PAGE_SIZE}
         onPageChange={setPage}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        onSort={handleSort}
       />
     </div>
   )

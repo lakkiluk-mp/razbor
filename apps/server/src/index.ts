@@ -4,7 +4,6 @@ import cluster from 'node:cluster'
 import { prisma } from '@razbor/db'
 import { yoga } from './graphql.js'
 import { bot } from './bot/index.js'
-import { registerPaymentHandlers } from './bot/payments.js'
 import { startRenewalCron } from './cron/renewal.js'
 import { createYooKassaWebhookHandler } from './payments/yookassa-webhook.js'
 
@@ -16,10 +15,6 @@ const BOT_WEBHOOK_URL = process.env.BOT_WEBHOOK_URL
 const botPath = `/bot${BOT_TOKEN}`
 
 const MAX_BODY_SIZE = 1024 * 1024
-
-if (bot) {
-  registerPaymentHandlers(bot)
-}
 
 const handleYooKassaWebhook = createYooKassaWebhookHandler(prisma)
 

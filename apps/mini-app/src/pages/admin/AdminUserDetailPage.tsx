@@ -26,14 +26,6 @@ interface YooPayment {
   createdAt: string
 }
 
-interface TelegramPayment {
-  id: string
-  telegramPaymentId: string
-  amount: number
-  calculationsCount: number
-  createdAt: string
-}
-
 interface Subscription {
   id: string
   plan: string
@@ -67,7 +59,6 @@ interface AdminUserData {
   createdAt: string
   calculations: Calculation[]
   yooPayments: YooPayment[]
-  telegramPayments: TelegramPayment[]
   subscriptions: Subscription[]
   recentUsageLogs: UsageLog[]
 }
@@ -79,7 +70,6 @@ interface AdminUserResponse {
 const sectionTabs = [
   { key: 'calculations', label: 'Расчёты' },
   { key: 'yoo', label: 'YooKassa' },
-  { key: 'tg', label: 'TG Stars' },
   { key: 'subs', label: 'Подписки' },
   { key: 'logs', label: 'Логи' },
 ] as const
@@ -190,7 +180,6 @@ export function AdminUserDetailPage() {
               <span className="ml-1 text-xs opacity-60">
                 {tab.key === 'calculations' && user.calculations.length}
                 {tab.key === 'yoo' && user.yooPayments.length}
-                {tab.key === 'tg' && user.telegramPayments.length}
                 {tab.key === 'subs' && user.subscriptions.length}
                 {tab.key === 'logs' && user.recentUsageLogs.length}
               </span>
@@ -204,9 +193,6 @@ export function AdminUserDetailPage() {
       )}
       {activeSection === 'yoo' && (
         <YooPaymentsSection data={user.yooPayments} />
-      )}
-      {activeSection === 'tg' && (
-        <TelegramPaymentsSection data={user.telegramPayments} />
       )}
       {activeSection === 'subs' && (
         <SubscriptionsSection data={user.subscriptions} />
@@ -253,24 +239,6 @@ function YooPaymentsSection({ data }: { data: YooPayment[] }) {
             </p>
           </div>
           <StatusBadge status={p.status} />
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function TelegramPaymentsSection({ data }: { data: TelegramPayment[] }) {
-  if (data.length === 0) return <EmptyState />
-  return (
-    <div className="space-y-2">
-      {data.map((p) => (
-        <div key={p.id} className="bg-zinc-900 rounded-xl p-3 flex items-center justify-between">
-          <div className="min-w-0">
-            <p className="text-sm text-zinc-200">{p.amount} Stars</p>
-            <p className="text-xs text-zinc-500">
-              {formatDate(p.createdAt)} &middot; {p.calculationsCount} расч.
-            </p>
-          </div>
         </div>
       ))}
     </div>
