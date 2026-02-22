@@ -8,22 +8,22 @@ const S = ['kia sportage', 'киа спортейдж', 'спортейдж', '�
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   // SL — G4KD 2.0 MPI
-  engine(P, S, '2.0-150', 'G4KD', 150),
+  engine(P, S, '2.0-150', 'G4KD', 150, ['G4KD']),
   starter(P, S, '2.0-150'),
   alternator(P, S, '2.0-150'),
 
   // SL — G4KE 2.4 MPI
-  engine(P, S, '2.4-176', 'G4KE', 176),
+  engine(P, S, '2.4-176', 'G4KE', 176, ['G4KE']),
   starter(P, S, '2.4-176'),
   alternator(P, S, '2.4-176'),
 
   // QL — G4NA 2.0 MPI
-  engine(P, S, '2.0-150n', 'G4NA', 150),
+  engine(P, S, '2.0-150n', 'G4NA', 150, ['G4NA']),
   starter(P, S, '2.0-150n'),
   alternator(P, S, '2.0-150n'),
 
   // QL — G4FJ 1.6 Turbo GDI
-  engine(P, S, '1.6t-177', 'G4FJ', 177),
+  engine(P, S, '1.6t-177', 'G4FJ', 177, ['G4FJ']),
   starter(P, S, '1.6t-177'),
   alternator(P, S, '1.6t-177'),
   fuelPumpHP(P, S, '1.6t-177'),
@@ -31,15 +31,29 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   intercooler(P, S, '1.6t-177'),
 
   // QL рестайл — G4KJ 2.4 GDI
-  engine(P, S, '2.4-184', 'G4KJ', 184),
+  engine(P, S, '2.4-184', 'G4KJ', 184, ['G4KJ']),
   starter(P, S, '2.4-184'),
   alternator(P, S, '2.4-184'),
   fuelPumpHP(P, S, '2.4-184'),
+
+  // SL — G4FD 1.6 GDI
+  engine(P, S, '1.6-135', 'G4FD', 135, ['G4FD']),
+  starter(P, S, '1.6-135'),
+  alternator(P, S, '1.6-135'),
+  fuelPumpHP(P, S, '1.6-135'),
 
   // NQ5 — G4NL 2.0 MPI
   engine(P, S, '2.0-150l', 'G4NL', 150),
   starter(P, S, '2.0-150l'),
   alternator(P, S, '2.0-150l'),
+
+  // NQ5 — G4FS 1.5T GDI
+  engine(P, S, '1.5t-200', 'G4FS', 200),
+  starter(P, S, '1.5t-200'),
+  alternator(P, S, '1.5t-200'),
+  fuelPumpHP(P, S, '1.5t-200'),
+  turbo(P, S, '1.5t-200', 'G4FS'),
+  intercooler(P, S, '1.5t-200'),
 
   // NQ5 — G4KN 2.5 GDI
   engine(P, S, '2.5-190', 'G4KN', 190),
@@ -71,6 +85,7 @@ const generations: GenerationData[] = [
     isActive: true,
     availableConfigs: [
       'engine:2.0-150l',
+      'engine:1.5t-200',
       'engine:2.5-190',
       'transmission:mt6',
       'transmission:at6',
@@ -106,6 +121,7 @@ const generations: GenerationData[] = [
     isActive: true,
     availableConfigs: [
       'engine:2.0-150',
+      'engine:1.6-135',
       'engine:2.4-176',
       'transmission:mt6',
       'transmission:at6',

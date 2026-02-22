@@ -20,8 +20,10 @@ import { ladaNivaSeed } from './seed/lada-niva'
 import { skodaRapidSeed } from './seed/skoda-rapid'
 import { volkswagenPoloSeed } from './seed/volkswagen-polo'
 import { toyotaCamrySeed } from './seed/toyota-camry'
+import { toyotaCorollaSeed } from './seed/toyota-corolla'
 import { nissanQashqaiSeed } from './seed/nissan-qashqai'
 import { audiQ5Seed } from './seed/audi-q5'
+import { audiA3Seed } from './seed/audi-a3'
 import { bmw5SeriesSeed } from './seed/bmw-5-series'
 import { porscheCayenneSeed } from './seed/porsche-cayenne'
 import { opelAstraSeed } from './seed/opel-astra'
@@ -31,7 +33,7 @@ import { isSharedPartRef } from './seed/types'
 
 const prisma = new PrismaClient()
 
-const modelSeeds: ModelSeed[] = [mazda6Seed, mazda3Seed, mazdaCx5Seed, mercedesCClassSeed, mercedesSClassSeed, renaultLoganSeed, renaultDusterSeed, kiaRioSeed, kiaOptimaSeed, kiaSportageSeed, kiaCeedSeed, fordFocusSeed, hyundaiSolarisSeed, hyundaiCretaSeed, ladaVestaSeed, ladaGrantaSeed, ladaNivaSeed, skodaRapidSeed, volkswagenPoloSeed, toyotaCamrySeed, nissanQashqaiSeed, audiQ5Seed, bmw5SeriesSeed, porscheCayenneSeed, opelAstraSeed] as ModelSeed[]
+const modelSeeds: ModelSeed[] = [mazda6Seed, mazda3Seed, mazdaCx5Seed, mercedesCClassSeed, mercedesSClassSeed, renaultLoganSeed, renaultDusterSeed, kiaRioSeed, kiaOptimaSeed, kiaSportageSeed, kiaCeedSeed, fordFocusSeed, hyundaiSolarisSeed, hyundaiCretaSeed, ladaVestaSeed, ladaGrantaSeed, ladaNivaSeed, skodaRapidSeed, volkswagenPoloSeed, toyotaCamrySeed, toyotaCorollaSeed, nissanQashqaiSeed, audiQ5Seed, audiA3Seed, bmw5SeriesSeed, porscheCayenneSeed, opelAstraSeed] as ModelSeed[]
 
 async function seedSharedParts() {
   console.log('\n--- Seeding shared parts ---')

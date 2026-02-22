@@ -8,12 +8,12 @@ const S = ['kia ceed', 'киа сид', 'сид']
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   // ED — G4FA 1.4 MPI
-  engine(P, S, '1.4-109', 'G4FA', 109),
+  engine(P, S, '1.4-109', 'G4FA', 109, ['G4FA']),
   starter(P, S, '1.4-109'),
   alternator(P, S, '1.4-109'),
 
   // ED — G4FC 1.6 MPI
-  engine(P, S, '1.6-122', 'G4FC', 122),
+  engine(P, S, '1.6-122', 'G4FC', 122, ['G4FC']),
   starter(P, S, '1.6-122'),
   alternator(P, S, '1.6-122'),
 
@@ -23,23 +23,23 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   alternator(P, S, '2.0-143'),
 
   // JD, CD — G4LC 1.4 MPI
-  engine(P, S, '1.4-100', 'G4LC', 100),
+  engine(P, S, '1.4-100', 'G4LC', 100, ['G4LC']),
   starter(P, S, '1.4-100'),
   alternator(P, S, '1.4-100'),
 
   // JD, CD — G4FG 1.6 MPI
-  engine(P, S, '1.6-130', 'G4FG', 130),
+  engine(P, S, '1.6-130', 'G4FG', 130, ['G4FG']),
   starter(P, S, '1.6-130'),
   alternator(P, S, '1.6-130'),
 
   // JD — G4FD 1.6 GDI
-  engine(P, S, '1.6-135', 'G4FD', 135),
+  engine(P, S, '1.6-135', 'G4FD', 135, ['G4FD']),
   starter(P, S, '1.6-135'),
   alternator(P, S, '1.6-135'),
   fuelPumpHP(P, S, '1.6-135'),
 
   // JD — G4FJ 1.6T GDI (GT)
-  engine(P, S, '1.6t-204', 'G4FJ', 204),
+  engine(P, S, '1.6t-204', 'G4FJ', 204, ['G4FJ']),
   starter(P, S, '1.6t-204'),
   alternator(P, S, '1.6t-204'),
   fuelPumpHP(P, S, '1.6t-204'),
@@ -47,7 +47,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   intercooler(P, S, '1.6t-204'),
 
   // CD — G4LD 1.4T GDI
-  engine(P, S, '1.4t-140', 'G4LD', 140),
+  engine(P, S, '1.4t-140', 'G4LD', 140, ['G4LD']),
   starter(P, S, '1.4t-140'),
   alternator(P, S, '1.4t-140'),
   fuelPumpHP(P, S, '1.4t-140'),

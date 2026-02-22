@@ -15,6 +15,17 @@ export const audiEuMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'a3',
+      modelCodes: { position: [6, 8], codes: ['8V', '8Y'] },
+      generationCodes: {
+        position: [6, 8],
+        mapping: {
+          '8V': { slug: '8v-sportback', bodyType: 'hatchback' },
+          '8Y': { slug: '8y-sportback', bodyType: 'hatchback' },
+        },
+      },
+    },
   ],
 }
 

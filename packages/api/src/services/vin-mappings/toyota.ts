@@ -40,6 +40,16 @@ export const toyotaRuMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'corolla',
+      engineCodes: {
+        position: 4,
+        mapping: {
+          A: ['engine:1.6-124', 'engine:1.6-122'],
+          R: ['engine:1.8-136', 'engine:1.8-140'],
+        },
+      },
+    },
   ],
 }
 
@@ -57,6 +67,16 @@ export const toyotaJpMapping: VinBrandMapping = {
           K: ['engine:3.5-249', 'engine:3.5-277'],
           D: ['engine:2.0-150-6ar', 'engine:2.0-150-m20a'],
           N: ['engine:2.5-181', 'engine:2.5-200'],
+        },
+      },
+    },
+    {
+      modelSlug: 'corolla',
+      engineCodes: {
+        position: 4,
+        mapping: {
+          A: ['engine:1.6-124', 'engine:1.6-122'],
+          R: ['engine:1.8-136', 'engine:1.8-140'],
         },
       },
     },

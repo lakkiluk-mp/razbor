@@ -7,11 +7,11 @@ const P = 'hyundai-creta'
 const S = ['hyundai creta', 'хёндай крета', 'хендай крета', 'крета']
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
-  engine(P, S, '1.6-123', 'G4FG', 123),
+  engine(P, S, '1.6-123', 'G4FG', 123, ['G4FG']),
   starter(P, S, '1.6-123', 'G4FG'),
   alternator(P, S, '1.6-123', 'G4FG'),
 
-  engine(P, S, '2.0-149', 'G4NA', 149),
+  engine(P, S, '2.0-149', 'G4NA', 149, ['G4NA']),
   starter(P, S, '2.0-149', 'G4NA'),
   alternator(P, S, '2.0-149', 'G4NA'),
 

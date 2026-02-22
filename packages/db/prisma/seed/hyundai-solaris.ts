@@ -7,17 +7,17 @@ const P = 'hyundai-solaris'
 const S = ['hyundai solaris', 'хёндай солярис', 'хендай солярис', 'солярис']
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
-  engine(P, S, '1.4-107', 'G4FA', 107, ['211012BW01']),
+  engine(P, S, '1.4-107', 'G4FA', 107, ['G4FA']),
   starter(P, S, '1.4-107', 'G4FA'),
   alternator(P, S, '1.4-107', 'G4FA'),
-  engine(P, S, '1.6-123', 'G4FC', 123, ['211012BW02']),
+  engine(P, S, '1.6-123', 'G4FC', 123, ['G4FC']),
   starter(P, S, '1.6-123', 'G4FC'),
   alternator(P, S, '1.6-123', 'G4FC'),
 
-  engine(P, S, '1.4-100', 'G4LC', 100),
+  engine(P, S, '1.4-100', 'G4LC', 100, ['G4LC']),
   starter(P, S, '1.4-100', 'G4LC'),
   alternator(P, S, '1.4-100', 'G4LC'),
-  engine(P, S, '1.6-123g', 'G4FG', 123),
+  engine(P, S, '1.6-123g', 'G4FG', 123, ['G4FG']),
   starter(P, S, '1.6-123g', 'G4FG'),
   alternator(P, S, '1.6-123g', 'G4FG'),
 

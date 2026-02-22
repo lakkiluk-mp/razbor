@@ -48,7 +48,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'мотор 2.5 SKYACTIV',
       'двигатель PY SKYACTIV',
     ],
-    usedBy: ['mazda-6', 'mazda-cx-5', 'mazda-cx-9'],
+    usedBy: ['mazda-6', 'mazda-cx-5', 'mazda-cx-9', 'mazda-3'],
   },
   {
     oemCode: 'PYZE02300',
@@ -60,7 +60,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'мотор 2.5T SKYACTIV',
       'двигатель SKYACTIV-G Turbo',
     ],
-    usedBy: ['mazda-6', 'mazda-cx-9'],
+    usedBy: ['mazda-6', 'mazda-cx-9', 'mazda-cx-5'],
   },
 
   // ========================================
@@ -601,6 +601,178 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     category: 'transmission',
     searchQueries: ['oem:3040012760', 'вариатор K120 тойота', 'cvt K120 камри', 'Direct Shift CVT'],
     usedBy: ['toyota-camry'],
+  },
+
+  // ========================================
+  // HYUNDAI-KIA GAMMA ENGINES
+  // ========================================
+  {
+    oemCode: 'G4FA',
+    name: 'Двигатель 1.4 G4FA (107-109 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'двигатель 1.4 G4FA',
+      'мотор G4FA',
+      'двигатель G4FA',
+      'двигатель 1.4 Gamma',
+    ],
+    usedBy: ['kia-rio', 'hyundai-solaris', 'kia-ceed'],
+  },
+  {
+    oemCode: 'G4FC',
+    name: 'Двигатель 1.6 G4FC (122-123 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'двигатель 1.6 G4FC',
+      'мотор G4FC',
+      'двигатель G4FC',
+      'двигатель 1.6 Gamma',
+    ],
+    usedBy: ['kia-rio', 'hyundai-solaris', 'kia-ceed'],
+  },
+  {
+    oemCode: 'G4LC',
+    name: 'Двигатель 1.4 G4LC (100 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'двигатель 1.4 G4LC',
+      'мотор G4LC',
+      'двигатель G4LC',
+      'двигатель 1.4 Kappa',
+    ],
+    usedBy: ['kia-rio', 'hyundai-solaris', 'kia-ceed'],
+  },
+  {
+    oemCode: 'G4FG',
+    name: 'Двигатель 1.6 G4FG (123-130 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'двигатель 1.6 G4FG',
+      'мотор G4FG',
+      'двигатель G4FG',
+      'двигатель 1.6 Gamma GDI',
+    ],
+    usedBy: ['kia-rio', 'hyundai-solaris', 'hyundai-creta', 'kia-ceed'],
+  },
+  {
+    oemCode: 'G4FD',
+    name: 'Двигатель 1.6 G4FD GDI (135-138 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'двигатель 1.6 G4FD',
+      'мотор G4FD',
+      'двигатель G4FD GDI',
+      'двигатель 1.6 GDI Gamma',
+    ],
+    usedBy: ['kia-rio', 'kia-ceed', 'kia-sportage'],
+  },
+  {
+    oemCode: 'G4LD',
+    name: 'Двигатель 1.4T G4LD T-GDI (140 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'двигатель 1.4 G4LD',
+      'мотор G4LD',
+      'двигатель G4LD турбо',
+      'двигатель 1.4T Kappa',
+    ],
+    usedBy: ['kia-ceed'],
+  },
+  {
+    oemCode: 'G4FJ',
+    name: 'Двигатель 1.6T G4FJ T-GDI (177-204 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'двигатель 1.6 G4FJ',
+      'мотор G4FJ',
+      'двигатель G4FJ турбо',
+      'двигатель 1.6T Gamma',
+    ],
+    usedBy: ['kia-ceed', 'kia-sportage'],
+  },
+
+  // ========================================
+  // HYUNDAI-KIA NU ENGINES
+  // ========================================
+  {
+    oemCode: 'G4NA',
+    name: 'Двигатель 2.0 G4NA (149-150 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'двигатель 2.0 G4NA',
+      'мотор G4NA',
+      'двигатель G4NA',
+      'двигатель 2.0 Nu',
+    ],
+    usedBy: ['hyundai-creta', 'kia-sportage'],
+  },
+
+  // ========================================
+  // HYUNDAI-KIA THETA II ENGINES
+  // ========================================
+  {
+    oemCode: 'G4KD',
+    name: 'Двигатель 2.0 G4KD (150 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'двигатель 2.0 G4KD',
+      'мотор G4KD',
+      'двигатель G4KD',
+      'двигатель 2.0 Theta II',
+    ],
+    usedBy: ['kia-sportage', 'kia-optima'],
+  },
+  {
+    oemCode: 'G4KE',
+    name: 'Двигатель 2.4 G4KE (176-180 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'двигатель 2.4 G4KE',
+      'мотор G4KE',
+      'двигатель G4KE',
+      'двигатель 2.4 Theta II',
+    ],
+    usedBy: ['kia-sportage', 'kia-optima'],
+  },
+  {
+    oemCode: 'G4KJ',
+    name: 'Двигатель 2.4 G4KJ GDI (184-188 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'двигатель 2.4 G4KJ',
+      'мотор G4KJ',
+      'двигатель G4KJ GDI',
+      'двигатель 2.4 GDI Theta II',
+    ],
+    usedBy: ['kia-sportage', 'kia-optima'],
+  },
+
+  // ========================================
+  // VAG SHARED (EA211 / DQ200)
+  // ========================================
+  {
+    oemCode: '04E100033B',
+    name: 'Двигатель 1.4 CZCA (125 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'oem:04E100033B',
+      'двигатель 1.4 CZCA',
+      'двигатель CZCA',
+      'мотор 1.4 TSI CZCA',
+    ],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'audi-a3'],
+  },
+  {
+    oemCode: '0AM300048',
+    name: 'DSG-7 DQ200 (робот)',
+    category: 'transmission',
+    searchQueries: [
+      'oem:0AM300048',
+      'ркпп DQ200',
+      'коробка DSG-7 DQ200',
+      'робот DQ200',
+    ],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'audi-a3'],
   },
 
   // ========================================

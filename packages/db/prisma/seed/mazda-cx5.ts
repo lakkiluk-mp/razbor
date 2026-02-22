@@ -17,6 +17,13 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   alternator(P, S, '2.5-192'),
   fuelPumpHP(P, S, '2.5-192'),
 
+  engine(P, S, '2.5t-231', 'Turbo SKYACTIV-G', 231, ['PYZE02300']),
+  starter(P, S, '2.5t-231'),
+  alternator(P, S, '2.5t-231'),
+  fuelPumpHP(P, S, '2.5t-231'),
+  turbo(P, S, '2.5t-231', 'SKYACTIV-G'),
+  intercooler(P, S, '2.5t-231'),
+
   engine(P, S, '2.2d-175', 'SH-VPTS', 175),
   starter(P, S, '2.2d-175'),
   alternator(P, S, '2.2d-175'),
@@ -44,6 +51,8 @@ const generations: GenerationData[] = [
     availableConfigs: [
       'engine:2.0-150',
       'engine:2.5-192',
+      'engine:2.5t-231',
+      'engine:2.2d-175',
       'transmission:mt6',
       'transmission:at6',
       'drivetrain:fwd',

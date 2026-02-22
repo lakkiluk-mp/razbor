@@ -1,7 +1,7 @@
 import { BodyType } from '@prisma/client'
 import type { PartData, GenerationData, SharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
-import { engine, starter, alternator, transmission, ecuTransmission, drivetrainFWD, fuelPumpHP } from './builders'
+import { engine, starter, alternator, transmission, ecuTransmission, drivetrainFWD, fuelPumpHP, turbo, intercooler, injectorsDiesel } from './builders'
 
 const P = 'mazda-3'
 const S = ['mazda 3', 'мазда 3', 'mazda3', 'мазда3']
@@ -24,6 +24,19 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   starter(P, S, '2.0-150'),
   alternator(P, S, '2.0-150'),
   fuelPumpHP(P, S, '2.0-150'),
+
+  engine(P, S, '2.5-192', 'SKYACTIV-G', 192, ['PYZC02300']),
+  starter(P, S, '2.5-192'),
+  alternator(P, S, '2.5-192'),
+  fuelPumpHP(P, S, '2.5-192'),
+
+  engine(P, S, '2.2d-150', 'SH-VPTS', 150),
+  starter(P, S, '2.2d-150'),
+  alternator(P, S, '2.2d-150'),
+  fuelPumpHP(P, S, '2.2d-150'),
+  injectorsDiesel(P, S, '2.2d-150'),
+  turbo(P, S, '2.2d-150', 'SKYACTIV-D'),
+  intercooler(P, S, '2.2d-150'),
 
   transmission(P, S, 'mt5', 'МКПП 5-ступ', ['G61117150']),
   transmission(P, S, 'at4', 'АКПП 4-ступ (FN4A-EL)'),
@@ -48,6 +61,8 @@ const generations: GenerationData[] = [
     availableConfigs: [
       'engine:1.5-120',
       'engine:2.0-150',
+      'engine:2.5-192',
+      'engine:2.2d-150',
       'transmission:mt6',
       'transmission:at6',
       'drivetrain:fwd',

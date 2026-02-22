@@ -8,7 +8,7 @@ const S = ['kia optima', 'киа оптима', 'оптима']
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   // TF MPI
-  engine(P, S, '2.0-150', 'G4KD', 150),
+  engine(P, S, '2.0-150', 'G4KD', 150, ['G4KD']),
   starter(P, S, '2.0-150'),
   alternator(P, S, '2.0-150'),
 
@@ -19,12 +19,12 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   fuelPumpHP(P, S, '2.0-150g'),
 
   // TF MPI
-  engine(P, S, '2.4-180', 'G4KE', 180),
+  engine(P, S, '2.4-180', 'G4KE', 180, ['G4KE']),
   starter(P, S, '2.4-180'),
   alternator(P, S, '2.4-180'),
 
   // JF GDI
-  engine(P, S, '2.4-188', 'G4KJ', 188),
+  engine(P, S, '2.4-188', 'G4KJ', 188, ['G4KJ']),
   starter(P, S, '2.4-188'),
   alternator(P, S, '2.4-188'),
   fuelPumpHP(P, S, '2.4-188'),
