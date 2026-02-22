@@ -86,7 +86,7 @@ test.describe('E2E-7: History page', () => {
 
       await page.goto('/?web=1#/history')
       await page.getByRole('link', { name: 'Начать расчёт' }).click()
-      await expect(page.getByRole('heading', { name: 'Калькулятор запчастей' })).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Оценка авто по запчастям' })).toBeVisible()
     })
   })
 })

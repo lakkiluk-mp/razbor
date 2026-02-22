@@ -56,7 +56,7 @@ export function ConfigPage() {
       configs.drivetrains.length > 0
 
     if (!hasConfigs) {
-      navigate(`/calculator/${generation.id}`)
+      navigate(`/estimation/${generation.id}`)
       return
     }
 
@@ -140,7 +140,7 @@ export function ConfigPage() {
     if (selectedEngine) params.set('engine', selectedEngine)
     if (selectedTransmission) params.set('transmission', selectedTransmission)
     if (selectedDrivetrain) params.set('drivetrain', selectedDrivetrain)
-    navigate(`/calculator/${generation.id}?${params.toString()}`)
+    navigate(`/estimation/${generation.id}?${params.toString()}`)
   }
 
   return (

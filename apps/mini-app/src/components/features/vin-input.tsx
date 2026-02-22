@@ -189,7 +189,7 @@ export function VinInput({ brands = [] }: VinInputProps) {
         `/${result.brand.slug}/${result.model.slug}/${result.generation.slug}/config?${params.toString()}`
       )
     } else {
-      navigate(`/calculator/${result.generation.id}?${params.toString()}`)
+      navigate(`/estimation/${result.generation.id}?${params.toString()}`)
     }
   }
 

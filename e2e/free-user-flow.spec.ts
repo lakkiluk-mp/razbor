@@ -18,7 +18,7 @@ import {
 } from './fixtures/mock-data'
 
 test.describe('E2E-1: Free user flow', () => {
-  test('full calculation flow: brand -> model -> generation -> calculator -> result', async ({ page }) => {
+  test('full calculation flow: brand -> model -> generation -> estimation -> result', async ({ page }) => {
     let usageCredits = 2
 
     await mockGraphQL(page, {
@@ -44,7 +44,7 @@ test.describe('E2E-1: Free user flow', () => {
     })
 
     await page.goto('/?web=1')
-    await expect(page.getByRole('heading', { name: 'Калькулятор запчастей' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Оценка авто по запчастям' })).toBeVisible()
 
     await page.getByRole('link', { name: 'Lada' }).click()
     await expect(page.getByText('Выберите модель')).toBeVisible()
@@ -136,7 +136,7 @@ test.describe('E2E-1: Free user flow', () => {
 
     await page.goto('/?web=1#/limit-reached')
     await page.getByRole('link', { name: 'На главную' }).click()
-    await expect(page.getByRole('heading', { name: 'Калькулятор запчастей' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Оценка авто по запчастям' })).toBeVisible()
   })
 
   test('tab bar navigation works', async ({ page }) => {
@@ -148,7 +148,7 @@ test.describe('E2E-1: Free user flow', () => {
     })
 
     await page.goto('/?web=1')
-    await expect(page.getByRole('heading', { name: 'Калькулятор запчастей' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Оценка авто по запчастям' })).toBeVisible()
 
     await page.getByRole('link', { name: 'История' }).click()
     await expect(page.getByRole('heading', { name: 'История', exact: true })).toBeVisible()
@@ -157,7 +157,7 @@ test.describe('E2E-1: Free user flow', () => {
     await expect(page.getByRole('heading', { name: 'Test User' })).toBeVisible()
 
     await page.getByRole('link', { name: 'Расчёт' }).click()
-    await expect(page.getByRole('heading', { name: 'Калькулятор запчастей' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Оценка авто по запчастям' })).toBeVisible()
   })
 
   test('profile page shows correct data for free user', async ({ page }) => {

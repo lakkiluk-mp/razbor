@@ -1,7 +1,7 @@
 import { GraphQLError } from 'graphql'
 import { builder } from '../builder'
 import { CalculationResultType } from '../types/calculation'
-import { calculatorService } from '../../services/calculator.service'
+import { estimationService } from '../../services/estimation.service'
 import { useCredit, refundCredit } from '../../services/credits.service'
 import { logUsage } from '../../services/usage.service'
 
@@ -31,7 +31,7 @@ builder.mutationField('calculate', (t) =>
 
       let result
       try {
-        result = await calculatorService.calculate({
+        result = await estimationService.calculate({
           generationId: input.generationId,
           damagedZones: input.damagedZones,
           excludedParts: input.excludedParts ?? [],

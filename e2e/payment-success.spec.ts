@@ -51,7 +51,7 @@ test.describe('E2E-5: Payment success page', () => {
 
     await expect(page.getByRole('heading', { name: 'Подписка оформлена!' })).toBeVisible()
     await page.getByRole('button', { name: 'Начать расчёт' }).click()
-    await expect(page.getByRole('heading', { name: 'Калькулятор запчастей' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Оценка авто по запчастям' })).toBeVisible()
   })
 
   test('shows timeout message if subscription does not appear', async ({ page }) => {
@@ -80,6 +80,6 @@ test.describe('E2E-5: Payment success page', () => {
     await expect(page.getByRole('heading', { name: 'Платёж обрабатывается' })).toBeVisible({ timeout: 35000 })
 
     await page.getByRole('button', { name: 'На главную' }).click()
-    await expect(page.getByRole('heading', { name: 'Калькулятор запчастей' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Оценка авто по запчастям' })).toBeVisible()
   })
 })

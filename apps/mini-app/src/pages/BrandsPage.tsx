@@ -37,7 +37,7 @@ export function BrandsPage() {
     <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col overflow-hidden">
       <header className="px-4 pt-6 pb-4 space-y-4">
         <div>
-          <h1 className="text-2xl font-bold">Калькулятор запчастей</h1>
+          <h1 className="text-2xl font-bold">Оценка авто по запчастям</h1>
           <p className="text-zinc-500 text-sm mt-1">Введите VIN или выберите марку</p>
         </div>
         <VinInput brands={data?.brands} />

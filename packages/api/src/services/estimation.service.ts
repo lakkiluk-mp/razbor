@@ -122,4 +122,4 @@ export async function calculate(input: CalculateInput): Promise<CalculationResul
   }
 }
 
-export const calculatorService = { calculate }
+export const estimationService = { calculate }

@@ -1,6 +1,6 @@
 # Архитектура проекта Razbor
 
-> Калькулятор маржинальности авторазбора
+> Сервис оценки авто по запчастям
 
 ---
 
@@ -76,7 +76,7 @@
 │   ├── /mini-app                  # Vite + React SPA (Telegram Mini App)
 │   │   ├── /src
 │   │   │   ├── App.tsx           # HashRouter + TelegramProvider
-│   │   │   ├── /pages           # Страницы (Home, Models, Calculator, Result)
+│   │   │   ├── /pages           # Страницы (Home, Models, Estimation, Result)
 │   │   │   ├── /components      # UI компоненты (shadcn)
 │   │   │   │   ├── /ui          # Базовые (button, input, etc.)
 │   │   │   │   └── /features    # Фичевые (CarSelector, PartsList)
@@ -100,7 +100,7 @@
 │   │   │   │   ├── /queries     # Query fields
 │   │   │   │   └── /mutations   # Mutation fields
 │   │   │   ├── /services        # Бизнес-логика
-│   │   │   │   └── calculator.service.ts
+│   │   │   │   └── estimation.service.ts
 │   │   │   └── index.ts         # Экспорт yoga сервера
 │   │   └── package.json
 │   │
@@ -186,7 +186,7 @@ Auth реализован через заголовок `X-Telegram-Init-Data`. 
 #### Бизнес-логика отдельно от UI
 
 ```typescript
-// ✓ packages/shared/src/utils/calculator.ts
+// ✓ packages/shared/src/utils/estimation.ts
 export function calculateMarketValue(parts: Part[]): number {
   return parts
     .filter(p => !p.isDamaged)
@@ -245,12 +245,12 @@ export type SelectCarInput = z.infer<typeof selectCarSchema>
 // ✓ packages/shared/src/constants/routes.ts
 export const ROUTES = {
   home: '/',
-  calculator: (carId: string) => `/calculator/${carId}`,
+  estimation: (carId: string) => `/estimation/${carId}`,
   result: (calculationId: string) => `/result/${calculationId}`,
 } as const
 
-// Web: Next.js router.push(ROUTES.calculator(carId))
-// Mobile: navigation.navigate('Calculator', { carId })
+// Web: Next.js router.push(ROUTES.estimation(carId))
+// Mobile: navigation.navigate('Estimation', { carId })
 ```
 
 ---

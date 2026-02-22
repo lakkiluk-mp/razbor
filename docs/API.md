@@ -559,7 +559,7 @@ packages/api/src/
 │   ├── brand.service.ts
 │   ├── part.service.ts
 │   ├── price.service.ts
-│   └── calculator.service.ts
+│   └── estimation.service.ts
 └── index.ts
 ```
 
@@ -658,7 +658,7 @@ builder.queryField('brand', (t) =>
 ```typescript
 // packages/api/src/schema/mutations/calculate.ts
 import { builder } from '../builder'
-import { calculatorService } from '../../services/calculator.service'
+import { estimationService } from '../../services/estimation.service'
 
 const CalculateInput = builder.inputType('CalculateInput', {
   fields: (t) => ({
@@ -675,7 +675,7 @@ builder.mutationField('calculate', (t) =>
       input: t.arg({ type: CalculateInput, required: true }),
     },
     resolve: async (_root, { input }, ctx) => {
-      return calculatorService.calculate({
+      return estimationService.calculate({
         generationId: input.generationId,
         damagedZones: input.damagedZones,
         excludedParts: input.excludedParts ?? [],

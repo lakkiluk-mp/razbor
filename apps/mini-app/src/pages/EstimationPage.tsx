@@ -11,7 +11,7 @@ interface GenerationByIdResponse {
   generation: GenerationWithParts | null
 }
 
-export function CalculatorPage() {
+export function EstimationPage() {
   const { generationId } = useParams<{ generationId: string }>()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()

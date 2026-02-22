@@ -125,7 +125,7 @@ export function TelegramRequired() {
                   В разборе
                 </h1>
                 <h2 className="text-3xl md:text-5xl font-bold bg-gradient-to-br from-slate-300 to-slate-500 bg-clip-text text-transparent tracking-tight mb-4">
-                  Твой калькулятор маржинальности
+                  Оценка авто по запчастям
                 </h2>
                 <h3 className="text-xl md:text-3xl font-medium bg-gradient-to-br from-slate-400 to-slate-600 bg-clip-text text-transparent mb-8">
                   Откройте в Telegram

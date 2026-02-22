@@ -8,8 +8,8 @@ vi.mock('../../../services/credits.service', () => ({
   ACTIVE_STATUSES: ['active', 'past_due'],
 }))
 
-vi.mock('../../../services/calculator.service', () => ({
-  calculatorService: {
+vi.mock('../../../services/estimation.service', () => ({
+  estimationService: {
     calculate: vi.fn(),
   },
 }))
@@ -19,11 +19,11 @@ vi.mock('../../../services/usage.service', () => ({
 }))
 
 import { useCredit, refundCredit } from '../../../services/credits.service'
-import { calculatorService } from '../../../services/calculator.service'
+import { estimationService } from '../../../services/estimation.service'
 
 const useCreditMock = vi.mocked(useCredit)
 const refundCreditMock = vi.mocked(refundCredit)
-const calculateMock = vi.mocked(calculatorService.calculate)
+const calculateMock = vi.mocked(estimationService.calculate)
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -102,7 +102,7 @@ describe('calculate', () => {
     expect(result.errors![0].message).toBe('Лимит расчётов исчерпан')
   })
 
-  it('should refund credit when calculator throws error', async () => {
+  it('should refund credit when estimation throws error', async () => {
     const creditSource = { type: 'trial' as const }
     useCreditMock.mockResolvedValue(creditSource)
     calculateMock.mockRejectedValue(new Error('GENERATION_NOT_FOUND: Поколение не найдено'))

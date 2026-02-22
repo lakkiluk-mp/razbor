@@ -6,7 +6,7 @@ export const ROUTES = {
   home: '/',
   brand: (brandSlug: string) => `/${brandSlug}`,
   model: (brandSlug: string, modelSlug: string) => `/${brandSlug}/${modelSlug}`,
-  calculator: (generationSlug: string) => `/calculator/${generationSlug}`,
+  estimation: (generationSlug: string) => `/estimation/${generationSlug}`,
   result: (calcId: string) => `/result/${calcId}`,
   subscribe: '/subscribe',
   payment: '/payment',

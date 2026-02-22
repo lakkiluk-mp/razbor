@@ -7,7 +7,7 @@ import { BrandsPage } from '@/pages/BrandsPage'
 import { ModelsPage } from '@/pages/ModelsPage'
 import { GenerationsPage } from '@/pages/GenerationsPage'
 import { ConfigPage } from '@/pages/ConfigPage'
-import { CalculatorPage } from '@/pages/CalculatorPage'
+import { EstimationPage } from '@/pages/EstimationPage'
 import { ResultPage } from '@/pages/ResultPage'
 import { HistoryPage } from '@/pages/HistoryPage'
 import { HistoryDetailPage } from '@/pages/HistoryDetailPage'
@@ -84,7 +84,7 @@ export function App() {
             <Route path="/:brandSlug" element={<ModelsPage />} />
             <Route path="/:brandSlug/:modelSlug" element={<GenerationsPage />} />
             <Route path="/:brandSlug/:modelSlug/:generationSlug/config" element={<ConfigPage />} />
-            <Route path="/calculator/:generationId" element={<CalculatorPage />} />
+            <Route path="/estimation/:generationId" element={<EstimationPage />} />
             <Route path="/result" element={<ResultPage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/history/:id" element={<HistoryDetailPage />} />
