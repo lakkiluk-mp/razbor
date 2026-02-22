@@ -4,7 +4,7 @@ import { getBaseParts } from './base-parts'
 import { engine, starter, alternator, transmission, ecuTransmission, drivetrainFWD, drivetrainAWD, fuelPumpHP, injectorsDiesel, turbo, intercooler } from './builders'
 
 const P = 'audi-a3'
-const S = ['a3', 'а3', 'a 3']
+const S = ['audi a3', 'ауди а3', 'a3', 'а3']
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   // === 8V Petrol engines ===

@@ -42,6 +42,39 @@ export const fordEuMapping: VinBrandMapping = {
     {
       modelSlug: 'focus',
     },
+    {
+      modelSlug: 'mondeo',
+      modelCodes: { position: [3, 4], codes: ['G'] },
+      generationCodes: {
+        position: [3, 4],
+        mapping: {
+          G: { slug: 'cd391', bodyType: 'sedan' },
+        },
+      },
+    },
+    {
+      modelSlug: 'mondeo',
+      modelCodes: { position: [3, 4], codes: ['B'] },
+      generationCodes: {
+        position: [3, 4],
+        mapping: {
+          B: { slug: 'ba7', bodyType: 'sedan' },
+        },
+      },
+    },
+    {
+      modelSlug: 'mondeo',
+      modelCodes: { position: [3, 4], codes: ['6'] },
+      generationCodes: {
+        position: [3, 4],
+        mapping: {
+          '6': { slug: 'b4y', bodyType: 'sedan' },
+        },
+      },
+    },
+    {
+      modelSlug: 'mondeo',
+    },
   ],
 }
 
