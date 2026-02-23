@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /payment
+Disallow: /api/
+
+Sitemap: https://razbor.app/sitemap.xml
+
+Host: https://razbor.app
