@@ -760,7 +760,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель CZCA',
       'мотор 1.4 TSI CZCA',
     ],
-    usedBy: ['volkswagen-polo', 'skoda-rapid', 'audi-a3'],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'audi-a3', 'skoda-octavia'],
   },
   {
     oemCode: '0AM300048',
@@ -772,7 +772,95 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'коробка DSG-7 DQ200',
       'робот DQ200',
     ],
-    usedBy: ['volkswagen-polo', 'skoda-rapid', 'audi-a3'],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'audi-a3', 'skoda-octavia'],
+  },
+
+  // ========================================
+  // VAG SHARED — Skoda Octavia additions
+  // ========================================
+  {
+    oemCode: '04E100037C',
+    name: 'Двигатель 1.6 CWVA (110 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'oem:04E100037C',
+      'двигатель 1.6 CWVA',
+      'двигатель CWVA',
+      'мотор 1.6 MPI CWVA',
+    ],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-octavia'],
+  },
+  {
+    oemCode: '03C100038P',
+    name: 'Двигатель 1.4 CAXA (122 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'oem:03C100038P',
+      'двигатель 1.4 CAXA',
+      'двигатель CAXA',
+      'мотор 1.4 TSI CAXA',
+    ],
+    usedBy: ['skoda-rapid', 'skoda-octavia'],
+  },
+  {
+    oemCode: '06K100033B',
+    name: 'Двигатель 1.8 CJSA (180 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'oem:06K100033B',
+      'двигатель 1.8 CJSA',
+      'двигатель CJSA',
+      'мотор 1.8 TSI CJSA',
+    ],
+    usedBy: ['audi-a3', 'skoda-octavia'],
+  },
+  {
+    oemCode: '02T300046R',
+    name: 'МКПП 5-ступ MQ200',
+    category: 'transmission',
+    searchQueries: [
+      'oem:02T300046R',
+      'мкпп MQ200',
+      'коробка механика MQ200',
+      'мкпп 5 ступ MQ200',
+    ],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-octavia'],
+  },
+  {
+    oemCode: '09G300034',
+    name: 'АКПП 6-ступ Aisin 09G',
+    category: 'transmission',
+    searchQueries: [
+      'oem:09G300034',
+      'акпп 09G',
+      'акпп Aisin 09G',
+      'коробка автомат 6 ступ 09G',
+    ],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-octavia'],
+  },
+  {
+    oemCode: '02E300043',
+    name: 'DSG-6 DQ250 (робот)',
+    category: 'transmission',
+    searchQueries: [
+      'oem:02E300043',
+      'ркпп DQ250',
+      'коробка DSG-6 DQ250',
+      'робот DQ250',
+    ],
+    usedBy: ['audi-a3', 'skoda-octavia'],
+  },
+  {
+    oemCode: '0GC300012',
+    name: 'S-tronic DQ381 (робот)',
+    category: 'transmission',
+    searchQueries: [
+      'oem:0GC300012',
+      'ркпп DQ381',
+      'коробка S-tronic DQ381',
+      'робот DQ381',
+    ],
+    usedBy: ['audi-a3', 'skoda-octavia'],
   },
 
   // ========================================

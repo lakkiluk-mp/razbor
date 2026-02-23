@@ -15,5 +15,17 @@ export const skodaMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'octavia',
+      modelCodes: { position: [6, 8], codes: ['1Z', '5E', 'NX'] },
+      generationCodes: {
+        position: [6, 8],
+        mapping: {
+          '1Z': { slug: 'a5', bodyType: 'liftback' },
+          '5E': { slug: 'a7', bodyType: 'liftback' },
+          NX: { slug: 'a8', bodyType: 'liftback' },
+        },
+      },
+    },
   ],
 }
