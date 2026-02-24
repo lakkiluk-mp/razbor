@@ -760,7 +760,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель CZCA',
       'мотор 1.4 TSI CZCA',
     ],
-    usedBy: ['volkswagen-polo', 'skoda-rapid', 'audi-a3', 'skoda-octavia'],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'audi-a3', 'skoda-octavia', 'volkswagen-passat'],
   },
   {
     oemCode: '0AM300048',
@@ -772,7 +772,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'коробка DSG-7 DQ200',
       'робот DQ200',
     ],
-    usedBy: ['volkswagen-polo', 'skoda-rapid', 'audi-a3', 'skoda-octavia'],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'audi-a3', 'skoda-octavia', 'volkswagen-passat'],
   },
 
   // ========================================
@@ -800,7 +800,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель CAXA',
       'мотор 1.4 TSI CAXA',
     ],
-    usedBy: ['skoda-rapid', 'skoda-octavia'],
+    usedBy: ['skoda-rapid', 'skoda-octavia', 'volkswagen-passat'],
   },
   {
     oemCode: '06K100033B',
@@ -812,7 +812,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель CJSA',
       'мотор 1.8 TSI CJSA',
     ],
-    usedBy: ['audi-a3', 'skoda-octavia'],
+    usedBy: ['audi-a3', 'skoda-octavia', 'volkswagen-passat'],
   },
   {
     oemCode: '02T300046R',
@@ -824,7 +824,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'коробка механика MQ200',
       'мкпп 5 ступ MQ200',
     ],
-    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-octavia'],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-octavia', 'volkswagen-passat'],
   },
   {
     oemCode: '09G300034',
@@ -836,7 +836,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'акпп Aisin 09G',
       'коробка автомат 6 ступ 09G',
     ],
-    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-octavia'],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-octavia', 'volkswagen-passat'],
   },
   {
     oemCode: '02E300043',
@@ -848,7 +848,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'коробка DSG-6 DQ250',
       'робот DQ250',
     ],
-    usedBy: ['audi-a3', 'skoda-octavia'],
+    usedBy: ['audi-a3', 'skoda-octavia', 'volkswagen-passat'],
   },
   {
     oemCode: '0GC300012',
@@ -861,6 +861,46 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'робот DQ381',
     ],
     usedBy: ['audi-a3', 'skoda-octavia'],
+  },
+
+  // ========================================
+  // VAG SHARED — Passat additions
+  // ========================================
+  {
+    oemCode: '04E100034F',
+    name: 'Двигатель 1.4 CZEA (150 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'oem:04E100034F',
+      'двигатель 1.4 CZEA',
+      'двигатель CZEA',
+      'мотор 1.4 TSI CZEA',
+    ],
+    usedBy: ['audi-a3', 'volkswagen-passat'],
+  },
+  {
+    oemCode: '06J100035F',
+    name: 'Двигатель 1.8 CDAB (152 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'oem:06J100035F',
+      'двигатель 1.8 CDAB',
+      'двигатель CDAB',
+      'мотор 1.8 TSI CDAB',
+    ],
+    usedBy: ['skoda-octavia', 'volkswagen-passat'],
+  },
+  {
+    oemCode: '06A100045S',
+    name: 'Двигатель 1.6 BSE (102 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'oem:06A100045S',
+      'двигатель 1.6 BSE',
+      'двигатель BSE',
+      'мотор 1.6 MPI BSE',
+    ],
+    usedBy: ['skoda-octavia', 'volkswagen-passat'],
   },
 
   // ========================================

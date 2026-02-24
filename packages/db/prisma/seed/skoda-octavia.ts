@@ -8,7 +8,7 @@ const S = ['skoda octavia', 'шкода октавия', 'октавия', 'octa
 
 const modelSpecificParts: (PartData | SharedPartRef)[] = [
   // === A5 (1Z) engines ===
-  engine(P, S, '1.6-102', 'BSE', 102),
+  engine(P, S, '1.6-102', 'BSE', 102, ['06A100045S']),
   starter(P, S, '1.6-102'),
   alternator(P, S, '1.6-102'),
 
@@ -26,7 +26,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   turbo(P, S, '1.4-125', 'CZCA'),
   intercooler(P, S, '1.4-125'),
 
-  engine(P, S, '1.8-152', 'CDAB', 152),
+  engine(P, S, '1.8-152', 'CDAB', 152, ['06J100035F']),
   starter(P, S, '1.8-152'),
   alternator(P, S, '1.8-152'),
   fuelPumpHP(P, S, '1.8-152'),
