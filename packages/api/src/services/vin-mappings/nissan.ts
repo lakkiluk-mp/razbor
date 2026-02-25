@@ -23,5 +23,24 @@ export const nissanMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'x-trail',
+      modelCodes: { position: [3, 4], codes: ['T'] },
+      generationCodes: {
+        position: [6, 8],
+        mapping: {
+          T0: { slug: 't30', bodyType: 'crossover' },
+          T1: { slug: 't31', bodyType: 'crossover' },
+          T2: { slug: 't32', bodyType: 'crossover' },
+        },
+      },
+      engineCodes: {
+        position: 4,
+        mapping: {
+          A: ['engine:2.0-140', 'engine:2.0-141', 'engine:2.0-144'],
+          B: ['engine:2.5-165', 'engine:2.5-169', 'engine:2.5-171'],
+        },
+      },
+    },
   ],
 }

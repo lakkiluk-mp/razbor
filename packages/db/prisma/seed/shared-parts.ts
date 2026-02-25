@@ -156,8 +156,40 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
   },
 
   // ========================================
+  // NISSAN ENGINES
+  // ========================================
+  {
+    oemCode: '10102JD2MC',
+    name: 'Двигатель 2.0 MR20DE (141 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:10102JD2MC', 'двигатель 2.0 MR20DE', 'мотор MR20DE', 'двигатель MR20DE ниссан'],
+    usedBy: ['nissan-qashqai', 'nissan-x-trail'],
+  },
+  {
+    oemCode: '101024EF1A',
+    name: 'Двигатель 2.0 MR20DD (144 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:101024EF1A', 'двигатель 2.0 MR20DD', 'мотор MR20DD', 'двигатель MR20DD ниссан'],
+    usedBy: ['nissan-qashqai', 'nissan-x-trail'],
+  },
+
+  // ========================================
   // NISSAN TRANSMISSIONS
   // ========================================
+  {
+    oemCode: 'JF011E',
+    name: 'Вариатор (Jatco JF011E)',
+    category: 'transmission',
+    searchQueries: ['oem:JF011E', 'oem:RE0F10A', 'вариатор JF011E', 'cvt JF011E', 'вариатор Jatco JF011E'],
+    usedBy: ['nissan-qashqai', 'nissan-x-trail', 'mitsubishi-lancer'],
+  },
+  {
+    oemCode: 'JF016E',
+    name: 'Вариатор (Jatco JF016E)',
+    category: 'transmission',
+    searchQueries: ['oem:JF016E', 'oem:RE0F10D', 'вариатор JF016E', 'cvt JF016E', 'вариатор Jatco JF016E'],
+    usedBy: ['nissan-qashqai', 'nissan-x-trail'],
+  },
   {
     oemCode: 'JF015E',
     name: 'Вариатор (Jatco JF015E)',
@@ -601,6 +633,77 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     category: 'transmission',
     searchQueries: ['oem:3040012760', 'вариатор K120 тойота', 'cvt K120 камри', 'Direct Shift CVT'],
     usedBy: ['toyota-camry'],
+  },
+
+  // ========================================
+  // BMW ENGINES
+  // ========================================
+  {
+    oemCode: 'M54B25',
+    name: 'Двигатель 2.5 M54B25 (192 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:M54B25', 'двигатель 2.5 M54B25', 'мотор M54B25', 'двигатель M54B25 бмв'],
+    usedBy: ['bmw-3-series', 'bmw-5-series'],
+  },
+  {
+    oemCode: 'M54B30',
+    name: 'Двигатель 3.0 M54B30 (231 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:M54B30', 'двигатель 3.0 M54B30', 'мотор M54B30', 'двигатель M54B30 бмв'],
+    usedBy: ['bmw-3-series', 'bmw-5-series'],
+  },
+  {
+    oemCode: 'N52B25',
+    name: 'Двигатель 2.5 N52B25 (218 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:N52B25', 'двигатель 2.5 N52B25', 'мотор N52B25', 'двигатель N52B25 бмв'],
+    usedBy: ['bmw-3-series', 'bmw-5-series'],
+  },
+  {
+    oemCode: 'N52B30',
+    name: 'Двигатель 3.0 N52B30 (258 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:N52B30', 'двигатель 3.0 N52B30', 'мотор N52B30', 'двигатель N52B30 бмв'],
+    usedBy: ['bmw-3-series', 'bmw-5-series'],
+  },
+  {
+    oemCode: 'N54B30',
+    name: 'Двигатель 3.0t N54B30 (272-306 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:N54B30', 'двигатель 3.0 N54B30', 'мотор N54B30', 'двигатель N54B30 бмв'],
+    usedBy: ['bmw-3-series', 'bmw-5-series'],
+  },
+  {
+    oemCode: 'N20B20',
+    name: 'Двигатель 2.0t N20B20 (184-245 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:N20B20', 'двигатель 2.0 N20B20', 'мотор N20B20', 'двигатель N20B20 бмв'],
+    usedBy: ['bmw-3-series', 'bmw-5-series'],
+  },
+  {
+    oemCode: 'N55B30',
+    name: 'Двигатель 3.0t N55B30 (306 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:N55B30', 'двигатель 3.0 N55B30', 'мотор N55B30', 'двигатель N55B30 бмв'],
+    usedBy: ['bmw-3-series', 'bmw-5-series'],
+  },
+
+  // ========================================
+  // BMW TRANSMISSIONS
+  // ========================================
+  {
+    oemCode: '5HP19',
+    name: 'АКПП 5-ступ ZF 5HP19',
+    category: 'transmission',
+    searchQueries: ['oem:5HP19', 'акпп 5HP19 бмв', 'акпп ZF 5HP19', 'коробка 5HP19'],
+    usedBy: ['bmw-3-series', 'bmw-5-series'],
+  },
+  {
+    oemCode: '8HP45',
+    name: 'АКПП 8-ступ ZF 8HP45',
+    category: 'transmission',
+    searchQueries: ['oem:8HP45', 'акпп 8HP45 бмв', 'акпп ZF 8HP45', 'коробка 8HP45'],
+    usedBy: ['bmw-3-series', 'bmw-5-series'],
   },
 
   // ========================================
