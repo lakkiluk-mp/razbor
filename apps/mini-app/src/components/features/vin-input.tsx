@@ -22,8 +22,10 @@ const WMI_BRANDS: Record<string, string> = {
   JN1: 'Nissan', SJN: 'Nissan', Z8N: 'Nissan',
   VNK: 'Renault', VF1: 'Renault',
   W0L: 'Opel',
-  KL1: 'Chevrolet', KL2: 'Chevrolet', KLA: 'Chevrolet', XUU: 'Chevrolet',
+  KL1: 'Chevrolet', KL2: 'Chevrolet', KLA: 'Chevrolet', XUU: 'Chevrolet', Y6D: 'Chevrolet',
   JA3: 'Mitsubishi', JMB: 'Mitsubishi', JMY: 'Mitsubishi',
+  JHM: 'Honda', '1HG': 'Honda', '2HG': 'Honda', SHH: 'Honda',
+  JF1: 'Subaru', JF2: 'Subaru',
 }
 
 const VIN_YEAR_CODES: Record<string, number> = {
@@ -53,6 +55,8 @@ const BRAND_ALIASES: Record<string, string[]> = {
   opel: ['опель', 'опэль'],
   chevrolet: ['шевроле', 'шеврале', 'шевролет', 'шевро'],
   mitsubishi: ['митсубиси', 'мицубиси', 'митсубиши', 'мицубиши'],
+  honda: ['хонда', 'хонду', 'хонды'],
+  subaru: ['субару', 'субара', 'субарик'],
 }
 
 const RU_TO_LAT: Record<string, string> = {

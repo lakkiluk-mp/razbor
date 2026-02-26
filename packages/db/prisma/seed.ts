@@ -33,14 +33,17 @@ import { bmw5SeriesSeed } from './seed/bmw-5-series'
 import { porscheCayenneSeed } from './seed/porsche-cayenne'
 import { opelAstraSeed } from './seed/opel-astra'
 import { chevroletLacettiSeed } from './seed/chevrolet-lacetti'
+import { chevroletLanosSeed } from './seed/chevrolet-lanos'
 import { mitsubishiLancerSeed } from './seed/mitsubishi-lancer'
+import { hondaAccordSeed } from './seed/honda-accord'
+import { subaruForesterSeed } from './seed/subaru-forester'
 import { SHARED_PARTS_REGISTRY, generateSharedPartSlug } from './seed/shared-parts'
 import type { ModelSeed } from './seed/types'
 import { isSharedPartRef } from './seed/types'
 
 const prisma = new PrismaClient()
 
-const modelSeeds: ModelSeed[] = [mazda6Seed, mazda3Seed, mazdaCx5Seed, mercedesCClassSeed, mercedesSClassSeed, renaultLoganSeed, renaultDusterSeed, kiaRioSeed, kiaOptimaSeed, kiaSportageSeed, kiaCeedSeed, fordFocusSeed, fordMondeoSeed, hyundaiSolarisSeed, hyundaiCretaSeed, ladaVestaSeed, ladaGrantaSeed, ladaNivaSeed, skodaRapidSeed, skodaOctaviaSeed, volkswagenPoloSeed, volkswagenPassatSeed, toyotaCamrySeed, toyotaCorollaSeed, nissanQashqaiSeed, nissanXTrailSeed, audiQ5Seed, audiA3Seed, bmw3SeriesSeed, bmw5SeriesSeed, porscheCayenneSeed, opelAstraSeed, chevroletLacettiSeed, mitsubishiLancerSeed] as ModelSeed[]
+const modelSeeds: ModelSeed[] = [mazda6Seed, mazda3Seed, mazdaCx5Seed, mercedesCClassSeed, mercedesSClassSeed, renaultLoganSeed, renaultDusterSeed, kiaRioSeed, kiaOptimaSeed, kiaSportageSeed, kiaCeedSeed, fordFocusSeed, fordMondeoSeed, hyundaiSolarisSeed, hyundaiCretaSeed, ladaVestaSeed, ladaGrantaSeed, ladaNivaSeed, skodaRapidSeed, skodaOctaviaSeed, volkswagenPoloSeed, volkswagenPassatSeed, toyotaCamrySeed, toyotaCorollaSeed, nissanQashqaiSeed, nissanXTrailSeed, audiQ5Seed, audiA3Seed, bmw3SeriesSeed, bmw5SeriesSeed, porscheCayenneSeed, opelAstraSeed, chevroletLacettiSeed, chevroletLanosSeed, mitsubishiLancerSeed, hondaAccordSeed, subaruForesterSeed] as ModelSeed[]
 
 async function seedSharedParts() {
   console.log('\n--- Seeding shared parts ---')

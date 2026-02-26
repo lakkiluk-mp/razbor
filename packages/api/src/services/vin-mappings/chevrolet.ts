@@ -1,5 +1,29 @@
 import type { VinBrandMapping } from './types'
 
+const lanosModel = {
+  modelSlug: 'lanos',
+  modelCodes: { position: [3, 4], codes: ['T'] },
+  generationCodes: {
+    position: [5, 7],
+    mapping: {
+      F69: { slug: 't100', bodyType: 'sedan' as const },
+      A69: { slug: 't100', bodyType: 'sedan' as const },
+    },
+  },
+  engineCodes: {
+    position: 7,
+    mapping: {
+      Y: ['engine:1.5-86'],
+    },
+  },
+  transmissionCodes: {
+    position: 4,
+    mapping: {
+      F: ['transmission:mt5'],
+    },
+  },
+}
+
 export const chevroletKrMapping: VinBrandMapping = {
   wmi: ['KL1', 'KL2', 'KLA'],
   brandSlug: 'chevrolet',
@@ -39,6 +63,7 @@ export const chevroletKrMapping: VinBrandMapping = {
         },
       },
     },
+    lanosModel,
   ],
 }
 
@@ -81,5 +106,12 @@ export const chevroletRuMapping: VinBrandMapping = {
         },
       },
     },
+    lanosModel,
   ],
+}
+
+export const chevroletUaMapping: VinBrandMapping = {
+  wmi: ['Y6D'],
+  brandSlug: 'chevrolet',
+  models: [lanosModel],
 }
