@@ -1,5 +1,6 @@
 import { BodyType } from '@prisma/client'
-import type { PartData, GenerationData } from './types'
+import type { PartData, SharedPartRef, GenerationData } from './types'
+import { isSharedPartRef } from './types'
 import { getBaseParts } from './base-parts'
 import {
   engine,
@@ -16,7 +17,7 @@ import {
 const P = 'subaru-forester'
 const S = ['forester', 'форестер']
 
-const modelSpecificParts: PartData[] = [
+const modelSpecificParts: (PartData | SharedPartRef)[] = [
   // ========================================
   // EJ20 — 2.0 атмо SOHC (122-137 л.с.) — SF, SG
   // MPI, без ТНВД, без турбо
@@ -65,7 +66,7 @@ const modelSpecificParts: PartData[] = [
   // FB20 — 2.0 атмо (150 л.с.) — SH рест., SJ, SK
   // MPI (цепной привод ГРМ), без ТНВД, без турбо
   // ========================================
-  engine(P, S, '2.0-150', 'FB20', 150),
+  engine(P, S, '2.0-150', 'FB20', 150, ['FB20']),
   starter(P, S, '2.0-150', 'FB20'),
   alternator(P, S, '2.0-150', 'FB20'),
 
@@ -185,12 +186,13 @@ export const subaruForesterSeed = {
   },
   model: { name: 'Forester', slug: 'forester', isPopular: true, sortOrder: 1 },
   generations,
-  getPartsForGeneration(generation: GenerationData): PartData[] {
-    const allParts = [...getBaseParts(P, S), ...modelSpecificParts]
+  getPartsForGeneration(generation: GenerationData): (PartData | SharedPartRef)[] {
+    const allParts: (PartData | SharedPartRef)[] = [...getBaseParts(P, S), ...modelSpecificParts]
     return allParts.filter((part) => {
-      if (!part.configGroup) return true
+      const cg = isSharedPartRef(part) ? part.configGroup : part.configGroup
+      if (!cg) return true
       if (!generation.availableConfigs) return true
-      return generation.availableConfigs.includes(part.configGroup)
+      return generation.availableConfigs.includes(cg)
     })
   },
 }

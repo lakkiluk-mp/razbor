@@ -26,5 +26,22 @@ export const subaruMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'impreza',
+      modelCodes: { position: [3, 4], codes: ['G'] },
+      generationCodes: {
+        position: [4, 5],
+        mapping: {
+          D: { slug: 'gd', bodyType: 'sedan' },
+          G: { slug: 'gd', bodyType: 'sedan' },
+          E: { slug: 'ge', bodyType: 'sedan' },
+          H: { slug: 'ge', bodyType: 'sedan' },
+          J: { slug: 'gj', bodyType: 'sedan' },
+          P: { slug: 'gj', bodyType: 'sedan' },
+          K: { slug: 'gk', bodyType: 'sedan' },
+          T: { slug: 'gk', bodyType: 'sedan' },
+        },
+      },
+    },
   ],
 }

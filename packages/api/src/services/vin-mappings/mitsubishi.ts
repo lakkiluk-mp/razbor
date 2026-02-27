@@ -16,5 +16,17 @@ export const mitsubishiMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'outlander',
+      modelCodes: { position: [3, 5], codes: ['CW', 'GF', 'GG', 'GN'] },
+      generationCodes: {
+        position: [6, 8],
+        mapping: {
+          CW: { slug: 'cw', bodyType: 'crossover' },
+          GF: { slug: 'gf', bodyType: 'crossover' },
+          GG: { slug: 'gf', bodyType: 'crossover' },
+        },
+      },
+    },
   ],
 }

@@ -42,6 +42,38 @@ export const hondaJpMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'civic',
+      variantCodes: {
+        position: [3, 6],
+        mapping: {
+          FD1: { engines: ['engine:1.8-140'] },
+          FD7: { engines: ['engine:1.8-140'] },
+          FB6: { engines: ['engine:1.8-142'] },
+          FB8: { engines: ['engine:1.8-142'] },
+          FC1: { engines: ['engine:1.5t-182'] },
+          FC2: { engines: ['engine:2.0-158'] },
+        },
+      },
+      generationCodes: {
+        position: [3, 6],
+        mapping: {
+          FD1: { slug: 'fd', bodyType: 'sedan' },
+          FD7: { slug: 'fd', bodyType: 'sedan' },
+          FB6: { slug: 'fb', bodyType: 'sedan' },
+          FB8: { slug: 'fb', bodyType: 'sedan' },
+          FC1: { slug: 'fc', bodyType: 'sedan' },
+          FC2: { slug: 'fc', bodyType: 'sedan' },
+        },
+      },
+      transmissionCodes: {
+        position: 6,
+        mapping: {
+          5: ['transmission:mt5', 'transmission:mt6'],
+          6: ['transmission:at5', 'transmission:cvt', 'transmission:at-diesel'],
+        },
+      },
+    },
   ],
 }
 
@@ -81,6 +113,38 @@ export const hondaUsMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'civic',
+      variantCodes: {
+        position: [3, 6],
+        mapping: {
+          FA1: { engines: ['engine:1.8-140'] },
+          FA5: { engines: ['engine:1.8-140'] },
+          FB2: { engines: ['engine:1.8-142'] },
+          FB4: { engines: ['engine:1.8-142'] },
+          FC1: { engines: ['engine:1.5t-182'] },
+          FC2: { engines: ['engine:2.0-158'] },
+        },
+      },
+      generationCodes: {
+        position: [3, 6],
+        mapping: {
+          FA1: { slug: 'fd', bodyType: 'sedan' },
+          FA5: { slug: 'fd', bodyType: 'sedan' },
+          FB2: { slug: 'fb', bodyType: 'sedan' },
+          FB4: { slug: 'fb', bodyType: 'sedan' },
+          FC1: { slug: 'fc', bodyType: 'sedan' },
+          FC2: { slug: 'fc', bodyType: 'sedan' },
+        },
+      },
+      transmissionCodes: {
+        position: 6,
+        mapping: {
+          5: ['transmission:mt5', 'transmission:mt6'],
+          6: ['transmission:at5', 'transmission:cvt'],
+        },
+      },
+    },
   ],
 }
 
@@ -117,6 +181,36 @@ export const hondaEuMapping: VinBrandMapping = {
         mapping: {
           5: ['transmission:mt5', 'transmission:mt6'],
           6: ['transmission:at5-mcta', 'transmission:at5', 'transmission:cvt', 'transmission:at6'],
+        },
+      },
+    },
+    {
+      modelSlug: 'civic',
+      variantCodes: {
+        position: [3, 6],
+        mapping: {
+          FD1: { engines: ['engine:1.8-140'] },
+          FK2: { engines: ['engine:1.5t-182'] },
+          FC1: { engines: ['engine:1.0t-126'] },
+          FC2: { engines: ['engine:1.5t-182'] },
+          FC3: { engines: ['engine:1.6d-120'] },
+        },
+      },
+      generationCodes: {
+        position: [3, 6],
+        mapping: {
+          FD1: { slug: 'fd', bodyType: 'sedan' },
+          FK2: { slug: 'fc', bodyType: 'sedan' },
+          FC1: { slug: 'fc', bodyType: 'sedan' },
+          FC2: { slug: 'fc', bodyType: 'sedan' },
+          FC3: { slug: 'fc', bodyType: 'sedan' },
+        },
+      },
+      transmissionCodes: {
+        position: 6,
+        mapping: {
+          5: ['transmission:mt5', 'transmission:mt6'],
+          6: ['transmission:at5', 'transmission:cvt', 'transmission:at-diesel'],
         },
       },
     },

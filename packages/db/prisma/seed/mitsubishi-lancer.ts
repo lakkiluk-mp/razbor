@@ -23,7 +23,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   starter(P, S, '1.8-143', '4B10'),
   alternator(P, S, '1.8-143', '4B10'),
 
-  engine(P, S, '2.0-150', '4B11', 150, ['11000W000P']),
+  engine(P, S, '2.0-150', '4B11', 150, ['4B11']),
   starter(P, S, '2.0-150', '4B11'),
   alternator(P, S, '2.0-150', '4B11'),
 

@@ -36,7 +36,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   alternator(P, S, '3.5-278'),
 
   // X (CV) 2017-2021
-  engine(P, S, '1.5t-192', 'L15B', 192),
+  engine(P, S, '1.5t-192', 'L15B', 192, ['L15B']),
   starter(P, S, '1.5t-192'),
   alternator(P, S, '1.5t-192'),
   fuelPumpHP(P, S, '1.5t-192'),

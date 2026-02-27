@@ -181,14 +181,14 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Вариатор (Jatco JF011E)',
     category: 'transmission',
     searchQueries: ['oem:JF011E', 'oem:RE0F10A', 'вариатор JF011E', 'cvt JF011E', 'вариатор Jatco JF011E'],
-    usedBy: ['nissan-qashqai', 'nissan-x-trail', 'mitsubishi-lancer'],
+    usedBy: ['nissan-qashqai', 'nissan-x-trail', 'mitsubishi-lancer', 'mitsubishi-outlander'],
   },
   {
     oemCode: 'JF016E',
     name: 'Вариатор (Jatco JF016E)',
     category: 'transmission',
     searchQueries: ['oem:JF016E', 'oem:RE0F10D', 'вариатор JF016E', 'cvt JF016E', 'вариатор Jatco JF016E'],
-    usedBy: ['nissan-qashqai', 'nissan-x-trail'],
+    usedBy: ['nissan-qashqai', 'nissan-x-trail', 'mitsubishi-outlander'],
   },
   {
     oemCode: 'JF015E',
@@ -562,6 +562,28 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     category: 'transmission',
     searchQueries: ['oem:716.5', 'мкпп 716.5 мерседес', 'мкпп 5 ступ мерседес'],
     usedBy: ['mercedes-c-class'],
+  },
+
+  // ========================================
+  // HONDA ENGINES
+  // ========================================
+  {
+    oemCode: 'L15B',
+    name: 'Двигатель 1.5T L15B',
+    category: 'engine',
+    searchQueries: ['oem:L15B', 'двигатель 1.5 L15B honda', 'двигатель 1.5 турбо хонда'],
+    usedBy: ['honda-accord', 'honda-civic'],
+  },
+
+  // ========================================
+  // MITSUBISHI ENGINES
+  // ========================================
+  {
+    oemCode: '4B11',
+    name: 'Двигатель 2.0 4B11 (147-150 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:4B11', 'двигатель 2.0 4B11', 'мотор 4B11', 'двигатель 4B11 митсубиси'],
+    usedBy: ['mitsubishi-lancer', 'mitsubishi-outlander'],
   },
 
   // ========================================
@@ -1004,6 +1026,35 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'мотор 1.6 MPI BSE',
     ],
     usedBy: ['skoda-octavia', 'volkswagen-passat'],
+  },
+
+  // ========================================
+  // SUBARU ENGINES
+  // ========================================
+  {
+    oemCode: 'FB20',
+    name: 'Двигатель 2.0 FB20 (150-154 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:FB20', 'двигатель 2.0 FB20', 'мотор FB20', 'двигатель FB20 субару'],
+    usedBy: ['subaru-forester', 'subaru-impreza'],
+  },
+
+  // ========================================
+  // SUBARU TRANSMISSIONS
+  // ========================================
+  {
+    oemCode: '4EAT',
+    name: 'АКПП 4-ступ (4EAT)',
+    category: 'transmission',
+    searchQueries: ['oem:4EAT', 'акпп 4EAT субару', 'акпп 4 ступ субару', 'коробка автомат 4EAT'],
+    usedBy: ['subaru-forester', 'subaru-impreza'],
+  },
+  {
+    oemCode: 'TR580',
+    name: 'Вариатор Lineartronic (TR580)',
+    category: 'transmission',
+    searchQueries: ['oem:TR580', 'вариатор TR580 субару', 'cvt TR580 субару', 'lineartronic TR580'],
+    usedBy: ['subaru-forester', 'subaru-impreza'],
   },
 
   // ========================================
