@@ -4,10 +4,8 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer'
-import { Button } from '@/components/ui/button'
 import { formatPrice } from '@razbor/shared'
 import { ExternalLink } from 'lucide-react'
-import { useNavigate, useLocation } from 'react-router-dom'
 
 interface PriceSource {
   source: string
@@ -105,12 +103,9 @@ export function PriceDetailsDrawer({
   partName,
   oemCode,
   price,
-  isSubscribed = false,
   open,
   onOpenChange,
 }: PriceDetailsDrawerProps) {
-  const navigate = useNavigate()
-  const location = useLocation()
   const sourcesWithSearchUrl = price?.sources?.filter((s) => isValidUrl(s.searchUrl)) ?? []
   const hasSearchUrls = sourcesWithSearchUrl.length > 0
 
