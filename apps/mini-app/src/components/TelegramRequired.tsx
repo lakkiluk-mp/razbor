@@ -131,7 +131,7 @@ export function TelegramRequired() {
                   Откройте в Telegram
                 </h3>
                 <p className="text-base md:text-lg text-slate-500 max-w-md leading-relaxed">
-                  Это приложение доступно только через официальный бот Razbor
+                  Это приложение доступно только через официальный бот В Разборе
                 </p>
               </div>
             }

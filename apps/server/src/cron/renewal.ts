@@ -139,7 +139,9 @@ export async function processRenewals(prisma: PrismaClient): Promise<void> {
       }
 
       if (subscription.status === 'past_due') {
-        if (subscription.retryCount >= SUBSCRIPTION_MAX_RETRIES) {
+        const planData = SUBSCRIPTION_PLANS[subscription.plan as keyof typeof SUBSCRIPTION_PLANS]
+        const maxRetries = planData?.maxRetries ?? SUBSCRIPTION_MAX_RETRIES
+        if (subscription.retryCount >= maxRetries) {
           if (subscription.currentPeriodEnd <= new Date()) {
             console.log(`[Renewal] ${subscription.id} max retries (${subscription.retryCount}) and grace expired → expiring`)
             await expireSubscription(prisma, subscription.id)

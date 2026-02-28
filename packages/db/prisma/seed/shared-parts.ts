@@ -658,6 +658,49 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
   },
 
   // ========================================
+  // LEXUS/TOYOTA ENGINES (RX300)
+  // ========================================
+  {
+    oemCode: '1900020290',
+    name: 'Двигатель 3.0 1MZ-FE V6 (200 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:1900020290', 'двигатель 3.0 1MZ-FE', 'мотор 1MZ-FE', 'двигатель 1MZ V6'],
+    usedBy: ['lexus-rx300'],
+  },
+  {
+    oemCode: '1900036510',
+    name: 'Двигатель 2.0T 8AR-FTS (238 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:1900036510', 'двигатель 2.0 8AR-FTS', 'мотор 8AR-FTS', 'двигатель 8AR турбо'],
+    usedBy: ['lexus-rx300'],
+  },
+
+  // ========================================
+  // LEXUS/TOYOTA TRANSMISSIONS (RX300)
+  // ========================================
+  {
+    oemCode: '3051048021',
+    name: 'АКПП 4-ступ A541E',
+    category: 'transmission',
+    searchQueries: ['oem:3051048021', 'акпп A541E лексус', 'акпп 4 ступ лексус rx', 'коробка автомат A541E'],
+    usedBy: ['lexus-rx300'],
+  },
+  {
+    oemCode: '3050048150',
+    name: 'АКПП 5-ступ U151F',
+    category: 'transmission',
+    searchQueries: ['oem:3050048150', 'акпп U151F лексус', 'акпп 5 ступ лексус rx', 'коробка автомат U151F'],
+    usedBy: ['lexus-rx300'],
+  },
+  {
+    oemCode: '3050048430',
+    name: 'АКПП 6-ступ U661E',
+    category: 'transmission',
+    searchQueries: ['oem:3050048430', 'акпп U661E лексус', 'акпп 6 ступ лексус rx', 'коробка автомат U661E'],
+    usedBy: ['lexus-rx300'],
+  },
+
+  // ========================================
   // BMW ENGINES
   // ========================================
   {

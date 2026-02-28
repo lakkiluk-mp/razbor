@@ -170,57 +170,25 @@ export function PriceDetailsDrawer({
 
           {hasSearchUrls && (
             <div className="mt-3 border-t border-zinc-800 pt-3">
-              {isSubscribed ? (
-                <>
-                  <span className="text-sm text-zinc-400">Ссылки на поиск</span>
-                  <p className="text-xs text-zinc-500 mt-0.5">Исходная выдача до фильтрации</p>
-                  <div className="mt-2 flex items-center justify-end gap-2">
-                    {sourcesWithSearchUrl.map((s) => (
-                      <button
-                        key={s.source}
-                        type="button"
-                        className="flex items-center gap-1.5 text-xs font-medium text-amber-500/80 bg-amber-500/10 px-3 py-1.5 rounded-lg active:bg-amber-500/20 transition-colors min-h-[36px]"
-                        onClick={() => {
-                          if (isValidUrl(s.searchUrl)) openExternalLink(s.searchUrl)
-                        }}
-                      >
-                        {getSourceLabel(s.source)}
-                        <ExternalLink className="w-3 h-3" />
-                      </button>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <span className="text-sm text-zinc-400">Ссылки на поиск</span>
-                  <p className="text-xs text-zinc-500 mt-0.5">Исходная выдача до фильтрации</p>
-                  <div className="relative mt-2 bg-zinc-800/50 rounded-xl px-4 py-5">
-                    <div className="blur-md pointer-events-none select-none flex items-center gap-2 mt-2">
-                      {sourcesWithSearchUrl.map((s) => (
-                        <div
-                          key={s.source}
-                          className="flex items-center gap-1 text-sm text-zinc-400"
-                        >
-                          {getSourceLabel(s.source)}
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </div>
-                      ))}
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <Button
-                        size="sm"
-                        className="bg-amber-500 hover:bg-amber-600 text-zinc-950 font-medium text-sm h-8 px-4"
-                        onClick={() => {
-                          onOpenChange(false)
-                          navigate('/subscribe', { state: { returnTo: location.pathname + location.search } })
-                        }}
-                      >
-                        Разблокировать
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              )}
+              <>
+                <span className="text-sm text-zinc-400">Ссылки на поиск</span>
+                <p className="text-xs text-zinc-500 mt-0.5">Исходная выдача до фильтрации</p>
+                <div className="mt-2 flex items-center justify-end gap-2">
+                  {sourcesWithSearchUrl.map((s) => (
+                    <button
+                      key={s.source}
+                      type="button"
+                      className="flex items-center gap-1.5 text-xs font-medium text-amber-500/80 bg-amber-500/10 px-3 py-1.5 rounded-lg active:bg-amber-500/20 transition-colors min-h-[36px]"
+                      onClick={() => {
+                        if (isValidUrl(s.searchUrl)) openExternalLink(s.searchUrl)
+                      }}
+                    >
+                      {getSourceLabel(s.source)}
+                      <ExternalLink className="w-3 h-3" />
+                    </button>
+                  ))}
+                </div>
+              </>
             </div>
           )}
         </div>

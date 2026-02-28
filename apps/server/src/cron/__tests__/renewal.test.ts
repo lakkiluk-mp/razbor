@@ -9,8 +9,8 @@ vi.mock('@razbor/api', () => ({
 
 vi.mock('@razbor/shared', () => ({
   SUBSCRIPTION_PLANS: {
-    weekly: { price: 249, label: '1 неделя', days: 7, credits: 5, graceDays: 1 },
-    monthly: { price: 799, label: '1 месяц', days: 30, credits: 25, graceDays: 3 },
+    weekly: { price: 249, label: '1 неделя', days: 7, credits: 5, graceDays: 1, maxRetries: 2 },
+    monthly: { price: 799, label: '1 месяц', days: 30, credits: 25, graceDays: 3, maxRetries: 3 },
   },
   SUBSCRIPTION_MAX_RETRIES: 3,
 }))
@@ -186,7 +186,7 @@ describe('processRenewals', () => {
     expect(mockExpireSubscription).toHaveBeenCalledWith(prisma, 'sub-1')
   })
 
-  it('should expire subscription when past_due retries exceed max and grace expired', async () => {
+  it('should expire weekly subscription when past_due retries exceed max (2) and grace expired', async () => {
     prisma.subscription.findMany.mockResolvedValue([
       {
         id: 'sub-1',
@@ -194,6 +194,25 @@ describe('processRenewals', () => {
         cancelAtPeriodEnd: false,
         status: 'past_due',
         plan: 'weekly',
+        retryCount: 2,
+        lastRetryAt: new Date('2026-02-14T12:00:00Z'),
+        currentPeriodEnd: new Date('2026-02-14T00:00:00Z'),
+      },
+    ])
+
+    await processRenewals(prisma)
+
+    expect(mockExpireSubscription).toHaveBeenCalledWith(prisma, 'sub-1')
+  })
+
+  it('should expire monthly subscription when past_due retries exceed max (3) and grace expired', async () => {
+    prisma.subscription.findMany.mockResolvedValue([
+      {
+        id: 'sub-1',
+        userId: 'user-1',
+        cancelAtPeriodEnd: false,
+        status: 'past_due',
+        plan: 'monthly',
         retryCount: 3,
         lastRetryAt: new Date('2026-02-14T12:00:00Z'),
         currentPeriodEnd: new Date('2026-02-14T00:00:00Z'),
@@ -213,7 +232,7 @@ describe('processRenewals', () => {
         cancelAtPeriodEnd: false,
         status: 'past_due',
         plan: 'weekly',
-        retryCount: 3,
+        retryCount: 2,
         lastRetryAt: new Date('2026-02-14T12:00:00Z'),
         currentPeriodEnd: new Date('2026-02-16T12:00:00Z'),
       },
@@ -257,8 +276,9 @@ describe('processRenewals', () => {
         cancelAtPeriodEnd: false,
         status: 'past_due',
         plan: 'weekly',
-        retryCount: 2,
-        lastRetryAt: new Date('2026-02-14T12:00:00Z'),
+        retryCount: 1,
+        lastRetryAt: new Date('2026-02-15T06:00:00Z'),
+        currentPeriodEnd: new Date('2026-02-20T12:00:00Z'),
       },
     ])
 
@@ -325,9 +345,10 @@ describe('processRenewals', () => {
         userId: 'user-1',
         cancelAtPeriodEnd: false,
         status: 'past_due',
-        plan: 'weekly',
+        plan: 'monthly',
         retryCount: 2,
-        lastRetryAt: new Date('2026-02-13T13:00:00Z'),
+        lastRetryAt: new Date('2026-02-14T12:00:00Z'),
+        currentPeriodEnd: new Date('2026-02-20T12:00:00Z'),
       },
     ])
 
@@ -474,7 +495,7 @@ describe('processRenewals', () => {
         cancelAtPeriodEnd: false,
         status: 'past_due',
         plan: 'weekly',
-        retryCount: 3,
+        retryCount: 2,
         lastRetryAt: new Date('2026-02-14T12:00:00Z'),
         currentPeriodEnd: new Date('2026-02-20T12:00:00Z'),
       },

@@ -26,6 +26,8 @@ const WMI_BRANDS: Record<string, string> = {
   JA3: 'Mitsubishi', JMB: 'Mitsubishi', JMY: 'Mitsubishi',
   JHM: 'Honda', '1HG': 'Honda', '2HG': 'Honda', SHH: 'Honda',
   JF1: 'Subaru', JF2: 'Subaru',
+  JTJ: 'Lexus', JTH: 'Lexus',
+  VF7: 'Citroen', Z8T: 'Citroen', VR7: 'Citroen',
 }
 
 const VIN_YEAR_CODES: Record<string, number> = {
@@ -57,6 +59,8 @@ const BRAND_ALIASES: Record<string, string[]> = {
   mitsubishi: ['митсубиси', 'мицубиси', 'митсубиши', 'мицубиши'],
   honda: ['хонда', 'хонду', 'хонды'],
   subaru: ['субару', 'субара', 'субарик'],
+  lexus: ['лексус', 'лекс', 'лексуc'],
+  citroen: ['ситроен', 'ситроэн', 'цитроен'],
 }
 
 const RU_TO_LAT: Record<string, string> = {

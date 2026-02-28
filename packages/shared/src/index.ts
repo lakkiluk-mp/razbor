@@ -17,8 +17,8 @@ export const ROUTES = {
 export const TRIAL_CREDITS = 3
 
 export const SUBSCRIPTION_PLANS = {
-  weekly: { price: 249, label: '1 неделя', days: 7, credits: 5, graceDays: 1 },
-  monthly: { price: 799, label: '1 месяц', days: 30, credits: 25, graceDays: 3 },
+  weekly: { price: 249, label: '1 неделя', days: 7, credits: 5, graceDays: 1, maxRetries: 2 },
+  monthly: { price: 799, label: '1 месяц', days: 30, credits: 25, graceDays: 3, maxRetries: 3 },
 } as const
 
 export type SubscriptionPlanKey = keyof typeof SUBSCRIPTION_PLANS

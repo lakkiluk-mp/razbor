@@ -18,6 +18,8 @@ import { chevroletKrMapping, chevroletRuMapping, chevroletUaMapping } from './ch
 import { mitsubishiMapping } from './mitsubishi'
 import { hondaJpMapping, hondaUsMapping, hondaEuMapping } from './honda'
 import { subaruMapping } from './subaru'
+import { lexusJpMapping } from './lexus'
+import { citroenMapping } from './citroen'
 
 export type { VinGenCode, VinModelMapping, VinBrandMapping, VinVariantConfig } from './types'
 
@@ -53,4 +55,6 @@ export const VIN_BRAND_MAPPINGS: VinBrandMapping[] = [
   hondaUsMapping,
   hondaEuMapping,
   subaruMapping,
+  lexusJpMapping,
+  citroenMapping,
 ]

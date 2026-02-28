@@ -162,7 +162,7 @@ export function SubscribePage() {
 
   const isLoading = plansLoading || subLoading || methodsLoading
   const subscription = subData?.mySubscription
-  const hasSubscription = subscription && subscription.status === 'active'
+  const hasSubscription = subscription && (subscription.status === 'active' || subscription.status === 'past_due')
   const plans = plansData?.subscriptionPlans ?? []
   const paymentMethods = methodsData?.myPaymentMethods ?? []
 
