@@ -23,8 +23,6 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   intercooler(P, S, '1.4t-140'),
 
   transmission(P, S, 'mt5', 'МКПП 5-ступ'),
-  transmission(P, S, 'at4', 'АКПП 4-ступ'),
-  ecuTransmission(P, S, 'at4'),
   transmission(P, S, 'at6', 'АКПП 6-ступ (6T30)'),
   ecuTransmission(P, S, 'at6'),
 

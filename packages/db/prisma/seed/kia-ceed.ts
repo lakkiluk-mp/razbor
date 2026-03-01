@@ -65,8 +65,6 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   // КПП
   transmission(P, S, 'mt5', 'МКПП 5-ступ'),
   transmission(P, S, 'mt6', 'МКПП 6-ступ'),
-  transmission(P, S, 'at4', 'АКПП 4-ступ'),
-  ecuTransmission(P, S, 'at4'),
   transmission(P, S, 'at6', 'АКПП 6-ступ'),
   ecuTransmission(P, S, 'at6'),
   transmission(P, S, 'robot6', 'Робот DCT 6-ступ'),
