@@ -1,5 +1,39 @@
 import type { VinBrandMapping } from './types'
 
+const cruzeModel = {
+  modelSlug: 'cruze',
+  modelCodes: { position: [3, 4] as [number, number], codes: ['J'] },
+  generationCodes: {
+    position: [5, 7] as [number, number],
+    mapping: {
+      F69: { slug: 'j300', bodyType: 'sedan' as const },
+      A69: { slug: 'j300', bodyType: 'sedan' as const },
+      F19: { slug: 'j300', bodyType: 'sedan' as const },
+      A19: { slug: 'j300', bodyType: 'sedan' as const },
+      F48: { slug: 'j300', bodyType: 'sedan' as const },
+      A48: { slug: 'j300', bodyType: 'sedan' as const },
+      F68: { slug: 'j300', bodyType: 'sedan' as const },
+      A68: { slug: 'j300', bodyType: 'sedan' as const },
+    },
+  },
+  engineCodes: {
+    position: 7,
+    mapping: {
+      '6': ['engine:1.6-109'],
+      B: ['engine:1.8-141'],
+      '9': ['engine:1.8-141'],
+      A: ['engine:1.4t-140'],
+    },
+  },
+  transmissionCodes: {
+    position: 4,
+    mapping: {
+      F: ['transmission:mt5'],
+      A: ['transmission:at4', 'transmission:at6'],
+    },
+  },
+}
+
 const lanosModel = {
   modelSlug: 'lanos',
   modelCodes: { position: [3, 4], codes: ['T'] },
@@ -63,6 +97,7 @@ export const chevroletKrMapping: VinBrandMapping = {
         },
       },
     },
+    cruzeModel,
     lanosModel,
   ],
 }
@@ -106,6 +141,7 @@ export const chevroletRuMapping: VinBrandMapping = {
         },
       },
     },
+    cruzeModel,
     lanosModel,
   ],
 }

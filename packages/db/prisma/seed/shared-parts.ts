@@ -565,6 +565,34 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
   },
 
   // ========================================
+  // CHEVROLET/GM ENGINES
+  // ========================================
+  {
+    oemCode: '96475805',
+    name: 'Двигатель 1.6 F16D3 (109 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'oem:96475805',
+      'двигатель 1.6 F16D3',
+      'мотор F16D3',
+      'двигатель F16D3',
+    ],
+    usedBy: ['chevrolet-lacetti', 'chevrolet-cruze'],
+  },
+  {
+    oemCode: 'A14NET',
+    name: 'Двигатель 1.4T A14NET (140 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'oem:A14NET',
+      'двигатель 1.4 A14NET',
+      'мотор A14NET',
+      'двигатель A14NET турбо',
+    ],
+    usedBy: ['opel-astra', 'chevrolet-cruze'],
+  },
+
+  // ========================================
   // HONDA ENGINES
   // ========================================
   {
