@@ -1136,7 +1136,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 2.0 CDNB (180 л.с.)',
     category: 'engine',
     searchQueries: ['oem:06H100031R', 'двигатель 2.0 CDNB', 'мотор CDNB', 'двигатель CDNB ауди'],
-    usedBy: ['audi-q5'],
+    usedBy: ['audi-q5', 'audi-a6'],
   },
   {
     oemCode: '06H100035H',
@@ -1189,7 +1189,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 2.0d CGLC TDI (177 л.с.)',
     category: 'engine',
     searchQueries: ['двигатель 2.0 CGLC', 'мотор CGLC', 'двигатель CGLC TDI'],
-    usedBy: ['audi-q5'],
+    usedBy: ['audi-q5', 'audi-a6'],
   },
   {
     oemCode: 'CCWA',
@@ -1203,7 +1203,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 3.0d CDUD TDI V6 (245 л.с.)',
     category: 'engine',
     searchQueries: ['двигатель 3.0 CDUD', 'мотор CDUD', 'двигатель CDUD TDI V6'],
-    usedBy: ['audi-q5'],
+    usedBy: ['audi-q5', 'audi-a6'],
   },
 
   // ========================================
@@ -1246,7 +1246,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       's-tronic DL501', 'робот DL501', 'dsg 7 ступ ауди',
       's tronic ауди q5', 'коробка 0B5',
     ],
-    usedBy: ['audi-q5'],
+    usedBy: ['audi-q5', 'audi-a6'],
   },
   {
     oemCode: '0BK',
@@ -1257,7 +1257,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'акпп 8 ступ ауди', 'tiptronic 8 ступ', 'zf 8hp ауди',
       'акпп 0BK', 'коробка автомат ауди q5',
     ],
-    usedBy: ['audi-q5'],
+    usedBy: ['audi-q5', 'audi-a6'],
   },
 ]
 

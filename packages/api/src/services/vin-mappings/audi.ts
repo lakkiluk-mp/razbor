@@ -26,6 +26,18 @@ export const audiEuMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'a6',
+      modelCodes: { position: [6, 8], codes: ['4F', '4G', '4K'] },
+      generationCodes: {
+        position: [6, 8],
+        mapping: {
+          '4F': { slug: '4f', bodyType: 'sedan' },
+          '4G': { slug: '4g', bodyType: 'sedan' },
+          '4K': { slug: '4k', bodyType: 'sedan' },
+        },
+      },
+    },
   ],
 }
 
