@@ -62,6 +62,14 @@ enum SubscriptionStatus {
   expired
 }
 
+enum BroadcastStatus {
+  draft
+  sending
+  completed
+  failed
+  cancelled
+}
+
 
 // ============================================
 // КАТАЛОГ АВТОМОБИЛЕЙ
@@ -344,4 +352,18 @@ model UsageLog {
   @@index([userId, createdAt])
   @@index([action])
   @@map("usage_logs")
+}
+
+model Broadcast {
+  id          String          @id @default(cuid())
+  message     String?
+  imageUrls   String[]        @default([])
+  status      BroadcastStatus @default(draft)
+  totalUsers  Int             @default(0)
+  sentCount   Int             @default(0)
+  failedCount Int             @default(0)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("broadcasts")
 }

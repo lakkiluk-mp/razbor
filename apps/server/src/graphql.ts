@@ -5,6 +5,7 @@ import depthLimit from 'graphql-depth-limit'
 import { schema } from '@razbor/api'
 import { prisma } from '@razbor/db'
 import { authenticateUser } from './auth.js'
+import { bot } from './bot/index.js'
 import type { Context } from '@razbor/api'
 
 const isProduction = process.env.NODE_ENV === 'production'
@@ -82,7 +83,7 @@ export const yoga = createYoga({
       })
     }
 
-    return { prisma, user }
+    return { prisma, user, telegram: bot?.telegram ?? null }
   },
   graphqlEndpoint: '/api/graphql',
   graphiql: !isProduction,

@@ -27,6 +27,7 @@ import { AdminUserDetailPage } from '@/pages/admin/AdminUserDetailPage'
 import { AdminPaymentsPage } from '@/pages/admin/AdminPaymentsPage'
 import { AdminSubscriptionsPage } from '@/pages/admin/AdminSubscriptionsPage'
 import { AdminCalculationsPage } from '@/pages/admin/AdminCalculationsPage'
+import { AdminBroadcastsPage } from '@/pages/admin/AdminBroadcastsPage'
 
 const queryClient = getQueryClient()
 const isDev = import.meta.env.DEV
@@ -101,6 +102,7 @@ export function App() {
             <Route path="payments" element={<AdminPaymentsPage />} />
             <Route path="subscriptions" element={<AdminSubscriptionsPage />} />
             <Route path="calculations" element={<AdminCalculationsPage />} />
+            <Route path="broadcasts" element={<AdminBroadcastsPage />} />
           </Route>
         </Routes>
       </HashRouter>

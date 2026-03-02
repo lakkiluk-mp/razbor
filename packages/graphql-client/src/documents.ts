@@ -468,6 +468,23 @@ export const queries = {
       }
     }
   `,
+  adminBroadcasts: `
+    query AdminBroadcasts($limit: Int, $offset: Int) {
+      adminBroadcasts(limit: $limit, offset: $offset) {
+        items {
+          id
+          message
+          imageUrls
+          status
+          totalUsers
+          sentCount
+          failedCount
+          createdAt
+        }
+        totalCount
+      }
+    }
+  `,
 }
 
 export const mutations = {
@@ -546,6 +563,41 @@ export const mutations = {
   removePaymentMethod: `
     mutation RemovePaymentMethod($paymentMethodId: ID!) {
       removePaymentMethod(paymentMethodId: $paymentMethodId)
+    }
+  `,
+  createBroadcast: `
+    mutation CreateBroadcast($message: String, $imageUrls: [String!]) {
+      createBroadcast(message: $message, imageUrls: $imageUrls) {
+        id
+        message
+        imageUrls
+        status
+        totalUsers
+        sentCount
+        failedCount
+        createdAt
+      }
+    }
+  `,
+  sendBroadcast: `
+    mutation SendBroadcast($id: ID!) {
+      sendBroadcast(id: $id) {
+        id
+        status
+        totalUsers
+        sentCount
+        failedCount
+      }
+    }
+  `,
+  cancelBroadcast: `
+    mutation CancelBroadcast($id: ID!) {
+      cancelBroadcast(id: $id) {
+        id
+        status
+        sentCount
+        failedCount
+      }
     }
   `,
 }

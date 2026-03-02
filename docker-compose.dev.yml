@@ -43,6 +43,7 @@ services:
       - ./packages/api/src:/app/packages/api/src
       - ./packages/shared/src:/app/packages/shared/src
       - ./packages/db/prisma:/app/packages/db/prisma
+      - uploads_data:/app/uploads
     env_file:
       - .env
     environment:
@@ -90,3 +91,4 @@ services:
 volumes:
   postgres_data:
   redis_data:
+  uploads_data:
