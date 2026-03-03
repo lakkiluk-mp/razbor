@@ -73,6 +73,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 600s
+    volumes:
+      - uploads_data:/app/uploads
     networks:
       - razbor-internal
 
@@ -110,6 +112,7 @@ services:
 volumes:
   postgres_data:
   redis_data:
+  uploads_data:
 
 networks:
   razbor-internal:

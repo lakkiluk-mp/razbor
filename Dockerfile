@@ -28,6 +28,8 @@ RUN npm install -g prisma@5 tsx
 RUN addgroup --system --gid 1001 appgroup
 RUN adduser --system --uid 1001 appuser
 
+RUN mkdir -p /app/uploads && chown appuser:appgroup /app/uploads
+
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json /app/pnpm-workspace.yaml /app/pnpm-lock.yaml ./
 COPY --from=builder /app/apps/server/dist ./apps/server/dist
