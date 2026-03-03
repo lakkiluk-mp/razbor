@@ -82,13 +82,6 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   turbo(P, S, '2.0-180', 'CDNB'),
   intercooler(P, S, '2.0-180'),
 
-  engine(P, S, '2.0-252', 'CYNB', 252, ['CYNB']),
-  starter(P, S, '2.0-252'),
-  alternator(P, S, '2.0-252'),
-  fuelPumpHP(P, S, '2.0-252'),
-  turbo(P, S, '2.0-252', 'CYNB'),
-  intercooler(P, S, '2.0-252'),
-
   engine(P, S, '2.8-204', 'CHVA', 204, ['CHVA']),
   starter(P, S, '2.8-204'),
   alternator(P, S, '2.8-204'),
@@ -134,14 +127,14 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   intercooler(P, S, '3.0d-245'),
 
   // === C8 (4K) Petrol engines ===
-  engine(P, S, '2.0-190c8', 'CVKB', 190, ['CVKB']),
+  engine(P, S, '2.0-190c8', 'CVKB', 190, ['CVKB', '06L100032E']),
   starter(P, S, '2.0-190c8'),
   alternator(P, S, '2.0-190c8'),
   fuelPumpHP(P, S, '2.0-190c8'),
   turbo(P, S, '2.0-190c8', 'CVKB'),
   intercooler(P, S, '2.0-190c8'),
 
-  engine(P, S, '2.0-245', 'DLBA', 245, ['DLBA']),
+  engine(P, S, '2.0-245', 'DLBA', 245, ['DLBA', '06K100038S']),
   starter(P, S, '2.0-245'),
   alternator(P, S, '2.0-245'),
   fuelPumpHP(P, S, '2.0-245'),
@@ -164,7 +157,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   turbo(P, S, '2.0d-190c8', 'DFBA'),
   intercooler(P, S, '2.0d-190c8'),
 
-  engine(P, S, '3.0d-249', 'DDVE', 249, ['DDVE']),
+  engine(P, S, '3.0d-249', 'DDVE', 249, ['DDVE', '059100040K']),
   starter(P, S, '3.0d-249'),
   alternator(P, S, '3.0d-249'),
   fuelPumpHP(P, S, '3.0d-249'),
