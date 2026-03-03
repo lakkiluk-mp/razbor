@@ -1,5 +1,23 @@
 import type { VinBrandMapping } from './types'
 
+export const vwTiguanMapping: VinBrandMapping = {
+  wmi: ['WVG'],
+  brandSlug: 'volkswagen',
+  models: [
+    {
+      modelSlug: 'tiguan',
+      modelCodes: { position: [6, 8], codes: ['5N', 'AD'] },
+      generationCodes: {
+        position: [6, 8],
+        mapping: {
+          '5N': { slug: '5n', bodyType: 'crossover' },
+          'AD': { slug: 'ad1', bodyType: 'crossover' },
+        },
+      },
+    },
+  ],
+}
+
 export const vwRuMapping: VinBrandMapping = {
   wmi: ['XW8'],
   brandSlug: 'volkswagen',

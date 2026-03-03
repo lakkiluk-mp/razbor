@@ -155,6 +155,27 @@ export function TelegramRequired() {
           </ContainerScroll>
         </motion.div>
       </LampContainer>
+      <footer className="relative z-10 flex flex-col items-center gap-2 py-6 text-sm text-slate-500">
+        <p>© {new Date().getFullYear()} В Разборе</p>
+        <div className="flex gap-4">
+          <a
+            href="https://vrazbore.tech/offers"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-slate-300 transition-colors"
+          >
+            Оферта
+          </a>
+          <a
+            href="https://vrazbore.tech/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-slate-300 transition-colors"
+          >
+            Политика конфиденциальности
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }

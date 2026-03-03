@@ -5,9 +5,9 @@ import { hyundaiRuMapping, hyundaiKrMapping } from './hyundai'
 import { kiaMapping, kiaRuMapping, kiaEuMapping } from './kia'
 import { renaultMapping } from './renault'
 import { fordEuMapping, fordUsMapping } from './ford'
-import { toyotaRuMapping, toyotaJpMapping } from './toyota'
+import { toyotaRuMapping, toyotaJpMapping, toyotaLcMapping } from './toyota'
 import { nissanMapping } from './nissan'
-import { vwRuMapping, vwDeMapping } from './volkswagen'
+import { vwRuMapping, vwDeMapping, vwTiguanMapping } from './volkswagen'
 import { skodaMapping } from './skoda'
 import { audiEuMapping, audiUsMapping } from './audi'
 import { bmwMapping } from './bmw'
@@ -36,9 +36,11 @@ export const VIN_BRAND_MAPPINGS: VinBrandMapping[] = [
   fordUsMapping,
   toyotaRuMapping,
   toyotaJpMapping,
+  toyotaLcMapping,
   nissanMapping,
   vwRuMapping,
   vwDeMapping,
+  vwTiguanMapping,
   skodaMapping,
   audiEuMapping,
   audiUsMapping,

@@ -1,5 +1,30 @@
 import type { VinBrandMapping } from './types'
 
+export const toyotaLcMapping: VinBrandMapping = {
+  wmi: ['JTM'],
+  brandSlug: 'toyota',
+  models: [
+    {
+      modelSlug: 'land-cruiser',
+      modelCodes: { position: [3, 4], codes: ['H'] },
+      generationCodes: {
+        position: [3, 4],
+        mapping: {
+          H: { slug: 'j200', bodyType: 'suv' },
+        },
+      },
+      engineCodes: {
+        position: 6,
+        mapping: {
+          B: ['engine:4.7-288'],
+          F: ['engine:4.5d-235', 'engine:4.5d-249'],
+          G: ['engine:4.6-309'],
+        },
+      },
+    },
+  ],
+}
+
 export const toyotaRuMapping: VinBrandMapping = {
   wmi: ['XW7'],
   brandSlug: 'toyota',

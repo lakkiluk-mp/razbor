@@ -26,7 +26,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   turbo(P, S, '1.8-160', 'BZB'),
   intercooler(P, S, '1.8-160'),
 
-  engine(P, S, '2.0-200', 'CAWB', 200),
+  engine(P, S, '2.0-200', 'CAWB', 200, ['06J100033S']),
   starter(P, S, '2.0-200'),
   alternator(P, S, '2.0-200'),
   fuelPumpHP(P, S, '2.0-200'),

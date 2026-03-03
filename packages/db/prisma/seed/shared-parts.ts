@@ -1060,6 +1060,22 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
   },
 
   // ========================================
+  // VAG SHARED — Tiguan additions
+  // ========================================
+  {
+    oemCode: '06J100033S',
+    name: 'Двигатель 2.0 CAWB (200 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'oem:06J100033S',
+      'двигатель 2.0 CAWB',
+      'двигатель CAWB',
+      'мотор 2.0 TSI CAWB',
+    ],
+    usedBy: ['volkswagen-passat', 'volkswagen-tiguan'],
+  },
+
+  // ========================================
   // VAG SHARED — Passat additions
   // ========================================
   {
