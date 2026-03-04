@@ -85,8 +85,10 @@ export function ConfigPage() {
     const fallbackTransmission = isVin ? null : firstWithPrice(configs.transmissions)
     const fallbackDrivetrain = isVin ? null : firstWithPrice(configs.drivetrains)
 
-    const autoSelectSingle = (options: ConfigOption[]) =>
-      options.length === 1 && hasPrice(options[0]) ? options[0].configGroup : null
+    const autoSelectSingle = (options: ConfigOption[]) => {
+      const first = options[0]
+      return options.length === 1 && first && hasPrice(first) ? first.configGroup : null
+    }
 
     setSelectedEngine(
       matchedEngine ?? autoSelectSingle(configs.engines) ?? fallbackEngine
