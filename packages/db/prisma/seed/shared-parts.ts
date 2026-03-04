@@ -139,7 +139,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'мотор K4M',
       'двигатель K4M рено',
     ],
-    usedBy: ['renault-logan', 'renault-sandero', 'renault-duster'],
+    usedBy: ['renault-logan', 'renault-sandero', 'renault-duster', 'renault-megane'],
   },
   {
     oemCode: '8201583992',
@@ -152,7 +152,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель H4M рено',
       'двигатель HR16DE',
     ],
-    usedBy: ['renault-logan', 'renault-sandero', 'renault-duster', 'lada-vesta', 'nissan-qashqai'],
+    usedBy: ['renault-logan', 'renault-sandero', 'renault-duster', 'renault-megane', 'lada-vesta', 'nissan-qashqai'],
   },
 
   // ========================================
@@ -660,6 +660,14 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     usedBy: ['toyota-camry'],
   },
 
+  {
+    oemCode: '1900031A41',
+    name: 'Двигатель 4.0 1GR-FE (249 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:1900031A41', 'двигатель 4.0 1GR-FE', 'мотор 4.0 1GR', 'двигатель 1GR-FE'],
+    usedBy: ['toyota-land-cruiser', 'toyota-land-cruiser-prado'],
+  },
+
   // ========================================
   // TOYOTA TRANSMISSIONS
   // ========================================
@@ -944,8 +952,20 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
   },
 
   // ========================================
-  // VAG SHARED (EA211 / DQ200)
+  // VAG SHARED (EA111 / EA211 / DQ200)
   // ========================================
+  {
+    oemCode: '03C100038F',
+    name: 'Двигатель 1.6 CFNA (105 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'oem:03C100038F',
+      'двигатель 1.6 CFNA',
+      'двигатель CFNA',
+      'мотор 1.6 CFNA',
+    ],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-fabia'],
+  },
   {
     oemCode: '04E100033B',
     name: 'Двигатель 1.4 CZCA (125 л.с.)',
@@ -968,7 +988,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'коробка DSG-7 DQ200',
       'робот DQ200',
     ],
-    usedBy: ['volkswagen-polo', 'skoda-rapid', 'audi-a3', 'skoda-octavia', 'volkswagen-passat'],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-fabia', 'audi-a3', 'skoda-octavia', 'volkswagen-passat'],
   },
 
   // ========================================
@@ -1020,7 +1040,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'коробка механика MQ200',
       'мкпп 5 ступ MQ200',
     ],
-    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-octavia', 'volkswagen-passat'],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-fabia', 'skoda-octavia', 'volkswagen-passat'],
   },
   {
     oemCode: '09G300034',
@@ -1032,7 +1052,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'акпп Aisin 09G',
       'коробка автомат 6 ступ 09G',
     ],
-    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-octavia', 'volkswagen-passat'],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-fabia', 'skoda-octavia', 'volkswagen-passat'],
   },
   {
     oemCode: '02E300043',

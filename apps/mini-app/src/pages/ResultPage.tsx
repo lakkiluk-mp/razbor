@@ -97,7 +97,7 @@ export function ResultPage() {
   const generation = searchParams.get('generation') || ''
 
   const isPartActive = useCallback(
-    (p: CalculationPart) => p.included && !p.isDamaged && !excludedParts.has(p.part.id),
+    (p: CalculationPart) => p.included && !p.isDamaged && !excludedParts.has(p.part.id) && p.price > 0,
     [excludedParts]
   )
 

@@ -7,6 +7,7 @@ import { mercedesCClassSeed } from './seed/mercedes-c-class'
 import { mercedesSClassSeed } from './seed/mercedes-s-class'
 import { renaultLoganSeed } from './seed/renault-logan'
 import { renaultDusterSeed } from './seed/renault-duster'
+import { renaultMeganeSeed } from './seed/renault-megane'
 import { kiaRioSeed } from './seed/kia-rio'
 import { kiaOptimaSeed } from './seed/kia-optima'
 import { kiaSportageSeed } from './seed/kia-sportage'
@@ -20,12 +21,14 @@ import { ladaGrantaSeed } from './seed/lada-granta'
 import { ladaNivaSeed } from './seed/lada-niva'
 import { skodaRapidSeed } from './seed/skoda-rapid'
 import { skodaOctaviaSeed } from './seed/skoda-octavia'
+import { skodaFabiaSeed } from './seed/skoda-fabia'
 import { volkswagenPoloSeed } from './seed/volkswagen-polo'
 import { volkswagenPassatSeed } from './seed/volkswagen-passat'
 import { volkswagenTiguanSeed } from './seed/volkswagen-tiguan'
 import { toyotaCamrySeed } from './seed/toyota-camry'
 import { toyotaCorollaSeed } from './seed/toyota-corolla'
 import { toyotaLandCruiserSeed } from './seed/toyota-land-cruiser'
+import { toyotaLandCruiserPradoSeed } from './seed/toyota-land-cruiser-prado'
 import { nissanQashqaiSeed } from './seed/nissan-qashqai'
 import { nissanXTrailSeed } from './seed/nissan-x-trail'
 import { audiQ5Seed } from './seed/audi-q5'
@@ -52,7 +55,7 @@ import { isSharedPartRef } from './seed/types'
 
 const prisma = new PrismaClient()
 
-const modelSeeds: ModelSeed[] = [mazda6Seed, mazda3Seed, mazdaCx5Seed, mercedesCClassSeed, mercedesSClassSeed, renaultLoganSeed, renaultDusterSeed, kiaRioSeed, kiaOptimaSeed, kiaSportageSeed, kiaCeedSeed, fordFocusSeed, fordMondeoSeed, hyundaiSolarisSeed, hyundaiCretaSeed, ladaVestaSeed, ladaGrantaSeed, ladaNivaSeed, skodaRapidSeed, skodaOctaviaSeed, volkswagenPoloSeed, volkswagenPassatSeed, volkswagenTiguanSeed, toyotaCamrySeed, toyotaCorollaSeed, toyotaLandCruiserSeed, nissanQashqaiSeed, nissanXTrailSeed, audiQ5Seed, audiA3Seed, audiA6Seed, bmw3SeriesSeed, bmw5SeriesSeed, porscheCayenneSeed, opelAstraSeed, chevroletLacettiSeed, chevroletCruzeSeed, chevroletLanosSeed, mitsubishiLancerSeed, mitsubishiOutlanderSeed, hondaAccordSeed, hondaCivicSeed, subaruForesterSeed, subaruImprezaSeed, citroenC4Seed, lexusRx300Seed] as ModelSeed[]
+const modelSeeds: ModelSeed[] = [mazda6Seed, mazda3Seed, mazdaCx5Seed, mercedesCClassSeed, mercedesSClassSeed, renaultLoganSeed, renaultDusterSeed, renaultMeganeSeed, kiaRioSeed, kiaOptimaSeed, kiaSportageSeed, kiaCeedSeed, fordFocusSeed, fordMondeoSeed, hyundaiSolarisSeed, hyundaiCretaSeed, ladaVestaSeed, ladaGrantaSeed, ladaNivaSeed, skodaRapidSeed, skodaOctaviaSeed, skodaFabiaSeed, volkswagenPoloSeed, volkswagenPassatSeed, volkswagenTiguanSeed, toyotaCamrySeed, toyotaCorollaSeed, toyotaLandCruiserSeed, toyotaLandCruiserPradoSeed, nissanQashqaiSeed, nissanXTrailSeed, audiQ5Seed, audiA3Seed, audiA6Seed, bmw3SeriesSeed, bmw5SeriesSeed, porscheCayenneSeed, opelAstraSeed, chevroletLacettiSeed, chevroletCruzeSeed, chevroletLanosSeed, mitsubishiLancerSeed, mitsubishiOutlanderSeed, hondaAccordSeed, hondaCivicSeed, subaruForesterSeed, subaruImprezaSeed, citroenC4Seed, lexusRx300Seed] as ModelSeed[]
 
 async function seedSharedParts() {
   console.log('\n--- Seeding shared parts ---')

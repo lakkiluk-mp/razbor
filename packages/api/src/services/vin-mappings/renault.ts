@@ -55,5 +55,30 @@ export const renaultMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'megane',
+      modelCodes: { position: [3, 4], codes: ['B', 'K'] },
+      engineCodesRange: {
+        position: [5, 7],
+        mapping: {
+          RB: ['engine:1.6-k4m'],
+          RH: ['engine:1.6-113'],
+          R4: ['engine:2.0-135', 'engine:2.0-137', 'engine:2.0-140'],
+          RD: ['engine:1.5-106', 'engine:1.5-110'],
+          R9: ['engine:1.3-140'],
+        },
+      },
+      transmissionCodes: {
+        position: 8,
+        mapping: {
+          '4': ['transmission:mt'],
+          '5': ['transmission:mt'],
+          '6': ['transmission:mt6'],
+          '1': ['transmission:at'],
+          C: ['transmission:cvt'],
+          D: ['transmission:robot'],
+        },
+      },
+    },
   ],
 }

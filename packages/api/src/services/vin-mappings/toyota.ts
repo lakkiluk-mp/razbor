@@ -22,6 +22,25 @@ export const toyotaLcMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'land-cruiser-prado',
+      modelCodes: { position: [3, 4], codes: ['V', 'K'] },
+      generationCodes: {
+        position: [3, 4],
+        mapping: {
+          V: { slug: 'j150', bodyType: 'suv' },
+          K: { slug: 'j150', bodyType: 'suv' },
+        },
+      },
+      engineCodes: {
+        position: 6,
+        mapping: {
+          R: ['engine:2.7-163'],
+          D: ['engine:2.8d-177', 'engine:3.0d-173'],
+          G: ['engine:4.0-249', 'engine:4.0-282'],
+        },
+      },
+    },
   ],
 }
 

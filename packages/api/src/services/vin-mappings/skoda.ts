@@ -16,6 +16,17 @@ export const skodaMapping: VinBrandMapping = {
       },
     },
     {
+      modelSlug: 'fabia',
+      modelCodes: { position: [6, 8], codes: ['6Y', '5J'] },
+      generationCodes: {
+        position: [6, 8],
+        mapping: {
+          '6Y': { slug: '6y', bodyType: 'hatchback' },
+          '5J': { slug: '5j', bodyType: 'hatchback' },
+        },
+      },
+    },
+    {
       modelSlug: 'octavia',
       modelCodes: { position: [6, 8], codes: ['1Z', '5E', 'NX'] },
       generationCodes: {

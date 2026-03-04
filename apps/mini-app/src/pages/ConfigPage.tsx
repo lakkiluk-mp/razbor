@@ -4,7 +4,9 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
-import type { GenerationResponse, GenerationConfigs, GenerationWithParts } from '@razbor/hooks'
+import type { GenerationResponse, GenerationConfigs, GenerationWithParts, ConfigOption } from '@razbor/hooks'
+
+const hasPrice = (option: ConfigOption) => option.price > 0
 
 interface GenerationConfigsResponse {
   generationConfigs: GenerationConfigs
@@ -69,22 +71,31 @@ export function ConfigPage() {
     const availableTransmissions = new Set(configs.transmissions.map(t => t.configGroup))
     const availableDrivetrains = new Set(configs.drivetrains.map(d => d.configGroup))
 
-    const matchedEngine = vinEngines.find(e => availableEngines.has(e))
-    const matchedTransmission = vinTransmissions.find(t => availableTransmissions.has(t))
-    const matchedDrivetrain = vinDrivetrains.find(d => availableDrivetrains.has(d))
+    const matchWithPrice = (vinValues: string[], options: ConfigOption[], available: Set<string>) =>
+      vinValues.find(v => available.has(v) && hasPrice(options.find(o => o.configGroup === v)!))
 
-    const fallbackEngine = isVin ? null : configs.engines[0]?.configGroup ?? null
-    const fallbackTransmission = isVin ? null : configs.transmissions[0]?.configGroup ?? null
-    const fallbackDrivetrain = isVin ? null : configs.drivetrains[0]?.configGroup ?? null
+    const matchedEngine = matchWithPrice(vinEngines, configs.engines, availableEngines)
+    const matchedTransmission = matchWithPrice(vinTransmissions, configs.transmissions, availableTransmissions)
+    const matchedDrivetrain = matchWithPrice(vinDrivetrains, configs.drivetrains, availableDrivetrains)
+
+    const firstWithPrice = (options: ConfigOption[]) =>
+      options.find(o => hasPrice(o))?.configGroup ?? null
+
+    const fallbackEngine = isVin ? null : firstWithPrice(configs.engines)
+    const fallbackTransmission = isVin ? null : firstWithPrice(configs.transmissions)
+    const fallbackDrivetrain = isVin ? null : firstWithPrice(configs.drivetrains)
+
+    const autoSelectSingle = (options: ConfigOption[]) =>
+      options.length === 1 && hasPrice(options[0]) ? options[0].configGroup : null
 
     setSelectedEngine(
-      matchedEngine ?? (configs.engines.length === 1 ? configs.engines[0]?.configGroup ?? null : fallbackEngine)
+      matchedEngine ?? autoSelectSingle(configs.engines) ?? fallbackEngine
     )
     setSelectedTransmission(
-      matchedTransmission ?? (configs.transmissions.length === 1 ? configs.transmissions[0]?.configGroup ?? null : fallbackTransmission)
+      matchedTransmission ?? autoSelectSingle(configs.transmissions) ?? fallbackTransmission
     )
     setSelectedDrivetrain(
-      matchedDrivetrain ?? (configs.drivetrains.length === 1 ? configs.drivetrains[0]?.configGroup ?? null : fallbackDrivetrain)
+      matchedDrivetrain ?? autoSelectSingle(configs.drivetrains) ?? fallbackDrivetrain
     )
   }, [configs, generation, navigate, searchParams])
 
@@ -128,11 +139,21 @@ export function ConfigPage() {
 
   const fromVin = searchParams.has('engine') || searchParams.has('transmission') || searchParams.has('drivetrain')
 
+  const allEnginesDisabled = configs.engines.length > 0 && configs.engines.every(e => !hasPrice(e))
+  const allTransmissionsDisabled = configs.transmissions.length > 0 && configs.transmissions.every(t => !hasPrice(t))
+  const allDrivetrainsDisabled = configs.drivetrains.length > 0 && configs.drivetrains.every(d => !hasPrice(d))
+
   const missingSelections: string[] = []
   if (configs.engines.length > 0 && !selectedEngine) missingSelections.push('двигатель')
   if (configs.transmissions.length > 0 && !selectedTransmission) missingSelections.push('трансмиссию')
   if (configs.drivetrains.length > 0 && !selectedDrivetrain) missingSelections.push('привод')
-  const isComplete = missingSelections.length === 0
+
+  const noPriceSelections: string[] = []
+  if (allEnginesDisabled) noPriceSelections.push('двигателей')
+  if (allTransmissionsDisabled) noPriceSelections.push('трансмиссий')
+  if (allDrivetrainsDisabled) noPriceSelections.push('приводов')
+
+  const isComplete = missingSelections.length === 0 && noPriceSelections.length === 0
 
   const handleNext = () => {
     if (!isComplete) return
@@ -157,25 +178,32 @@ export function ConfigPage() {
           <section>
             <h2 className="text-lg font-semibold mb-3 text-zinc-300">Двигатель</h2>
             <div className="space-y-2">
-              {configs.engines.map((engine) => (
-                <button
-                  type="button"
-                  key={engine.configGroup}
-                  onClick={() => setSelectedEngine(engine.configGroup)}
-                  className={`w-full rounded-xl px-4 py-4 flex items-center justify-between transition-colors ${
-                    selectedEngine === engine.configGroup
-                      ? 'bg-amber-500/10 border-2 border-amber-500'
-                      : 'bg-zinc-900 border-2 border-transparent hover:bg-zinc-800'
-                  }`}
-                >
-                  <div className="text-left">
-                    <span className="text-zinc-100 font-medium">{engine.name}</span>
-                  </div>
-                  {selectedEngine === engine.configGroup && (
-                    <Check className="w-5 h-5 text-amber-500" />
-                  )}
-                </button>
-              ))}
+              {configs.engines.map((engine) => {
+                const disabled = !hasPrice(engine)
+                return (
+                  <button
+                    type="button"
+                    key={engine.configGroup}
+                    disabled={disabled}
+                    onClick={() => setSelectedEngine(engine.configGroup)}
+                    className={`w-full rounded-xl px-4 py-4 flex items-center justify-between transition-colors ${
+                      disabled
+                        ? 'bg-zinc-900 border-2 border-transparent opacity-40 cursor-not-allowed'
+                        : selectedEngine === engine.configGroup
+                          ? 'bg-amber-500/10 border-2 border-amber-500'
+                          : 'bg-zinc-900 border-2 border-transparent hover:bg-zinc-800'
+                    }`}
+                  >
+                    <div className="text-left">
+                      <span className="text-zinc-100 font-medium">{engine.name}</span>
+                      {disabled && <span className="text-zinc-500 text-xs ml-2">нет данных</span>}
+                    </div>
+                    {selectedEngine === engine.configGroup && !disabled && (
+                      <Check className="w-5 h-5 text-amber-500" />
+                    )}
+                  </button>
+                )
+              })}
             </div>
           </section>
         )}
@@ -184,25 +212,32 @@ export function ConfigPage() {
           <section>
             <h2 className="text-lg font-semibold mb-3 text-zinc-300">Трансмиссия</h2>
             <div className="space-y-2">
-              {configs.transmissions.map((transmission) => (
-                <button
-                  type="button"
-                  key={transmission.configGroup}
-                  onClick={() => setSelectedTransmission(transmission.configGroup)}
-                  className={`w-full rounded-xl px-4 py-4 flex items-center justify-between transition-colors ${
-                    selectedTransmission === transmission.configGroup
-                      ? 'bg-amber-500/10 border-2 border-amber-500'
-                      : 'bg-zinc-900 border-2 border-transparent hover:bg-zinc-800'
-                  }`}
-                >
-                  <div className="text-left">
-                    <span className="text-zinc-100 font-medium">{transmission.name}</span>
-                  </div>
-                  {selectedTransmission === transmission.configGroup && (
-                    <Check className="w-5 h-5 text-amber-500" />
-                  )}
-                </button>
-              ))}
+              {configs.transmissions.map((transmission) => {
+                const disabled = !hasPrice(transmission)
+                return (
+                  <button
+                    type="button"
+                    key={transmission.configGroup}
+                    disabled={disabled}
+                    onClick={() => setSelectedTransmission(transmission.configGroup)}
+                    className={`w-full rounded-xl px-4 py-4 flex items-center justify-between transition-colors ${
+                      disabled
+                        ? 'bg-zinc-900 border-2 border-transparent opacity-40 cursor-not-allowed'
+                        : selectedTransmission === transmission.configGroup
+                          ? 'bg-amber-500/10 border-2 border-amber-500'
+                          : 'bg-zinc-900 border-2 border-transparent hover:bg-zinc-800'
+                    }`}
+                  >
+                    <div className="text-left">
+                      <span className="text-zinc-100 font-medium">{transmission.name}</span>
+                      {disabled && <span className="text-zinc-500 text-xs ml-2">нет данных</span>}
+                    </div>
+                    {selectedTransmission === transmission.configGroup && !disabled && (
+                      <Check className="w-5 h-5 text-amber-500" />
+                    )}
+                  </button>
+                )
+              })}
             </div>
           </section>
         )}
@@ -211,32 +246,44 @@ export function ConfigPage() {
           <section>
             <h2 className="text-lg font-semibold mb-3 text-zinc-300">Привод</h2>
             <div className="space-y-2">
-              {configs.drivetrains.map((drivetrain) => (
-                <button
-                  type="button"
-                  key={drivetrain.configGroup}
-                  onClick={() => setSelectedDrivetrain(drivetrain.configGroup)}
-                  className={`w-full rounded-xl px-4 py-4 flex items-center justify-between transition-colors ${
-                    selectedDrivetrain === drivetrain.configGroup
-                      ? 'bg-amber-500/10 border-2 border-amber-500'
-                      : 'bg-zinc-900 border-2 border-transparent hover:bg-zinc-800'
-                  }`}
-                >
-                  <div className="text-left">
-                    <span className="text-zinc-100 font-medium">{drivetrain.name}</span>
-                  </div>
-                  {selectedDrivetrain === drivetrain.configGroup && (
-                    <Check className="w-5 h-5 text-amber-500" />
-                  )}
-                </button>
-              ))}
+              {configs.drivetrains.map((drivetrain) => {
+                const disabled = !hasPrice(drivetrain)
+                return (
+                  <button
+                    type="button"
+                    key={drivetrain.configGroup}
+                    disabled={disabled}
+                    onClick={() => setSelectedDrivetrain(drivetrain.configGroup)}
+                    className={`w-full rounded-xl px-4 py-4 flex items-center justify-between transition-colors ${
+                      disabled
+                        ? 'bg-zinc-900 border-2 border-transparent opacity-40 cursor-not-allowed'
+                        : selectedDrivetrain === drivetrain.configGroup
+                          ? 'bg-amber-500/10 border-2 border-amber-500'
+                          : 'bg-zinc-900 border-2 border-transparent hover:bg-zinc-800'
+                    }`}
+                  >
+                    <div className="text-left">
+                      <span className="text-zinc-100 font-medium">{drivetrain.name}</span>
+                      {disabled && <span className="text-zinc-500 text-xs ml-2">нет данных</span>}
+                    </div>
+                    {selectedDrivetrain === drivetrain.configGroup && !disabled && (
+                      <Check className="w-5 h-5 text-amber-500" />
+                    )}
+                  </button>
+                )
+              })}
             </div>
           </section>
         )}
       </div>
 
       <div className="px-4 pb-8">
-        {!isComplete && (
+        {noPriceSelections.length > 0 && (
+          <p className="text-zinc-500 text-sm text-center mb-2">
+            Нет данных о ценах для {noPriceSelections.join(', ')}
+          </p>
+        )}
+        {noPriceSelections.length === 0 && !isComplete && (
           <p className="text-zinc-500 text-sm text-center mb-2">
             {fromVin
               ? `Не удалось определить ${missingSelections.join(', ')} по VIN — выберите вручную`
