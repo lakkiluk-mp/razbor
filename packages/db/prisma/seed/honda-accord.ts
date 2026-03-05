@@ -24,10 +24,10 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   alternator(P, S, '2.4-200'),
 
   // IX (CR) 2012-2015
-  engine(P, S, '2.0-150', 'R20A', 150),
+  engine(P, S, '2.0-150', 'R20A', 150, ['R20A']),
   starter(P, S, '2.0-150'),
   alternator(P, S, '2.0-150'),
-  engine(P, S, '2.4-188', 'K24W', 188),
+  engine(P, S, '2.4-188', 'K24W', 188, ['K24W']),
   starter(P, S, '2.4-188'),
   alternator(P, S, '2.4-188'),
   fuelPumpHP(P, S, '2.4-188'),

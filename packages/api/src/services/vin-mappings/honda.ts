@@ -74,6 +74,44 @@ export const hondaJpMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'cr-v',
+      variantCodes: {
+        position: [3, 6],
+        mapping: {
+          RD1: { engines: ['engine:2.0-128'] },
+          RD3: { engines: ['engine:2.0-147'] },
+          RD5: { engines: ['engine:2.0-150-k20a'] },
+          RD8: { engines: ['engine:2.0-150-k20a'] },
+          RE5: { engines: ['engine:2.0-150'] },
+          RE7: { engines: ['engine:2.4-166'] },
+          RM4: { engines: ['engine:2.4-190', 'engine:2.4-188'] },
+          RW1: { engines: ['engine:2.0-150'] },
+          RW2: { engines: ['engine:2.4-186'] },
+        },
+      },
+      generationCodes: {
+        position: [3, 6],
+        mapping: {
+          RD1: { slug: 'rd', bodyType: 'crossover' },
+          RD3: { slug: 'rd', bodyType: 'crossover' },
+          RD5: { slug: 'rd5', bodyType: 'crossover' },
+          RD8: { slug: 'rd5', bodyType: 'crossover' },
+          RE5: { slug: 're', bodyType: 'crossover' },
+          RE7: { slug: 're', bodyType: 'crossover' },
+          RM4: { slug: 'rm', bodyType: 'crossover' },
+          RW1: { slug: 'rw', bodyType: 'crossover' },
+          RW2: { slug: 'rw', bodyType: 'crossover' },
+        },
+      },
+      transmissionCodes: {
+        position: 6,
+        mapping: {
+          5: ['transmission:mt', 'transmission:mt5', 'transmission:mt6'],
+          6: ['transmission:at4', 'transmission:at5', 'transmission:cvt'],
+        },
+      },
+    },
   ],
 }
 
@@ -145,6 +183,44 @@ export const hondaUsMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'cr-v',
+      variantCodes: {
+        position: [3, 6],
+        mapping: {
+          RD1: { engines: ['engine:2.0-128'] },
+          RD3: { engines: ['engine:2.0-147'] },
+          RD5: { engines: ['engine:2.0-150-k20a'] },
+          RD8: { engines: ['engine:2.0-150-k20a'] },
+          RE5: { engines: ['engine:2.0-150'] },
+          RE7: { engines: ['engine:2.4-166'] },
+          RM4: { engines: ['engine:2.4-190', 'engine:2.4-188'] },
+          RW1: { engines: ['engine:2.0-150'] },
+          RW2: { engines: ['engine:2.4-186'] },
+        },
+      },
+      generationCodes: {
+        position: [3, 6],
+        mapping: {
+          RD1: { slug: 'rd', bodyType: 'crossover' },
+          RD3: { slug: 'rd', bodyType: 'crossover' },
+          RD5: { slug: 'rd5', bodyType: 'crossover' },
+          RD8: { slug: 'rd5', bodyType: 'crossover' },
+          RE5: { slug: 're', bodyType: 'crossover' },
+          RE7: { slug: 're', bodyType: 'crossover' },
+          RM4: { slug: 'rm', bodyType: 'crossover' },
+          RW1: { slug: 'rw', bodyType: 'crossover' },
+          RW2: { slug: 'rw', bodyType: 'crossover' },
+        },
+      },
+      transmissionCodes: {
+        position: 6,
+        mapping: {
+          5: ['transmission:mt', 'transmission:mt5', 'transmission:mt6'],
+          6: ['transmission:at4', 'transmission:at5', 'transmission:cvt'],
+        },
+      },
+    },
   ],
 }
 
@@ -211,6 +287,44 @@ export const hondaEuMapping: VinBrandMapping = {
         mapping: {
           5: ['transmission:mt5', 'transmission:mt6'],
           6: ['transmission:at5', 'transmission:cvt', 'transmission:at-diesel'],
+        },
+      },
+    },
+    {
+      modelSlug: 'cr-v',
+      variantCodes: {
+        position: [3, 6],
+        mapping: {
+          RD1: { engines: ['engine:2.0-128'] },
+          RD3: { engines: ['engine:2.0-147'] },
+          RD5: { engines: ['engine:2.0-150-k20a'] },
+          RD8: { engines: ['engine:2.0-150-k20a'] },
+          RE5: { engines: ['engine:2.0-150'] },
+          RE7: { engines: ['engine:2.4-166'] },
+          RM4: { engines: ['engine:2.4-190', 'engine:2.4-188'] },
+          RW1: { engines: ['engine:2.0-150'] },
+          RW2: { engines: ['engine:2.4-186'] },
+        },
+      },
+      generationCodes: {
+        position: [3, 6],
+        mapping: {
+          RD1: { slug: 'rd', bodyType: 'crossover' },
+          RD3: { slug: 'rd', bodyType: 'crossover' },
+          RD5: { slug: 'rd5', bodyType: 'crossover' },
+          RD8: { slug: 'rd5', bodyType: 'crossover' },
+          RE5: { slug: 're', bodyType: 'crossover' },
+          RE7: { slug: 're', bodyType: 'crossover' },
+          RM4: { slug: 'rm', bodyType: 'crossover' },
+          RW1: { slug: 'rw', bodyType: 'crossover' },
+          RW2: { slug: 'rw', bodyType: 'crossover' },
+        },
+      },
+      transmissionCodes: {
+        position: 6,
+        mapping: {
+          5: ['transmission:mt', 'transmission:mt5', 'transmission:mt6'],
+          6: ['transmission:at4', 'transmission:at5', 'transmission:cvt'],
         },
       },
     },

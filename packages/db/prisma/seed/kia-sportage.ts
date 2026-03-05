@@ -43,7 +43,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   fuelPumpHP(P, S, '1.6-135'),
 
   // NQ5 — G4NL 2.0 MPI
-  engine(P, S, '2.0-150l', 'G4NL', 150),
+  engine(P, S, '2.0-150l', 'G4NL', 150, ['G4NL']),
   starter(P, S, '2.0-150l'),
   alternator(P, S, '2.0-150l'),
 

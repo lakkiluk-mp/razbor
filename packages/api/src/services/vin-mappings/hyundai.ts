@@ -68,5 +68,24 @@ export const hyundaiKrMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'elantra',
+      modelCodes: { position: [3, 4], codes: ['D'] },
+      engineCodes: {
+        position: 7,
+        mapping: {
+          C: ['engine:1.6-122', 'engine:1.6-128', 'engine:1.6-132'],
+          D: ['engine:2.0-143', 'engine:2.0-150', 'engine:2.0-150l'],
+          B: ['engine:1.8-150'],
+        },
+      },
+      transmissionCodes: {
+        position: 8,
+        mapping: {
+          A: ['transmission:mt6'],
+          B: ['transmission:at4', 'transmission:at6'],
+        },
+      },
+    },
   ],
 }

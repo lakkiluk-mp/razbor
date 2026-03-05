@@ -263,14 +263,14 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 2.6 M112 V6 (170 л.с.)',
     category: 'engine',
     searchQueries: ['oem:112912', 'oem:M112912', 'двигатель 2.6 M112', 'мотор M112 V6 2.6'],
-    usedBy: ['mercedes-c-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-e-class'],
   },
   {
     oemCode: '112946',
     name: 'Двигатель 3.2 M112 V6 (218 л.с.)',
     category: 'engine',
     searchQueries: ['oem:112946', 'oem:M112946', 'двигатель 3.2 M112', 'мотор M112 3.2'],
-    usedBy: ['mercedes-c-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-e-class'],
   },
   {
     oemCode: '271946',
@@ -284,7 +284,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 1.8 M271 (163 л.с.)',
     category: 'engine',
     searchQueries: ['oem:271948', 'oem:M271948', 'двигатель 1.8 M271', 'мотор M271 компрессор'],
-    usedBy: ['mercedes-c-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-e-class'],
   },
   {
     oemCode: '271910',
@@ -298,7 +298,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 1.8 M271 EVO (184 л.с.)',
     category: 'engine',
     searchQueries: ['oem:271820', 'oem:M271820', 'двигатель 1.8 M271 EVO', 'мотор M271 EVO'],
-    usedBy: ['mercedes-c-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-e-class'],
   },
   {
     oemCode: '271860',
@@ -312,21 +312,21 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 2.5 M272 V6 (204 л.с.)',
     category: 'engine',
     searchQueries: ['oem:272922', 'oem:M272922', 'двигатель 2.5 M272', 'мотор M272 V6'],
-    usedBy: ['mercedes-c-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-e-class'],
   },
   {
     oemCode: '272947',
     name: 'Двигатель 3.0 M272 V6 (231 л.с.)',
     category: 'engine',
     searchQueries: ['oem:272947', 'oem:M272947', 'двигатель 3.0 M272', 'мотор M272 V6'],
-    usedBy: ['mercedes-c-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-e-class'],
   },
   {
     oemCode: '272948',
     name: 'Двигатель 3.5 M272 V6 (272 л.с.)',
     category: 'engine',
     searchQueries: ['oem:272948', 'oem:M272948', 'двигатель 3.5 M272', 'мотор M272 V6'],
-    usedBy: ['mercedes-c-class', 'mercedes-s-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-s-class', 'mercedes-e-class'],
   },
   {
     oemCode: '274910',
@@ -340,14 +340,14 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 2.0 M274 (184 л.с.)',
     category: 'engine',
     searchQueries: ['oem:274920', 'oem:M274920', 'двигатель 2.0 M274', 'мотор M274'],
-    usedBy: ['mercedes-c-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-e-class'],
   },
   {
     oemCode: '264920',
     name: 'Двигатель 2.0 M264 (204-249 л.с.)',
     category: 'engine',
     searchQueries: ['oem:264920', 'oem:M264920', 'двигатель 2.0 M264', 'мотор M264'],
-    usedBy: ['mercedes-c-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-e-class'],
   },
   {
     oemCode: '276823',
@@ -442,7 +442,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 5.0 M113 V8 (306 л.с.)',
     category: 'engine',
     searchQueries: ['oem:113960', 'oem:M113960', 'двигатель 5.0 M113', 'мотор M113 V8'],
-    usedBy: ['mercedes-s-class'],
+    usedBy: ['mercedes-s-class', 'mercedes-e-class'],
   },
   {
     oemCode: '273923',
@@ -463,7 +463,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 3.5 M276 V6 (306 л.с.)',
     category: 'engine',
     searchQueries: ['oem:276957', 'oem:M276957', 'двигатель 3.5 M276', 'мотор M276 V6'],
-    usedBy: ['mercedes-s-class'],
+    usedBy: ['mercedes-s-class', 'mercedes-e-class'],
   },
   {
     oemCode: '278929',
@@ -486,7 +486,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'турбина левая M276',
       'турбокомпрессор левый M276 мерседес',
     ],
-    usedBy: ['mercedes-s-class'],
+    usedBy: ['mercedes-s-class', 'mercedes-e-class'],
   },
   {
     oemCode: 'A2760900400',
@@ -498,7 +498,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'турбина правая M276',
       'турбокомпрессор правый M276 мерседес',
     ],
-    usedBy: ['mercedes-s-class'],
+    usedBy: ['mercedes-s-class', 'mercedes-e-class'],
   },
   {
     oemCode: 'A2780903580',
@@ -526,6 +526,38 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
   },
 
   // ========================================
+  // MERCEDES DIESEL ENGINES (E-Class)
+  // ========================================
+  {
+    oemCode: 'OM646',
+    name: 'Двигатель 2.2d OM646 CDI (150 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:OM646', 'двигатель 2.2 OM646', 'мотор OM646 CDI', 'двигатель OM646'],
+    usedBy: ['mercedes-e-class'],
+  },
+  {
+    oemCode: 'OM642',
+    name: 'Двигатель 3.0d OM642 CDI V6 (224 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:OM642', 'двигатель 3.0 OM642', 'мотор OM642 CDI', 'двигатель OM642 V6'],
+    usedBy: ['mercedes-e-class'],
+  },
+  {
+    oemCode: 'OM651',
+    name: 'Двигатель 2.2d OM651 CDI (170 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:OM651', 'двигатель 2.2 OM651', 'мотор OM651 CDI', 'двигатель OM651'],
+    usedBy: ['mercedes-e-class'],
+  },
+  {
+    oemCode: 'OM654',
+    name: 'Двигатель 2.0d OM654 CDI (194 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:OM654', 'двигатель 2.0 OM654', 'мотор OM654 CDI', 'двигатель OM654'],
+    usedBy: ['mercedes-e-class'],
+  },
+
+  // ========================================
   // MERCEDES TRANSMISSIONS
   // ========================================
   {
@@ -533,28 +565,28 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'АКПП 5-ступ Mercedes 722.6',
     category: 'transmission',
     searchQueries: ['oem:722.6', 'акпп 722.6 мерседес', 'акпп 5 ступ мерседес'],
-    usedBy: ['mercedes-c-class', 'mercedes-s-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-s-class', 'mercedes-e-class'],
   },
   {
     oemCode: '722.9',
     name: 'АКПП 7-ступ Mercedes 722.9',
     category: 'transmission',
     searchQueries: ['oem:722.9', 'акпп 722.9 мерседес', 'акпп 7 ступ мерседес 7G-Tronic'],
-    usedBy: ['mercedes-c-class', 'mercedes-s-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-s-class', 'mercedes-e-class'],
   },
   {
     oemCode: '725.0',
     name: 'АКПП 9-ступ Mercedes 725.0',
     category: 'transmission',
     searchQueries: ['oem:725.0', 'акпп 725.0 мерседес', 'акпп 9 ступ мерседес 9G-Tronic'],
-    usedBy: ['mercedes-c-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-e-class'],
   },
   {
     oemCode: '716.6',
     name: 'МКПП 6-ступ Mercedes 716.6',
     category: 'transmission',
     searchQueries: ['oem:716.6', 'мкпп 716.6 мерседес', 'мкпп 6 ступ мерседес'],
-    usedBy: ['mercedes-c-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-e-class'],
   },
   {
     oemCode: '716.5',
@@ -601,6 +633,20 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     category: 'engine',
     searchQueries: ['oem:L15B', 'двигатель 1.5 L15B honda', 'двигатель 1.5 турбо хонда'],
     usedBy: ['honda-accord', 'honda-civic'],
+  },
+  {
+    oemCode: 'R20A',
+    name: 'Двигатель 2.0 R20A (150 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:R20A', 'двигатель 2.0 R20A honda', 'мотор R20A хонда'],
+    usedBy: ['honda-accord', 'honda-cr-v'],
+  },
+  {
+    oemCode: 'K24W',
+    name: 'Двигатель 2.4 K24W (188 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:K24W', 'двигатель 2.4 K24W honda', 'мотор K24W хонда'],
+    usedBy: ['honda-accord', 'honda-cr-v'],
   },
 
   // ========================================
@@ -832,7 +878,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель G4FC',
       'двигатель 1.6 Gamma',
     ],
-    usedBy: ['kia-rio', 'hyundai-solaris', 'kia-ceed'],
+    usedBy: ['kia-rio', 'hyundai-solaris', 'kia-ceed', 'hyundai-elantra'],
   },
   {
     oemCode: 'G4LC',
@@ -848,7 +894,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
   },
   {
     oemCode: 'G4FG',
-    name: 'Двигатель 1.6 G4FG (123-130 л.с.)',
+    name: 'Двигатель 1.6 G4FG (123-132 л.с.)',
     category: 'engine',
     searchQueries: [
       'двигатель 1.6 G4FG',
@@ -856,7 +902,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель G4FG',
       'двигатель 1.6 Gamma GDI',
     ],
-    usedBy: ['kia-rio', 'hyundai-solaris', 'hyundai-creta', 'kia-ceed'],
+    usedBy: ['kia-rio', 'hyundai-solaris', 'hyundai-creta', 'kia-ceed', 'hyundai-elantra'],
   },
   {
     oemCode: 'G4FD',
@@ -908,7 +954,39 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель G4NA',
       'двигатель 2.0 Nu',
     ],
-    usedBy: ['hyundai-creta', 'kia-sportage'],
+    usedBy: ['hyundai-creta', 'kia-sportage', 'hyundai-elantra'],
+  },
+
+  // ========================================
+  // HYUNDAI-KIA BETA II ENGINES
+  // ========================================
+  {
+    oemCode: 'G4GC',
+    name: 'Двигатель 2.0 G4GC (143 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'двигатель 2.0 G4GC',
+      'мотор G4GC',
+      'двигатель G4GC',
+      'двигатель 2.0 Beta II',
+    ],
+    usedBy: ['kia-ceed', 'hyundai-elantra'],
+  },
+
+  // ========================================
+  // HYUNDAI-KIA NU ENGINES (G4NL)
+  // ========================================
+  {
+    oemCode: 'G4NL',
+    name: 'Двигатель 2.0 G4NL (150 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'двигатель 2.0 G4NL',
+      'мотор G4NL',
+      'двигатель G4NL',
+      'двигатель 2.0 Nu GDI',
+    ],
+    usedBy: ['kia-sportage', 'hyundai-elantra'],
   },
 
   // ========================================

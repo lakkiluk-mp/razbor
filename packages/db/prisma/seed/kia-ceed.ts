@@ -18,7 +18,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   alternator(P, S, '1.6-122'),
 
   // ED — G4GC 2.0 MPI
-  engine(P, S, '2.0-143', 'G4GC', 143),
+  engine(P, S, '2.0-143', 'G4GC', 143, ['G4GC']),
   starter(P, S, '2.0-143'),
   alternator(P, S, '2.0-143'),
 

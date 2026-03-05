@@ -28,6 +28,18 @@ export const mercedesOldMapping: VinBrandMapping = {
       },
     },
     {
+      modelSlug: 'e-class',
+      modelCodes: { position: [4, 6], codes: ['FA', 'JA', 'JF'] },
+      generationCodes: {
+        position: [4, 6],
+        mapping: {
+          FA: { slug: 'w211', bodyType: 'sedan' },
+          JA: { slug: 'w212', bodyType: 'sedan' },
+          JF: { slug: 'w213', bodyType: 'sedan' },
+        },
+      },
+    },
+    {
       modelSlug: 's-class',
       modelCodes: { position: [3, 6], codes: ['140', '220', '221'] },
       generationCodes: {
@@ -85,6 +97,18 @@ export const mercedesNewMapping: VinBrandMapping = {
           '082': { engines: ['engine:1.8-156'], transmissions: ['transmission:mt6'], drivetrains: ['drivetrain:rwd'] },
           '083': { engines: ['engine:1.8-184'], transmissions: ['transmission:mt6'], drivetrains: ['drivetrain:rwd'] },
           '084': { engines: ['engine:1.8-204'], transmissions: ['transmission:mt6'], drivetrains: ['drivetrain:rwd'] },
+        },
+      },
+    },
+    {
+      modelSlug: 'e-class',
+      modelCodes: { position: [3, 6], codes: ['211', '212', '213'] },
+      generationCodes: {
+        position: [3, 6],
+        mapping: {
+          '211': { slug: 'w211', bodyType: 'sedan' },
+          '212': { slug: 'w212', bodyType: 'sedan' },
+          '213': { slug: 'w213', bodyType: 'sedan' },
         },
       },
     },
