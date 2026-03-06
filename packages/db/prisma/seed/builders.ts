@@ -229,7 +229,7 @@ export function turbo(
   return {
     name: `${namePrefix} ${engineCode}`,
     slug: `${prefix}-turbo${sideSuffix}-${slugConfig}`,
-    category: 'engine' as PartCategory,
+    category: 'other' as PartCategory,
     schematicZoneCode: null,
     searchQueries: [
       ...oem,
@@ -256,7 +256,7 @@ export function supercharger(
   return {
     name: `Компрессор (нагнетатель) ${engineCode}`,
     slug: `${prefix}-supercharger-${slugConfig}`,
-    category: 'engine' as PartCategory,
+    category: 'other' as PartCategory,
     schematicZoneCode: null,
     searchQueries: [
       ...searchNames.map((n) => `компрессор ${engineCode} ${n}`),
