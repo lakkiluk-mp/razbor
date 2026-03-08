@@ -42,5 +42,21 @@ export const nissanMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'almera',
+      modelCodes: { position: [3, 4], codes: ['L'] },
+      generationCodes: {
+        position: [6, 8],
+        mapping: {
+          G0: { slug: 'g15', bodyType: 'sedan' },
+        },
+      },
+      engineCodes: {
+        position: 4,
+        mapping: {
+          A: ['engine:1.6-102'],
+        },
+      },
+    },
   ],
 }

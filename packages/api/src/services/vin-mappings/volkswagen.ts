@@ -49,5 +49,19 @@ export const vwDeMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'golf',
+      modelCodes: { position: [6, 8], codes: ['1J', '1K', '5K', '5G', 'AU'] },
+      generationCodes: {
+        position: [6, 8],
+        mapping: {
+          '1J': { slug: '1j', bodyType: 'hatchback' },
+          '1K': { slug: '1k', bodyType: 'hatchback' },
+          '5K': { slug: '5k', bodyType: 'hatchback' },
+          '5G': { slug: '5g', bodyType: 'hatchback' },
+          'AU': { slug: '5g', bodyType: 'hatchback' },
+        },
+      },
+    },
   ],
 }

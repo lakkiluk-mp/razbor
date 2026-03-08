@@ -139,7 +139,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'мотор K4M',
       'двигатель K4M рено',
     ],
-    usedBy: ['renault-logan', 'renault-sandero', 'renault-duster', 'renault-megane'],
+    usedBy: ['renault-logan', 'renault-sandero', 'renault-duster', 'renault-megane', 'nissan-almera'],
   },
   {
     oemCode: '8201583992',
@@ -220,7 +220,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'коробка механика рено логан',
       'мкпп JH3 рено',
     ],
-    usedBy: ['renault-logan', 'renault-sandero', 'renault-duster'],
+    usedBy: ['renault-logan', 'renault-sandero', 'renault-duster', 'nissan-almera'],
   },
   {
     oemCode: '8201114873',
@@ -232,7 +232,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'коробка автомат рено логан',
       'акпп DP2 рено',
     ],
-    usedBy: ['renault-logan', 'renault-duster'],
+    usedBy: ['renault-logan', 'renault-duster', 'nissan-almera'],
   },
   // ========================================
   // MERCEDES ENGINES
@@ -1054,7 +1054,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель CZCA',
       'мотор 1.4 TSI CZCA',
     ],
-    usedBy: ['volkswagen-polo', 'skoda-rapid', 'audi-a3', 'skoda-octavia', 'volkswagen-passat'],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'audi-a3', 'skoda-octavia', 'volkswagen-passat', 'volkswagen-golf'],
   },
   {
     oemCode: '0AM300048',
@@ -1066,7 +1066,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'коробка DSG-7 DQ200',
       'робот DQ200',
     ],
-    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-fabia', 'audi-a3', 'skoda-octavia', 'volkswagen-passat'],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-fabia', 'audi-a3', 'skoda-octavia', 'volkswagen-passat', 'volkswagen-golf'],
   },
 
   // ========================================
@@ -1094,7 +1094,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель CAXA',
       'мотор 1.4 TSI CAXA',
     ],
-    usedBy: ['skoda-rapid', 'skoda-octavia', 'volkswagen-passat'],
+    usedBy: ['skoda-rapid', 'skoda-octavia', 'volkswagen-passat', 'volkswagen-tiguan', 'volkswagen-golf'],
   },
   {
     oemCode: '06K100033B',
@@ -1118,7 +1118,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'коробка механика MQ200',
       'мкпп 5 ступ MQ200',
     ],
-    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-fabia', 'skoda-octavia', 'volkswagen-passat'],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-fabia', 'skoda-octavia', 'volkswagen-passat', 'volkswagen-golf'],
   },
   {
     oemCode: '09G300034',
@@ -1130,7 +1130,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'акпп Aisin 09G',
       'коробка автомат 6 ступ 09G',
     ],
-    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-fabia', 'skoda-octavia', 'volkswagen-passat'],
+    usedBy: ['volkswagen-polo', 'skoda-rapid', 'skoda-fabia', 'skoda-octavia', 'volkswagen-passat', 'volkswagen-golf'],
   },
   {
     oemCode: '02E300043',
@@ -1142,7 +1142,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'коробка DSG-6 DQ250',
       'робот DQ250',
     ],
-    usedBy: ['audi-a3', 'skoda-octavia', 'volkswagen-passat'],
+    usedBy: ['audi-a3', 'skoda-octavia', 'volkswagen-passat', 'volkswagen-tiguan', 'volkswagen-golf'],
   },
   {
     oemCode: '0GC300012',
@@ -1174,6 +1174,22 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
   },
 
   // ========================================
+  // VAG SHARED — Golf additions
+  // ========================================
+  {
+    oemCode: '06K100038S',
+    name: 'Двигатель 2.0 CHHB (220 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'oem:06K100038S',
+      'двигатель 2.0 CHHB',
+      'двигатель CHHB',
+      'мотор 2.0 TSI CHHB',
+    ],
+    usedBy: ['volkswagen-tiguan', 'volkswagen-golf'],
+  },
+
+  // ========================================
   // VAG SHARED — Passat additions
   // ========================================
   {
@@ -1186,7 +1202,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель CZEA',
       'мотор 1.4 TSI CZEA',
     ],
-    usedBy: ['audi-a3', 'volkswagen-passat'],
+    usedBy: ['audi-a3', 'volkswagen-passat', 'volkswagen-tiguan', 'volkswagen-golf'],
   },
   {
     oemCode: '06J100035F',
@@ -1210,7 +1226,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель BSE',
       'мотор 1.6 MPI BSE',
     ],
-    usedBy: ['skoda-octavia', 'volkswagen-passat'],
+    usedBy: ['skoda-octavia', 'volkswagen-passat', 'volkswagen-golf'],
   },
 
   // ========================================
@@ -1250,21 +1266,21 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 2.0 CDNB (180 л.с.)',
     category: 'engine',
     searchQueries: ['oem:06H100031R', 'двигатель 2.0 CDNB', 'мотор CDNB', 'двигатель CDNB ауди'],
-    usedBy: ['audi-q5', 'audi-a6'],
+    usedBy: ['audi-q5', 'audi-a6', 'audi-a4'],
   },
   {
     oemCode: '06H100035H',
     name: 'Двигатель 2.0 CDNC (211 л.с.)',
     category: 'engine',
     searchQueries: ['oem:06H100035H', 'двигатель 2.0 CDNC', 'мотор CDNC', 'двигатель CDNC ауди'],
-    usedBy: ['audi-q5'],
+    usedBy: ['audi-q5', 'audi-a4'],
   },
   {
     oemCode: '06L100032L',
     name: 'Двигатель 2.0 CNCD (225 л.с.)',
     category: 'engine',
     searchQueries: ['oem:06L100032L', 'двигатель 2.0 CNCD', 'мотор CNCD', 'двигатель CNCD ауди'],
-    usedBy: ['audi-q5'],
+    usedBy: ['audi-q5', 'audi-a4'],
   },
   {
     oemCode: 'CNCE',
@@ -1303,21 +1319,21 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 2.0d CGLC TDI (177 л.с.)',
     category: 'engine',
     searchQueries: ['двигатель 2.0 CGLC', 'мотор CGLC', 'двигатель CGLC TDI'],
-    usedBy: ['audi-q5', 'audi-a6'],
+    usedBy: ['audi-q5', 'audi-a6', 'audi-a4'],
   },
   {
     oemCode: 'CCWA',
     name: 'Двигатель 3.0d CCWA TDI V6 (240 л.с.)',
     category: 'engine',
     searchQueries: ['двигатель 3.0 CCWA', 'мотор CCWA', 'двигатель CCWA TDI V6'],
-    usedBy: ['audi-q5'],
+    usedBy: ['audi-q5', 'audi-a4'],
   },
   {
     oemCode: 'CDUD',
     name: 'Двигатель 3.0d CDUD TDI V6 (245 л.с.)',
     category: 'engine',
     searchQueries: ['двигатель 3.0 CDUD', 'мотор CDUD', 'двигатель CDUD TDI V6'],
-    usedBy: ['audi-q5', 'audi-a6'],
+    usedBy: ['audi-q5', 'audi-a6', 'audi-a4'],
   },
 
   // ========================================
@@ -1339,8 +1355,19 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 2.0d DETA TDI (190 л.с.)',
     category: 'engine',
     searchQueries: ['двигатель 2.0 DETA', 'мотор DETA', 'двигатель DETA TDI'],
-    usedBy: ['audi-q5'],
+    usedBy: ['audi-q5', 'audi-a4'],
   },
+  // ========================================
+  // AUDI A4/A6 ENGINES — Shared
+  // ========================================
+  {
+    oemCode: 'CVKB',
+    name: 'Двигатель 2.0 CVKB (190 л.с.)',
+    category: 'engine',
+    searchQueries: ['двигатель 2.0 CVKB', 'мотор CVKB', 'двигатель CVKB ауди'],
+    usedBy: ['audi-a6', 'audi-a4'],
+  },
+
   // ========================================
   // AUDI Q5 TRANSMISSIONS
   // ========================================
@@ -1360,7 +1387,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       's-tronic DL501', 'робот DL501', 'dsg 7 ступ ауди',
       's tronic ауди q5', 'коробка 0B5',
     ],
-    usedBy: ['audi-q5', 'audi-a6'],
+    usedBy: ['audi-q5', 'audi-a6', 'audi-a4'],
   },
   {
     oemCode: '0BK',
@@ -1371,7 +1398,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'акпп 8 ступ ауди', 'tiptronic 8 ступ', 'zf 8hp ауди',
       'акпп 0BK', 'коробка автомат ауди q5',
     ],
-    usedBy: ['audi-q5', 'audi-a6'],
+    usedBy: ['audi-q5', 'audi-a6', 'audi-a4'],
   },
 ]
 
