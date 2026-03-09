@@ -266,11 +266,18 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     usedBy: ['mercedes-c-class', 'mercedes-e-class'],
   },
   {
+    oemCode: '112941',
+    name: 'Двигатель 3.2 M112 V6 (215 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:112941', 'oem:M112941', 'двигатель 3.2 M112', 'мотор M112 V6 3.2'],
+    usedBy: ['mercedes-m-class', 'mercedes-g-class'],
+  },
+  {
     oemCode: '112946',
     name: 'Двигатель 3.2 M112 V6 (218 л.с.)',
     category: 'engine',
     searchQueries: ['oem:112946', 'oem:M112946', 'двигатель 3.2 M112', 'мотор M112 3.2'],
-    usedBy: ['mercedes-c-class', 'mercedes-e-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-e-class', 'mercedes-m-class'],
   },
   {
     oemCode: '271946',
@@ -326,7 +333,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 3.5 M272 V6 (272 л.с.)',
     category: 'engine',
     searchQueries: ['oem:272948', 'oem:M272948', 'двигатель 3.5 M272', 'мотор M272 V6'],
-    usedBy: ['mercedes-c-class', 'mercedes-s-class', 'mercedes-e-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-s-class', 'mercedes-e-class', 'mercedes-m-class'],
   },
   {
     oemCode: '274910',
@@ -361,14 +368,14 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 4.0T M177 V8 (510 л.с.)',
     category: 'engine',
     searchQueries: ['oem:177980', 'oem:M177980', 'двигатель 4.0 M177 AMG', 'мотор M177 V8'],
-    usedBy: ['mercedes-c-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-g-class'],
   },
   {
     oemCode: '156985',
     name: 'Двигатель 6.2 M156 V8 (457 л.с.)',
     category: 'engine',
     searchQueries: ['oem:156985', 'oem:M156985', 'двигатель 6.2 M156 AMG', 'мотор M156 V8'],
-    usedBy: ['mercedes-c-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-m-class', 'mercedes-g-class'],
   },
   {
     oemCode: '254915',
@@ -428,21 +435,21 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 3.7 M112 V6 (245 л.с.)',
     category: 'engine',
     searchQueries: ['oem:112973', 'oem:M112973', 'двигатель 3.7 M112', 'мотор M112 V6 3.7'],
-    usedBy: ['mercedes-s-class'],
+    usedBy: ['mercedes-s-class', 'mercedes-m-class'],
   },
   {
     oemCode: '113941',
     name: 'Двигатель 4.3 M113 V8 (279 л.с.)',
     category: 'engine',
     searchQueries: ['oem:113941', 'oem:M113941', 'двигатель 4.3 M113', 'мотор M113 V8'],
-    usedBy: ['mercedes-s-class'],
+    usedBy: ['mercedes-s-class', 'mercedes-m-class', 'mercedes-g-class'],
   },
   {
     oemCode: '113960',
     name: 'Двигатель 5.0 M113 V8 (306 л.с.)',
     category: 'engine',
     searchQueries: ['oem:113960', 'oem:M113960', 'двигатель 5.0 M113', 'мотор M113 V8'],
-    usedBy: ['mercedes-s-class', 'mercedes-e-class'],
+    usedBy: ['mercedes-s-class', 'mercedes-e-class', 'mercedes-m-class', 'mercedes-g-class'],
   },
   {
     oemCode: '273923',
@@ -456,21 +463,21 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 5.5 M273 V8 (388 л.с.)',
     category: 'engine',
     searchQueries: ['oem:273961', 'oem:M273961', 'двигатель 5.5 M273', 'мотор M273 V8'],
-    usedBy: ['mercedes-s-class'],
+    usedBy: ['mercedes-s-class', 'mercedes-m-class', 'mercedes-g-class'],
   },
   {
     oemCode: '276957',
     name: 'Двигатель 3.5 M276 V6 (306 л.с.)',
     category: 'engine',
     searchQueries: ['oem:276957', 'oem:M276957', 'двигатель 3.5 M276', 'мотор M276 V6'],
-    usedBy: ['mercedes-s-class', 'mercedes-e-class'],
+    usedBy: ['mercedes-s-class', 'mercedes-e-class', 'mercedes-m-class'],
   },
   {
     oemCode: '278929',
     name: 'Двигатель 4.7 M278 V8 (435 л.с.)',
     category: 'engine',
     searchQueries: ['oem:278929', 'oem:M278929', 'двигатель 4.7 M278', 'мотор M278 V8 турбо'],
-    usedBy: ['mercedes-s-class'],
+    usedBy: ['mercedes-s-class', 'mercedes-m-class'],
   },
 
   // ========================================
@@ -486,7 +493,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'турбина левая M276',
       'турбокомпрессор левый M276 мерседес',
     ],
-    usedBy: ['mercedes-s-class', 'mercedes-e-class'],
+    usedBy: ['mercedes-s-class', 'mercedes-e-class', 'mercedes-m-class'],
   },
   {
     oemCode: 'A2760900400',
@@ -498,7 +505,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'турбина правая M276',
       'турбокомпрессор правый M276 мерседес',
     ],
-    usedBy: ['mercedes-s-class', 'mercedes-e-class'],
+    usedBy: ['mercedes-s-class', 'mercedes-e-class', 'mercedes-m-class'],
   },
   {
     oemCode: 'A2780903580',
@@ -510,7 +517,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'турбина левая M278',
       'турбокомпрессор левый M278 мерседес',
     ],
-    usedBy: ['mercedes-s-class'],
+    usedBy: ['mercedes-s-class', 'mercedes-m-class'],
   },
   {
     oemCode: 'A2780901880',
@@ -522,7 +529,60 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'турбина правая M278',
       'турбокомпрессор правый M278 мерседес',
     ],
-    usedBy: ['mercedes-s-class'],
+    usedBy: ['mercedes-s-class', 'mercedes-m-class'],
+  },
+
+  // ========================================
+  // MERCEDES M-CLASS UNIQUE ENGINES
+  // ========================================
+  {
+    oemCode: '111977',
+    name: 'Двигатель 2.3 M111 (150 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:111977', 'oem:M111977', 'двигатель 2.3 M111', 'мотор M111 2.3'],
+    usedBy: ['mercedes-m-class'],
+  },
+  {
+    oemCode: '113981',
+    name: 'Двигатель 5.4 M113 V8 AMG (347 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:113981', 'oem:M113981', 'двигатель 5.5 M113 AMG', 'мотор M113 AMG V8'],
+    usedBy: ['mercedes-m-class', 'mercedes-g-class'],
+  },
+  {
+    oemCode: '157982',
+    name: 'Двигатель 5.5T M157 V8 AMG (525 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:157982', 'oem:M157982', 'двигатель 5.5 M157 AMG', 'мотор M157 V8 битурбо'],
+    usedBy: ['mercedes-m-class', 'mercedes-g-class'],
+  },
+  {
+    oemCode: '276821',
+    name: 'Двигатель 3.0T M276 V6 (333 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:276821', 'oem:M276821', 'двигатель 3.0 M276', 'мотор M276 турбо'],
+    usedBy: ['mercedes-m-class'],
+  },
+  {
+    oemCode: 'OM612',
+    name: 'Двигатель 2.7d OM612 CDI (163 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:OM612', 'двигатель 2.7 OM612', 'мотор OM612 CDI', 'двигатель OM612'],
+    usedBy: ['mercedes-m-class', 'mercedes-g-class'],
+  },
+  {
+    oemCode: 'OM628',
+    name: 'Двигатель 4.0d OM628 CDI V8 (250 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:OM628', 'двигатель 4.0 OM628', 'мотор OM628 CDI', 'двигатель OM628 V8'],
+    usedBy: ['mercedes-m-class'],
+  },
+  {
+    oemCode: 'OM629',
+    name: 'Двигатель 4.0d OM629 CDI V8 (306 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:OM629', 'двигатель 4.0 OM629', 'мотор OM629 CDI', 'двигатель OM629 V8'],
+    usedBy: ['mercedes-m-class'],
   },
 
   // ========================================
@@ -540,14 +600,14 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 3.0d OM642 CDI V6 (224 л.с.)',
     category: 'engine',
     searchQueries: ['oem:OM642', 'двигатель 3.0 OM642', 'мотор OM642 CDI', 'двигатель OM642 V6'],
-    usedBy: ['mercedes-e-class'],
+    usedBy: ['mercedes-e-class', 'mercedes-m-class', 'mercedes-g-class'],
   },
   {
     oemCode: 'OM651',
     name: 'Двигатель 2.2d OM651 CDI (170 л.с.)',
     category: 'engine',
     searchQueries: ['oem:OM651', 'двигатель 2.2 OM651', 'мотор OM651 CDI', 'двигатель OM651'],
-    usedBy: ['mercedes-e-class'],
+    usedBy: ['mercedes-e-class', 'mercedes-m-class'],
   },
   {
     oemCode: 'OM654',
@@ -565,21 +625,21 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'АКПП 5-ступ Mercedes 722.6',
     category: 'transmission',
     searchQueries: ['oem:722.6', 'акпп 722.6 мерседес', 'акпп 5 ступ мерседес'],
-    usedBy: ['mercedes-c-class', 'mercedes-s-class', 'mercedes-e-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-s-class', 'mercedes-e-class', 'mercedes-m-class', 'mercedes-g-class'],
   },
   {
     oemCode: '722.9',
     name: 'АКПП 7-ступ Mercedes 722.9',
     category: 'transmission',
     searchQueries: ['oem:722.9', 'акпп 722.9 мерседес', 'акпп 7 ступ мерседес 7G-Tronic'],
-    usedBy: ['mercedes-c-class', 'mercedes-s-class', 'mercedes-e-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-s-class', 'mercedes-e-class', 'mercedes-m-class', 'mercedes-g-class'],
   },
   {
     oemCode: '725.0',
     name: 'АКПП 9-ступ Mercedes 725.0',
     category: 'transmission',
     searchQueries: ['oem:725.0', 'акпп 725.0 мерседес', 'акпп 9 ступ мерседес 9G-Tronic'],
-    usedBy: ['mercedes-c-class', 'mercedes-e-class'],
+    usedBy: ['mercedes-c-class', 'mercedes-e-class', 'mercedes-g-class'],
   },
   {
     oemCode: '716.6',
@@ -797,7 +857,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 3.0 M54B30 (231 л.с.)',
     category: 'engine',
     searchQueries: ['oem:M54B30', 'двигатель 3.0 M54B30', 'мотор M54B30', 'двигатель M54B30 бмв'],
-    usedBy: ['bmw-3-series', 'bmw-5-series'],
+    usedBy: ['bmw-3-series', 'bmw-5-series', 'bmw-x5'],
   },
   {
     oemCode: 'N52B25',
@@ -811,7 +871,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 3.0 N52B30 (258 л.с.)',
     category: 'engine',
     searchQueries: ['oem:N52B30', 'двигатель 3.0 N52B30', 'мотор N52B30', 'двигатель N52B30 бмв'],
-    usedBy: ['bmw-3-series', 'bmw-5-series'],
+    usedBy: ['bmw-3-series', 'bmw-5-series', 'bmw-x5'],
   },
   {
     oemCode: 'N54B30',
@@ -825,14 +885,28 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 2.0t N20B20 (184-245 л.с.)',
     category: 'engine',
     searchQueries: ['oem:N20B20', 'двигатель 2.0 N20B20', 'мотор N20B20', 'двигатель N20B20 бмв'],
-    usedBy: ['bmw-3-series', 'bmw-5-series'],
+    usedBy: ['bmw-3-series', 'bmw-5-series', 'bmw-x5'],
   },
   {
     oemCode: 'N55B30',
     name: 'Двигатель 3.0t N55B30 (306 л.с.)',
     category: 'engine',
     searchQueries: ['oem:N55B30', 'двигатель 3.0 N55B30', 'мотор N55B30', 'двигатель N55B30 бмв'],
-    usedBy: ['bmw-3-series', 'bmw-5-series'],
+    usedBy: ['bmw-3-series', 'bmw-5-series', 'bmw-x5'],
+  },
+  {
+    oemCode: 'N63B44',
+    name: 'Двигатель 4.4t N63B44 (407-462 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:N63B44', 'двигатель 4.4 N63B44', 'мотор N63B44', 'двигатель N63B44 бмв'],
+    usedBy: ['bmw-5-series', 'bmw-x5'],
+  },
+  {
+    oemCode: 'N57D30',
+    name: 'Двигатель 3.0d N57D30 (245-313 л.с.)',
+    category: 'engine',
+    searchQueries: ['oem:N57D30', 'двигатель 3.0 N57D30', 'мотор N57D30', 'двигатель N57D30 бмв'],
+    usedBy: ['bmw-5-series', 'bmw-x5'],
   },
 
   // ========================================
@@ -850,7 +924,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'АКПП 8-ступ ZF 8HP45',
     category: 'transmission',
     searchQueries: ['oem:8HP45', 'акпп 8HP45 бмв', 'акпп ZF 8HP45', 'коробка 8HP45'],
-    usedBy: ['bmw-3-series', 'bmw-5-series'],
+    usedBy: ['bmw-3-series', 'bmw-5-series', 'bmw-x5'],
   },
 
   // ========================================

@@ -11,7 +11,7 @@ import { vwRuMapping, vwDeMapping, vwTiguanMapping } from './volkswagen'
 import { skodaMapping } from './skoda'
 import { audiEuMapping, audiUsMapping } from './audi'
 import { bmwMapping } from './bmw'
-import { mercedesOldMapping, mercedesNewMapping } from './mercedes'
+import { mercedesOldMapping, mercedesNewMapping, mercedesSuvMapping } from './mercedes'
 import { porscheMapping } from './porsche'
 import { opelMapping } from './opel'
 import { chevroletKrMapping, chevroletRuMapping, chevroletUaMapping } from './chevrolet'
@@ -47,6 +47,7 @@ export const VIN_BRAND_MAPPINGS: VinBrandMapping[] = [
   bmwMapping,
   mercedesOldMapping,
   mercedesNewMapping,
+  mercedesSuvMapping,
   porscheMapping,
   opelMapping,
   chevroletKrMapping,

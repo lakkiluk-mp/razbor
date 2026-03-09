@@ -65,6 +65,36 @@ export const mercedesOldMapping: VinBrandMapping = {
   ],
 }
 
+export const mercedesSuvMapping: VinBrandMapping = {
+  wmi: ['WDC'],
+  brandSlug: 'mercedes-benz',
+  skipYearParsing: true,
+  models: [
+    {
+      modelSlug: 'm-class',
+      modelCodes: { position: [3, 6], codes: ['163', '164', '166'] },
+      generationCodes: {
+        position: [3, 6],
+        mapping: {
+          '163': { slug: 'w163', bodyType: 'suv' },
+          '164': { slug: 'w164', bodyType: 'suv' },
+          '166': { slug: 'w166', bodyType: 'suv' },
+        },
+      },
+    },
+    {
+      modelSlug: 'g-class',
+      modelCodes: { position: [3, 6], codes: ['463'] },
+      generationCodes: {
+        position: [3, 6],
+        mapping: {
+          '463': { slug: 'w463', bodyType: 'suv' },
+        },
+      },
+    },
+  ],
+}
+
 export const mercedesNewMapping: VinBrandMapping = {
   wmi: ['WDD', 'WDC', 'W1K', 'W1N'],
   brandSlug: 'mercedes-benz',

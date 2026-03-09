@@ -98,5 +98,55 @@ export const bmwMapping: VinBrandMapping = {
         },
       },
     },
+    // === X5 ===
+    {
+      modelSlug: 'x5',
+      modelCodes: { position: [4, 6], codes: ['FA', 'FB', 'FC'] },
+      generationCodes: {
+        position: [4, 6],
+        mapping: {
+          FA: { slug: 'e53', bodyType: 'suv' },
+          FB: { slug: 'e53', bodyType: 'suv' },
+          FC: { slug: 'e53', bodyType: 'suv' },
+        },
+      },
+    },
+    {
+      modelSlug: 'x5',
+      modelCodes: { position: [4, 6], codes: ['FE', 'FF', 'FG'] },
+      generationCodes: {
+        position: [4, 6],
+        mapping: {
+          FE: { slug: 'e70', bodyType: 'suv' },
+          FF: { slug: 'e70', bodyType: 'suv' },
+          FG: { slug: 'e70', bodyType: 'suv' },
+        },
+      },
+    },
+    {
+      modelSlug: 'x5',
+      modelCodes: { position: [4, 6], codes: ['JA', 'JB', 'JC'] },
+      generationCodes: {
+        position: [4, 6],
+        mapping: {
+          JA: { slug: 'f15', bodyType: 'suv' },
+          JB: { slug: 'f15', bodyType: 'suv' },
+          JC: { slug: 'f15', bodyType: 'suv' },
+        },
+      },
+    },
+    {
+      modelSlug: 'x5',
+      modelCodes: { position: [4, 6], codes: ['CR', 'CS', 'CT', 'CU'] },
+      generationCodes: {
+        position: [4, 6],
+        mapping: {
+          CR: { slug: 'g05', bodyType: 'suv' },
+          CS: { slug: 'g05', bodyType: 'suv' },
+          CT: { slug: 'g05', bodyType: 'suv' },
+          CU: { slug: 'g05', bodyType: 'suv' },
+        },
+      },
+    },
   ],
 }
