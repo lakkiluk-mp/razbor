@@ -485,6 +485,55 @@ export const queries = {
       }
     }
   `,
+  monitorSubscriptions: `
+    query MonitorSubscriptions {
+      monitorSubscriptions {
+        id
+        label
+        brandSlug
+        modelSlug
+        city
+        priceMin
+        priceMax
+        yearMin
+        yearMax
+        mileageMax
+        isActive
+        notificationsSent
+        lastNotifiedAt
+        createdAt
+      }
+    }
+  `,
+  monitorSubscription: `
+    query MonitorSubscription($id: ID!) {
+      monitorSubscription(id: $id) {
+        id
+        label
+        brandSlug
+        modelSlug
+        city
+        priceMin
+        priceMax
+        yearMin
+        yearMax
+        mileageMax
+        isActive
+        notificationsSent
+        lastNotifiedAt
+        createdAt
+        updatedAt
+      }
+    }
+  `,
+  monitorCities: `
+    query MonitorCities {
+      monitorCities {
+        name
+        slug
+      }
+    }
+  `,
 }
 
 export const mutations = {
@@ -597,6 +646,54 @@ export const mutations = {
         status
         sentCount
         failedCount
+      }
+    }
+  `,
+  createMonitorSubscription: `
+    mutation CreateMonitorSubscription($input: CreateMonitorSubscriptionInput!) {
+      createMonitorSubscription(input: $input) {
+        id
+        label
+        brandSlug
+        modelSlug
+        city
+        priceMin
+        priceMax
+        yearMin
+        yearMax
+        mileageMax
+        isActive
+        createdAt
+      }
+    }
+  `,
+  updateMonitorSubscription: `
+    mutation UpdateMonitorSubscription($id: ID!, $input: UpdateMonitorSubscriptionInput!) {
+      updateMonitorSubscription(id: $id, input: $input) {
+        id
+        label
+        brandSlug
+        modelSlug
+        city
+        priceMin
+        priceMax
+        yearMin
+        yearMax
+        mileageMax
+        isActive
+      }
+    }
+  `,
+  deleteMonitorSubscription: `
+    mutation DeleteMonitorSubscription($id: ID!) {
+      deleteMonitorSubscription(id: $id)
+    }
+  `,
+  pauseMonitorSubscription: `
+    mutation PauseMonitorSubscription($id: ID!) {
+      pauseMonitorSubscription(id: $id) {
+        id
+        isActive
       }
     }
   `,

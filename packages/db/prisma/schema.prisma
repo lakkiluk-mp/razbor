@@ -70,6 +70,21 @@ enum BroadcastStatus {
   cancelled
 }
 
+enum MonitorLogType {
+  CRAWL
+  NOTIFICATION
+  PROXY
+  STRATEGY
+  SYSTEM
+}
+
+enum LogLevel {
+  DEBUG
+  INFO
+  WARN
+  ERROR
+}
+
 
 // ============================================
 // КАТАЛОГ АВТОМОБИЛЕЙ
@@ -245,11 +260,14 @@ model User {
   isPremium    Boolean  @default(false)
   trialCredits Int      @default(3)
 
-  calculations   Calculation[]
-  usageLogs      UsageLog[]
-  subscriptions  Subscription[]
-  paymentMethods PaymentMethod[]
-  yooPayments    YooPayment[]
+  trialMonitorStartedAt DateTime?
+
+  calculations          Calculation[]
+  usageLogs             UsageLog[]
+  subscriptions         Subscription[]
+  paymentMethods        PaymentMethod[]
+  yooPayments           YooPayment[]
+  monitorSubscriptions  MonitorSubscription[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -366,4 +384,49 @@ model Broadcast {
   updatedAt   DateTime        @updatedAt
 
   @@map("broadcasts")
+}
+
+model MonitorSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  label     String
+  brandSlug String
+  modelSlug String
+  city      String?
+  priceMin  Int?
+  priceMax  Int?
+  yearMin   Int?
+  yearMax   Int?
+  mileageMax Int?
+
+  isActive  Boolean            @default(true)
+  expiresAt DateTime?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  notificationsSent Int        @default(0)
+  lastNotifiedAt    DateTime?
+
+  @@index([brandSlug, modelSlug, isActive])
+  @@index([userId])
+  @@map("monitor_subscriptions")
+}
+
+model MonitorLog {
+  id        String   @id @default(cuid())
+  type      MonitorLogType
+  level     LogLevel @default(INFO)
+
+  brandSlug String?
+  modelSlug String?
+  message   String
+  meta      Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([type, createdAt])
+  @@index([brandSlug, modelSlug, createdAt])
+  @@map("monitor_logs")
 }

@@ -4,6 +4,7 @@ import PrismaPlugin from '@pothos/plugin-prisma'
 import type PrismaTypes from '../pothos-types'
 import { getDatamodel } from '../pothos-types'
 import { type PrismaClient, prisma } from '@razbor/db'
+import type Redis from 'ioredis'
 
 export type TelegramPhoto = string | { source: Buffer; filename?: string }
 
@@ -24,6 +25,7 @@ export interface Context {
   prisma: PrismaClient
   user: { id: string; telegramId: bigint; username?: string | null } | null
   telegram: TelegramApi | null
+  redis: Redis | null
 }
 
 export const builder = new SchemaBuilder<{

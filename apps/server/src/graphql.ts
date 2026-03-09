@@ -4,6 +4,7 @@ import { GraphQLError } from 'graphql'
 import depthLimit from 'graphql-depth-limit'
 import { schema } from '@razbor/api'
 import { prisma } from '@razbor/db'
+import { getRedis } from '@razbor/cache'
 import { authenticateUser } from './auth.js'
 import { bot } from './bot/index.js'
 import type { Context } from '@razbor/api'
@@ -83,7 +84,7 @@ export const yoga = createYoga({
       })
     }
 
-    return { prisma, user, telegram: bot?.telegram ?? null }
+    return { prisma, user, telegram: bot?.telegram ?? null, redis: getRedis() }
   },
   graphqlEndpoint: '/api/graphql',
   graphiql: !isProduction,

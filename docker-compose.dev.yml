@@ -88,6 +88,35 @@ services:
       server:
         condition: service_healthy
 
+  listing-monitor:
+    build:
+      context: .
+      dockerfile: apps/listing-monitor/Dockerfile
+    container_name: razbor-listing-monitor
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./apps/listing-monitor/src:/app/apps/listing-monitor/src
+      - ./packages/db/prisma:/app/packages/db/prisma
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://razbor:razbor_dev@postgres:5432/razbor
+      REDIS_URL: redis://redis:6379
+      BOT_TOKEN: ${BOT_TOKEN}
+      ADMIN_CHAT_ID: "371828944"
+      MOBILE_PROXY_URL: "http://basgYR:tUrnEB8aHYgd@mproxy.site:18642"
+      MOBILE_PROXY_CHANGE_URL: "https://changeip.mobileproxy.space/?proxy_key=REMOVED"
+      ADMIN_PORT: "3001"
+      LOG_LEVEL: debug
+      NODE_ENV: development
+      CRAWL_INTERVAL_MS: "60000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
 volumes:
   postgres_data:
   redis_data:

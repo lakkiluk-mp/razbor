@@ -48,3 +48,12 @@ export function pluralCredits(n: number): string {
 export const CACHE_TTL = {
   prices: 14 * 24 * 60 * 60,
 } as const
+
+export { MONITOR_CITIES, type MonitorCity } from './cities'
+
+export const MONITOR_SLOT_LIMITS = {
+  trial: 50,
+  premium: 50,
+} as const
+
+export { parseAvitoUrl, type AvitoUrlParseResult } from './avito-url-parser'

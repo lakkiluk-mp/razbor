@@ -17,6 +17,9 @@ import { SubscribePage } from '@/pages/SubscribePage'
 import { PaymentPage } from '@/pages/PaymentPage'
 import { PaymentSuccessPage } from '@/pages/PaymentSuccessPage'
 import { TelegramRequired } from '@/components/TelegramRequired'
+import { MonitorListPage } from '@/pages/MonitorListPage'
+import { MonitorNewPage } from '@/pages/MonitorNewPage'
+import { MonitorDetailPage } from '@/pages/MonitorDetailPage'
 import { OffersPage } from '@/pages/static/OffersPage'
 import { PrivacyPage } from '@/pages/static/PrivacyPage'
 import { AdminGuard } from '@/components/admin/admin-guard'
@@ -82,6 +85,9 @@ export function App() {
         <Routes>
           <Route element={<AppLayout />}>
             <Route path="/" element={<BrandsPage />} />
+            <Route path="/monitor" element={<MonitorListPage />} />
+            <Route path="/monitor/new" element={<MonitorNewPage />} />
+            <Route path="/monitor/:id" element={<MonitorDetailPage />} />
             <Route path="/:brandSlug" element={<ModelsPage />} />
             <Route path="/:brandSlug/:modelSlug" element={<GenerationsPage />} />
             <Route path="/:brandSlug/:modelSlug/:generationSlug/config" element={<ConfigPage />} />

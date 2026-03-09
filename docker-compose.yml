@@ -109,6 +109,44 @@ services:
       - "traefik.http.routers.razbor-http.middlewares=razbor-redirect-https"
       - "traefik.http.middlewares.razbor-redirect-https.redirectscheme.scheme=https"
 
+  listing-monitor:
+    build:
+      context: .
+      dockerfile: apps/listing-monitor/Dockerfile
+    container_name: razbor-listing-monitor
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      REDIS_URL: redis://redis:6379
+      BOT_TOKEN: ${BOT_TOKEN}
+      MOBILE_PROXY_URL: ${MOBILE_PROXY_URL}
+      MOBILE_PROXY_CHANGE_URL: ${MOBILE_PROXY_CHANGE_URL}
+      SPFA_API_KEY: ${SPFA_API_KEY}
+      ADMIN_PORT: "3001"
+      ADMIN_CHAT_ID: ${ADMIN_CHAT_ID}
+      LOG_LEVEL: info
+      NODE_ENV: production
+    expose:
+      - "3001"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3001/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - razbor-internal
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
 volumes:
   postgres_data:
   redis_data:

@@ -13,6 +13,7 @@
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "@razbor/api": "workspace:*",
+    "@razbor/cache": "workspace:*",
     "@razbor/db": "workspace:*",
     "@razbor/shared": "workspace:*",
     "@telegram-apps/init-data-node": "^2.0.10",

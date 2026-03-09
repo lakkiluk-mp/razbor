@@ -9,6 +9,8 @@ function buildContext(overrides?: Partial<Context>): Context {
   return {
     prisma: prismaMock,
     user: DEFAULT_USER,
+    telegram: null,
+    redis: null,
     ...overrides,
   }
 }
