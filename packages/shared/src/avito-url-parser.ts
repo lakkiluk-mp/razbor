@@ -118,10 +118,12 @@ function decodeSearchFilters(fParam: string): {
   return result
 }
 
+const TRANSMISSIONS = new Set(['at', 'mt', 'cvt', 'amt', 'robot'])
+
 function parseListing(slug: string): Omit<AvitoUrlParseResult, 'priceMin' | 'priceMax'> | string {
   const tokens = slug.split('_')
 
-  if (tokens.length < 7) {
+  if (tokens.length < 5) {
     return 'Не удалось распознать ссылку на объявление'
   }
 
@@ -130,22 +132,21 @@ function parseListing(slug: string): Omit<AvitoUrlParseResult, 'priceMin' | 'pri
     return 'Не удалось распознать ссылку на объявление'
   }
 
-  const kmLiteral = tokens.pop()
-  if (kmLiteral !== 'km') {
-    return 'Не удалось распознать ссылку на объявление'
-  }
+  let mileage: number | null = null
 
-  const mileageParts: string[] = []
-  while (tokens.length > 0 && isNumeric(tokens[tokens.length - 1]!)) {
-    const candidate = tokens[tokens.length - 1]!
-    const num = parseInt(candidate, 10)
-    if (candidate.length === 4 && num >= 1990 && num <= 2030) break
-    mileageParts.unshift(tokens.pop()!)
+  if (tokens.length > 0 && tokens[tokens.length - 1] === 'km') {
+    tokens.pop()
+    const mileageParts: string[] = []
+    while (tokens.length > 0 && isNumeric(tokens[tokens.length - 1]!)) {
+      const candidate = tokens[tokens.length - 1]!
+      const num = parseInt(candidate, 10)
+      if (candidate.length === 4 && num >= 1990 && num <= 2030) break
+      mileageParts.unshift(tokens.pop()!)
+    }
+    if (mileageParts.length > 0) {
+      mileage = parseInt(mileageParts.join(''), 10)
+    }
   }
-  if (mileageParts.length === 0) {
-    return 'Не удалось распознать ссылку на объявление'
-  }
-  const mileage = parseInt(mileageParts.join(''), 10)
 
   if (tokens.length === 0) return 'Не удалось распознать ссылку на объявление'
   const yearStr = tokens.pop()!
@@ -156,7 +157,7 @@ function parseListing(slug: string): Omit<AvitoUrlParseResult, 'priceMin' | 'pri
 
   if (tokens.length === 0) return 'Не удалось распознать ссылку на объявление'
   const transmission = tokens.pop()!
-  if (transmission !== 'at' && transmission !== 'mt') {
+  if (!TRANSMISSIONS.has(transmission)) {
     return 'Не удалось распознать ссылку на объявление'
   }
 
