@@ -119,6 +119,7 @@ function decodeSearchFilters(fParam: string): {
 }
 
 const TRANSMISSIONS = new Set(['at', 'mt', 'cvt', 'amt', 'robot'])
+const CONDITION_PATTERN = /^(?:ne_)?bit[iy]{1,2}[ey]?$/
 
 function parseListing(slug: string): Omit<AvitoUrlParseResult, 'priceMin' | 'priceMax'> | string {
   const tokens = slug.split('_')
@@ -146,6 +147,10 @@ function parseListing(slug: string): Omit<AvitoUrlParseResult, 'priceMin' | 'pri
     if (mileageParts.length > 0) {
       mileage = parseInt(mileageParts.join(''), 10)
     }
+  }
+
+  while (tokens.length > 0 && CONDITION_PATTERN.test(tokens[tokens.length - 1]!)) {
+    tokens.pop()
   }
 
   if (tokens.length === 0) return 'Не удалось распознать ссылку на объявление'

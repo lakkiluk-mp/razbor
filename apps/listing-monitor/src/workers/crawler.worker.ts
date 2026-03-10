@@ -166,6 +166,7 @@ export function createCrawlerWorker(
           message: `First run done: ${result.cards.length} seen, ${notifiedCards} new`,
           meta: { groupKey, totalCards: result.cards.length, notifiedCards },
         })
+        await redis.set(`lastCrawl:${groupKey}`, String(Date.now()), 'EX', 604800)
         return { blocked: false, cards: result.cards.length, newCards: notifiedCards }
       }
 
@@ -177,12 +178,24 @@ export function createCrawlerWorker(
         )
       }
 
+      const CRAWL_TIME_BUFFER_MS = 15 * 60 * 1000
       const maxAgeMs = 24 * 60 * 60 * 1000
       const now = Date.now()
+
+      const lastCrawlRaw = await redis.get(`lastCrawl:${groupKey}`)
+      const lastCrawlTime = lastCrawlRaw ? parseInt(lastCrawlRaw, 10) : 0
+
+      if (lastCrawlTime === 0) {
+        logger.warn(`[${groupKey}] lastCrawl key missing, using maxAge filter only`)
+      }
+
       const freshCards = newCards.filter((card) => {
         if (!card.publishedAt) return false
         const published = new Date(card.publishedAt).getTime()
-        return !isNaN(published) && now - published < maxAgeMs
+        if (isNaN(published)) return false
+        if (now - published >= maxAgeMs) return false
+        if (lastCrawlTime > 0 && published < lastCrawlTime - CRAWL_TIME_BUFFER_MS) return false
+        return true
       })
 
       if (freshCards.length !== newCards.length) {
@@ -193,6 +206,7 @@ export function createCrawlerWorker(
 
       if (freshCards.length === 0) {
         logger.info(`[${groupKey}] Нет новых (всего ${result.cards.length})`)
+        await redis.set(`lastCrawl:${groupKey}`, String(now), 'EX', 604800)
         writeMonitorLog({
           type: 'CRAWL',
           level: 'INFO',
@@ -220,6 +234,11 @@ export function createCrawlerWorker(
       for (const card of freshCards) {
         const matches = matcher.match(card, brandSlug, modelSlug)
         for (const match of matches) {
+          if (card.publishedAt) {
+            const publishedAt = new Date(card.publishedAt).getTime()
+            if (!isNaN(publishedAt) && publishedAt <= match.createdAt.getTime()) continue
+          }
+
           const userCardKey = `${match.telegramId}:${card.extId}`
           if (sentToUser.has(userCardKey)) continue
           sentToUser.add(userCardKey)
@@ -251,6 +270,8 @@ export function createCrawlerWorker(
       logger.info(
         `[${groupKey}] Crawl done: ${result.cards.length} total, ${freshCards.length} new, ${notifyMap.size} notifications`,
       )
+      await redis.set(`lastCrawl:${groupKey}`, String(now), 'EX', 604800)
+
       writeMonitorLog({
         type: 'CRAWL',
         level: 'INFO',
