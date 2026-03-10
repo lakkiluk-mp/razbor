@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { MONITOR_SUBSCRIPTIONS_CHANNEL } from '@razbor/shared'
 import { prismaMock } from '../../__mocks__/prisma'
 import {
   getActiveSubscription,
@@ -459,6 +460,7 @@ describe('expireSubscription', () => {
   it('should set status to expired and credits to 0', async () => {
     prismaMock.subscription.findUnique.mockResolvedValue({ userId: 'user-1' })
     prismaMock.$transaction.mockResolvedValue([])
+    prismaMock.monitorSubscription.findMany.mockResolvedValue([])
 
     await expireSubscription(prismaMock, 'sub-1')
 
@@ -477,6 +479,7 @@ describe('expireSubscription', () => {
   it('should set isPremium to false on user', async () => {
     prismaMock.subscription.findUnique.mockResolvedValue({ userId: 'user-1' })
     prismaMock.$transaction.mockResolvedValue([])
+    prismaMock.monitorSubscription.findMany.mockResolvedValue([])
 
     await expireSubscription(prismaMock, 'sub-1')
 
@@ -490,5 +493,54 @@ describe('expireSubscription', () => {
     prismaMock.subscription.findUnique.mockResolvedValue(null)
 
     await expect(expireSubscription(prismaMock, 'sub-fake')).rejects.toThrow('Подписка не найдена')
+  })
+
+  it('should deactivate monitor subscriptions exceeding trial limit', async () => {
+    prismaMock.subscription.findUnique.mockResolvedValue({ userId: 'user-1' })
+    prismaMock.$transaction.mockResolvedValue([])
+    prismaMock.monitorSubscription.findMany.mockResolvedValue([
+      { id: 'mon-1', userId: 'user-1', isActive: true, createdAt: new Date('2026-01-01') },
+      { id: 'mon-2', userId: 'user-1', isActive: true, createdAt: new Date('2026-01-02') },
+      { id: 'mon-3', userId: 'user-1', isActive: true, createdAt: new Date('2026-01-03') },
+    ])
+    prismaMock.monitorSubscription.updateMany.mockResolvedValue({ count: 2 })
+
+    await expireSubscription(prismaMock, 'sub-1')
+
+    expect(prismaMock.monitorSubscription.updateMany).toHaveBeenCalledWith({
+      where: { id: { in: ['mon-2', 'mon-3'] } },
+      data: { isActive: false },
+    })
+  })
+
+  it('should not deactivate monitor subscriptions within trial limit', async () => {
+    prismaMock.subscription.findUnique.mockResolvedValue({ userId: 'user-1' })
+    prismaMock.$transaction.mockResolvedValue([])
+    prismaMock.monitorSubscription.findMany.mockResolvedValue([
+      { id: 'mon-1', userId: 'user-1', isActive: true, createdAt: new Date('2026-01-01') },
+    ])
+
+    await expireSubscription(prismaMock, 'sub-1')
+
+    expect(prismaMock.monitorSubscription.updateMany).not.toHaveBeenCalled()
+  })
+
+  it('should publish Redis events for deactivated monitor subscriptions', async () => {
+    prismaMock.subscription.findUnique.mockResolvedValue({ userId: 'user-1' })
+    prismaMock.$transaction.mockResolvedValue([])
+    prismaMock.monitorSubscription.findMany.mockResolvedValue([
+      { id: 'mon-1', userId: 'user-1', isActive: true, createdAt: new Date('2026-01-01') },
+      { id: 'mon-2', userId: 'user-1', isActive: true, createdAt: new Date('2026-01-02') },
+    ])
+    prismaMock.monitorSubscription.updateMany.mockResolvedValue({ count: 1 })
+
+    const redisMock = { publish: vi.fn().mockResolvedValue(1) } as unknown as import('ioredis').default
+
+    await expireSubscription(prismaMock, 'sub-1', redisMock)
+
+    expect(redisMock.publish).toHaveBeenCalledWith(
+      MONITOR_SUBSCRIPTIONS_CHANNEL,
+      JSON.stringify({ action: 'deactivated', subscriptionId: 'mon-2' }),
+    )
   })
 })

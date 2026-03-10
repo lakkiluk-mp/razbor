@@ -1,5 +1,6 @@
 import type { PrismaClient, Subscription } from '@razbor/db'
-import { SUBSCRIPTION_PLANS, type SubscriptionPlanKey } from '@razbor/shared'
+import type Redis from 'ioredis'
+import { SUBSCRIPTION_PLANS, MONITOR_SLOT_LIMITS, MONITOR_SUBSCRIPTIONS_CHANNEL, type SubscriptionPlanKey } from '@razbor/shared'
 import { GraphQLError } from 'graphql'
 
 import { ACTIVE_STATUSES } from './credits.service'
@@ -186,6 +187,7 @@ export async function renewSubscription(
 export async function expireSubscription(
   prisma: PrismaClient,
   subscriptionId: string,
+  redis?: Redis | null,
 ): Promise<void> {
   const subscription = await prisma.subscription.findUnique({
     where: { id: subscriptionId },
@@ -205,4 +207,30 @@ export async function expireSubscription(
       data: { isPremium: false },
     }),
   ])
+
+  const activeMonitorSubs = await prisma.monitorSubscription.findMany({
+    where: { userId: subscription.userId, isActive: true },
+    orderBy: { createdAt: 'asc' },
+  })
+
+  if (activeMonitorSubs.length > MONITOR_SLOT_LIMITS.trial) {
+    const subsToDeactivate = activeMonitorSubs.slice(MONITOR_SLOT_LIMITS.trial)
+    const idsToDeactivate = subsToDeactivate.map((s) => s.id)
+
+    await prisma.monitorSubscription.updateMany({
+      where: { id: { in: idsToDeactivate } },
+      data: { isActive: false },
+    })
+
+    if (redis) {
+      const channel = MONITOR_SUBSCRIPTIONS_CHANNEL
+      for (const id of idsToDeactivate) {
+        try {
+          await redis.publish(channel, JSON.stringify({ action: 'deactivated', subscriptionId: id }))
+        } catch (err) {
+          console.error('[expireSubscription] Failed to publish Redis event:', err)
+        }
+      }
+    }
+  }
 }

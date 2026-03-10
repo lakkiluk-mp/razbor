@@ -1,6 +1,7 @@
 import type { PrismaClient } from '@razbor/db'
-import { SUBSCRIPTION_PLANS, SUBSCRIPTION_MAX_RETRIES } from '@razbor/shared'
+import { SUBSCRIPTION_PLANS, SUBSCRIPTION_MAX_RETRIES, MONITOR_SLOT_LIMITS, MONITOR_SUBSCRIPTIONS_CHANNEL } from '@razbor/shared'
 import { renewSubscription, expireSubscription, createRecurringPayment, ACTIVE_STATUSES } from '@razbor/api'
+import { getRedis } from '@razbor/cache'
 
 async function moveToGracePeriod(prisma: PrismaClient, subscriptionId: string, graceDays: number): Promise<void> {
   const graceEnd = new Date(Date.now() + graceDays * 24 * 60 * 60 * 1000)
@@ -37,7 +38,7 @@ async function chargeSubscription(prisma: PrismaClient, subscription: { id: stri
 
   if (!defaultMethod) {
     console.log(`[Renewal] No payment method for user ${subscription.userId}, expiring subscription`)
-    await expireSubscription(prisma, subscription.id)
+    await expireSubscription(prisma, subscription.id, getRedis())
     return 'failed'
   }
 
@@ -117,6 +118,33 @@ export async function processRenewals(prisma: PrismaClient): Promise<void> {
             data: { isPremium: false },
           }),
         ])
+
+        const activeMonitorSubs = await prisma.monitorSubscription.findMany({
+          where: { userId: subscription.userId, isActive: true },
+          orderBy: { createdAt: 'asc' },
+        })
+
+        if (activeMonitorSubs.length > MONITOR_SLOT_LIMITS.trial) {
+          const subsToDeactivate = activeMonitorSubs.slice(MONITOR_SLOT_LIMITS.trial)
+          const idsToDeactivate = subsToDeactivate.map((s) => s.id)
+
+          await prisma.monitorSubscription.updateMany({
+            where: { id: { in: idsToDeactivate } },
+            data: { isActive: false },
+          })
+
+          const redis = getRedis()
+          if (redis) {
+            for (const id of idsToDeactivate) {
+              try {
+                await redis.publish(MONITOR_SUBSCRIPTIONS_CHANNEL, JSON.stringify({ action: 'deactivated', subscriptionId: id }))
+              } catch (err) {
+                console.error('[Renewal] Failed to publish Redis event:', err)
+              }
+            }
+          }
+        }
+
         continue
       }
 
@@ -144,7 +172,7 @@ export async function processRenewals(prisma: PrismaClient): Promise<void> {
         if (subscription.retryCount >= maxRetries) {
           if (subscription.currentPeriodEnd <= new Date()) {
             console.log(`[Renewal] ${subscription.id} max retries (${subscription.retryCount}) and grace expired → expiring`)
-            await expireSubscription(prisma, subscription.id)
+            await expireSubscription(prisma, subscription.id, getRedis())
           } else {
             console.log(`[Renewal] ${subscription.id} max retries but grace period still active until ${subscription.currentPeriodEnd.toISOString()}`)
           }

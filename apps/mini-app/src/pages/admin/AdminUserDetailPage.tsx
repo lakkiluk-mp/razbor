@@ -5,6 +5,7 @@ import { ArrowLeft } from 'lucide-react'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
 import { cn } from '@/lib/utils'
 import { formatMoney, formatDate } from '@/lib/format'
+import { formatMonitorFilters } from '@/lib/monitor-format'
 
 interface Calculation {
   id: string
@@ -45,6 +46,23 @@ interface UsageLog {
   createdAt: string
 }
 
+interface MonitorSubscription {
+  id: string
+  label: string
+  brandSlug: string
+  modelSlug: string
+  city: string | null
+  priceMin: number | null
+  priceMax: number | null
+  yearMin: number | null
+  yearMax: number | null
+  mileageMax: number | null
+  isActive: boolean
+  notificationsSent: number
+  lastNotifiedAt: string | null
+  createdAt: string
+}
+
 interface AdminUserData {
   id: string
   telegramId: string
@@ -61,6 +79,7 @@ interface AdminUserData {
   yooPayments: YooPayment[]
   subscriptions: Subscription[]
   recentUsageLogs: UsageLog[]
+  monitorSubscriptions: MonitorSubscription[]
 }
 
 interface AdminUserResponse {
@@ -68,10 +87,11 @@ interface AdminUserResponse {
 }
 
 const sectionTabs = [
-  { key: 'calculations', label: 'Расчёты' },
+  { key: 'calculations', label: '\u0420\u0430\u0441\u0447\u0451\u0442\u044B' },
   { key: 'yoo', label: 'YooKassa' },
-  { key: 'subs', label: 'Подписки' },
-  { key: 'logs', label: 'Логи' },
+  { key: 'subs', label: '\u041F\u043E\u0434\u043F\u0438\u0441\u043A\u0438' },
+  { key: 'monitor', label: '\u041C\u043E\u043D\u0438\u0442\u043E\u0440\u0438\u043D\u0433' },
+  { key: 'logs', label: '\u041B\u043E\u0433\u0438' },
 ] as const
 
 type SectionKey = (typeof sectionTabs)[number]['key']
@@ -181,6 +201,7 @@ export function AdminUserDetailPage() {
                 {tab.key === 'calculations' && user.calculations.length}
                 {tab.key === 'yoo' && user.yooPayments.length}
                 {tab.key === 'subs' && user.subscriptions.length}
+                {tab.key === 'monitor' && user.monitorSubscriptions.length}
                 {tab.key === 'logs' && user.recentUsageLogs.length}
               </span>
             </button>
@@ -196,6 +217,9 @@ export function AdminUserDetailPage() {
       )}
       {activeSection === 'subs' && (
         <SubscriptionsSection data={user.subscriptions} />
+      )}
+      {activeSection === 'monitor' && (
+        <MonitorSection data={user.monitorSubscriptions} />
       )}
       {activeSection === 'logs' && (
         <UsageLogsSection data={user.recentUsageLogs} />
@@ -283,6 +307,51 @@ function UsageLogsSection({ data }: { data: UsageLog[] }) {
               {log.metadata}
             </pre>
           )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function MonitorSection({ data }: { data: MonitorSubscription[] }) {
+  if (data.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <p className="text-zinc-500 text-sm">{'\u041D\u0435\u0442 \u043F\u043E\u0434\u043F\u0438\u0441\u043E\u043A \u043C\u043E\u043D\u0438\u0442\u043E\u0440\u0438\u043D\u0433\u0430'}</p>
+      </div>
+    )
+  }
+  return (
+    <div className="space-y-2">
+      {data.map((sub) => (
+        <div key={sub.id} className="bg-zinc-900 rounded-xl p-3 space-y-1.5">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-zinc-200 font-medium truncate">{sub.label}</p>
+            <span
+              className={cn(
+                'px-2 py-0.5 rounded-md text-xs font-medium shrink-0 ml-2',
+                sub.isActive
+                  ? 'bg-green-500/15 text-green-500'
+                  : 'bg-zinc-700/50 text-zinc-400'
+              )}
+            >
+              {sub.isActive ? '\u0410\u043A\u0442\u0438\u0432\u043D\u0430' : '\u041F\u0430\u0443\u0437\u0430'}
+            </span>
+          </div>
+          <p className="text-xs text-zinc-400">
+            {sub.brandSlug}/{sub.modelSlug}
+            {sub.city && ` \u00b7 ${sub.city}`}
+          </p>
+          <p className="text-xs text-zinc-500">
+            {formatMonitorFilters(sub)}
+          </p>
+          <div className="flex items-center gap-3 text-xs text-zinc-500">
+            <span>{'\u0423\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u0439:'} {sub.notificationsSent}</span>
+            {sub.lastNotifiedAt && (
+              <span>{'\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u0435\u0435:'} {formatDate(sub.lastNotifiedAt)}</span>
+            )}
+            <span>{'\u0421\u043E\u0437\u0434\u0430\u043D\u0430:'} {formatDate(sub.createdAt)}</span>
+          </div>
         </div>
       ))}
     </div>

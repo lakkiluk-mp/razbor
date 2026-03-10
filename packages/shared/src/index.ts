@@ -52,8 +52,10 @@ export const CACHE_TTL = {
 export { MONITOR_CITIES, type MonitorCity } from './cities'
 
 export const MONITOR_SLOT_LIMITS = {
-  trial: 50,
-  premium: 50,
-} as const
+  trial: Number(typeof process !== 'undefined' && process.env?.MONITOR_SLOTS_TRIAL || 1),
+  premium: Number(typeof process !== 'undefined' && process.env?.MONITOR_SLOTS_PREMIUM || 3),
+}
+
+export const MONITOR_SUBSCRIPTIONS_CHANNEL = 'monitor:subscriptions:changed'
 
 export { parseAvitoUrl, type AvitoUrlParseResult } from './avito-url-parser'

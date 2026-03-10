@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@razbor/db": "workspace:*",
+    "@razbor/shared": "workspace:*",
     "@bull-board/api": "^6.0.0",
     "@bull-board/express": "^6.0.0",
     "bullmq": "^5.0.0",

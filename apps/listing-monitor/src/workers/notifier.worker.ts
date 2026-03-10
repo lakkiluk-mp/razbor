@@ -5,6 +5,7 @@ import { createLogger } from '../logger/index.js'
 import { config } from '../config.js'
 import { createBullConnection } from '../storage/redis.js'
 import { type NotifyJobData } from './crawler.worker.js'
+import { writeMonitorLog } from '../storage/monitor-log.js'
 
 const logger = createLogger('notifier-worker')
 
@@ -36,6 +37,14 @@ export function createNotifierWorker(): Worker<NotifyJobData> {
       }
 
       logger.info({ telegramId, sentCount, total: cards.length, limited: limitedCards.length }, 'Notification processed')
+      if (sentCount > 0) {
+        writeMonitorLog({
+          type: 'NOTIFICATION',
+          level: 'INFO',
+          message: `Sent ${sentCount} cards to ${telegramId}`,
+          meta: { telegramId, sentCount, total: cards.length, subscriptionId, subscriptionLabel, isFirstRun },
+        })
+      }
       return { sent: sentCount > 0, count: sentCount }
     },
     {
@@ -46,6 +55,12 @@ export function createNotifierWorker(): Worker<NotifyJobData> {
 
   worker.on('failed', (job: Job<NotifyJobData> | undefined, err: Error) => {
     logger.error({ jobId: job?.id, telegramId: job?.data.telegramId, err: err.message }, 'Notify job failed')
+    writeMonitorLog({
+      type: 'NOTIFICATION',
+      level: 'ERROR',
+      message: `Notification failed: ${err.message}`,
+      meta: { telegramId: job?.data.telegramId, subscriptionId: job?.data.subscriptionId, jobId: job?.id },
+    })
   })
 
   return worker

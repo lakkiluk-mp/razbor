@@ -16,6 +16,7 @@ interface AdminUser {
   trialCredits: number
   totalCalculations: number
   totalPayments: number
+  activeMonitorCount: number
   activeSubscription: boolean
   createdAt: string
 }
@@ -89,6 +90,16 @@ export function AdminUsersPage() {
     },
     { key: 'totalCalculations', header: 'Расчётов', sortable: true },
     { key: 'totalPayments', header: 'Платежей' },
+    {
+      key: 'activeMonitorCount',
+      header: 'Мониторинг',
+      sortable: true,
+      render: (item: AdminUser) => (
+        <span className={item.activeMonitorCount > 0 ? 'text-amber-500' : 'text-zinc-600'}>
+          {item.activeMonitorCount}
+        </span>
+      ),
+    },
     {
       key: 'activeSubscription',
       header: 'Подписка',

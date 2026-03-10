@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight, Link as LinkIcon } from 'lucide-react'
+import { ArrowRight, Link as LinkIcon, AlertTriangle } from 'lucide-react'
 import { fetchGraphQL, mutations } from '@/lib/graphql-client'
 import { parseAvitoUrl } from '@razbor/shared'
 import type { AvitoUrlParseResult } from '@razbor/shared'
@@ -64,6 +64,7 @@ export function MonitorNewPage() {
   const [yearMax, setYearMax] = useState('')
   const [mileageMax, setMileageMax] = useState('')
   const [formError, setFormError] = useState('')
+  const [freeSlotsBlocked, setFreeSlotsBlocked] = useState(false)
 
   const handleBack = useCallback(() => {
     if (step === 2) {
@@ -122,6 +123,11 @@ export function MonitorNewPage() {
       queryClient.invalidateQueries({ queryKey: ['monitorSubscriptions'] })
       navigate('/monitor')
     },
+    onError: (error: Error & { code?: string }) => {
+      if (error.code === 'FREE_SLOTS_BLOCKED') {
+        setFreeSlotsBlocked(true)
+      }
+    },
   })
 
   const handleSubmit = () => {
@@ -171,7 +177,7 @@ export function MonitorNewPage() {
         <div className="flex-1 flex flex-col px-4 pt-6">
           <h1 className="text-2xl font-bold mb-2">Новая подписка</h1>
           <p className="text-zinc-400 text-sm mb-6">
-            Вставьте ссылку на объявление или поиск с Авито
+            Вставьте ссылку на объявление или поиск с Авито — мы определим марку, модель, город и фильтры автоматически
           </p>
 
           <div className="flex flex-col gap-4">
@@ -201,6 +207,10 @@ export function MonitorNewPage() {
               Далее
               <ArrowRight className="w-4 h-4" />
             </button>
+
+            <p className="text-zinc-600 text-xs text-center">
+              Откройте Авито → найдите нужную модель → скопируйте ссылку из адресной строки
+            </p>
           </div>
         </div>
       )}
@@ -316,7 +326,26 @@ export function MonitorNewPage() {
               <p className="text-red-400 text-sm text-center">{formError}</p>
             )}
 
-            {createMutation.isError && !formError && (
+            {freeSlotsBlocked && (
+              <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
+                  <p className="text-sm font-semibold text-amber-400">Мониторинг временно недоступен</p>
+                </div>
+                <p className="text-xs text-zinc-400">
+                  Из-за высокой нагрузки мониторинг для бесплатных аккаунтов приостановлен. Оформите подписку — 3 слота мониторинга без ограничений.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => navigate('/subscribe')}
+                  className="bg-amber-500 text-zinc-950 rounded-xl px-4 py-2.5 font-semibold text-sm active:scale-95 transition-transform mt-1"
+                >
+                  Оформить подписку
+                </button>
+              </div>
+            )}
+
+            {createMutation.isError && !formError && !freeSlotsBlocked && (
               <p className="text-red-400 text-sm text-center">
                 {createMutation.error instanceof Error
                   ? createMutation.error.message
@@ -324,18 +353,22 @@ export function MonitorNewPage() {
               </p>
             )}
 
-            <p className="text-zinc-500 text-xs text-center">
-              Уведомления о новых объявлениях будут приходить в Telegram-бот
-            </p>
+            {!freeSlotsBlocked && (
+              <>
+                <p className="text-zinc-500 text-xs text-center">
+                  Уведомления о новых объявлениях будут приходить в Telegram-бот
+                </p>
 
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={createMutation.isPending}
-              className="bg-amber-500 text-zinc-950 rounded-xl px-6 py-3 font-semibold text-sm w-full active:scale-95 transition-transform disabled:opacity-50 mt-2"
-            >
-              {createMutation.isPending ? 'Создание...' : 'Создать подписку'}
-            </button>
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  disabled={createMutation.isPending}
+                  className="bg-amber-500 text-zinc-950 rounded-xl px-6 py-3 font-semibold text-sm w-full active:scale-95 transition-transform disabled:opacity-50 mt-2"
+                >
+                  {createMutation.isPending ? 'Создание...' : 'Создать подписку'}
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

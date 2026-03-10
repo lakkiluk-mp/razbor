@@ -104,13 +104,14 @@ services:
       DATABASE_URL: postgresql://razbor:razbor_dev@postgres:5432/razbor
       REDIS_URL: redis://redis:6379
       BOT_TOKEN: ${BOT_TOKEN}
-      ADMIN_CHAT_ID: "371828944"
-      MOBILE_PROXY_URL: "http://basgYR:tUrnEB8aHYgd@mproxy.site:18642"
-      MOBILE_PROXY_CHANGE_URL: "https://changeip.mobileproxy.space/?proxy_key=REMOVED"
-      ADMIN_PORT: "3001"
+      ADMIN_CHAT_ID: ${ADMIN_CHAT_ID}
+      MOBILE_PROXY_URL: ${MOBILE_PROXY_URL}
+      MOBILE_PROXY_CHANGE_URL: ${MOBILE_PROXY_CHANGE_URL}
+      SPFA_API_KEY: ${SPFA_API_KEY}
+      ADMIN_PORT: ${ADMIN_PORT}
       LOG_LEVEL: debug
       NODE_ENV: development
-      CRAWL_INTERVAL_MS: "60000"
+      CRAWL_INTERVAL_MS: ${CRAWL_INTERVAL_MS}
     depends_on:
       postgres:
         condition: service_healthy

@@ -302,6 +302,7 @@ export const queries = {
           totalCalculations
           totalPayments
           activeSubscription
+          activeMonitorCount
           createdAt
         }
         totalCount
@@ -321,6 +322,7 @@ export const queries = {
         totalCalculations
         totalPayments
         activeSubscription
+        activeMonitorCount
         createdAt
         calculations {
           id
@@ -365,6 +367,26 @@ export const queries = {
           action
           metadata
           createdAt
+        }
+        monitorSubscriptions {
+          id
+          label
+          brandSlug
+          modelSlug
+          city
+          priceMin
+          priceMax
+          yearMin
+          yearMax
+          mileageMax
+          isActive
+          notificationsSent
+          lastNotifiedAt
+          createdAt
+          userId
+          userFirstName
+          userUsername
+          userTelegramId
         }
       }
     }
@@ -534,6 +556,69 @@ export const queries = {
       }
     }
   `,
+  adminMonitorStats: `
+    query AdminMonitorStats {
+      adminMonitorStats {
+        totalMonitorUsers
+        totalSubscriptions
+        activeSubscriptions
+        totalNotificationsSent
+        uniqueGroups
+      }
+    }
+  `,
+  adminMonitorSubscriptions: `
+    query AdminMonitorSubscriptions($limit: Int, $offset: Int, $isActive: Boolean, $search: String, $sortBy: String, $sortOrder: String) {
+      adminMonitorSubscriptions(limit: $limit, offset: $offset, isActive: $isActive, search: $search, sortBy: $sortBy, sortOrder: $sortOrder) {
+        items {
+          id
+          label
+          brandSlug
+          modelSlug
+          city
+          priceMin
+          priceMax
+          yearMin
+          yearMax
+          mileageMax
+          isActive
+          notificationsSent
+          lastNotifiedAt
+          createdAt
+          userId
+          userFirstName
+          userUsername
+          userTelegramId
+        }
+        totalCount
+      }
+    }
+  `,
+  adminMonitorLogs: `
+    query AdminMonitorLogs($limit: Int, $offset: Int, $level: String, $type: String, $sortBy: String, $sortOrder: String) {
+      adminMonitorLogs(limit: $limit, offset: $offset, level: $level, type: $type, sortBy: $sortBy, sortOrder: $sortOrder) {
+        items {
+          id
+          type
+          level
+          brandSlug
+          modelSlug
+          message
+          meta
+          createdAt
+        }
+        totalCount
+      }
+    }
+  `,
+  adminMonitorSettings: `
+    query AdminMonitorSettings {
+      adminMonitorSettings {
+        freeSlotsClosed
+        freeSlotsBlocked
+      }
+    }
+  `,
 }
 
 export const mutations = {
@@ -694,6 +779,33 @@ export const mutations = {
       pauseMonitorSubscription(id: $id) {
         id
         isActive
+      }
+    }
+  `,
+  adminSetFreeSlotsClosed: `
+    mutation AdminSetFreeSlotsClosed($closed: Boolean!) {
+      adminSetFreeSlotsClosed(closed: $closed) {
+        freeSlotsClosed
+        freeSlotsBlocked
+      }
+    }
+  `,
+  adminStopFreeSlots: `
+    mutation AdminStopFreeSlots {
+      adminStopFreeSlots {
+        deactivatedCount
+        settings {
+          freeSlotsClosed
+          freeSlotsBlocked
+        }
+      }
+    }
+  `,
+  adminResumeFreeSlots: `
+    mutation AdminResumeFreeSlots {
+      adminResumeFreeSlots {
+        freeSlotsClosed
+        freeSlotsBlocked
       }
     }
   `,

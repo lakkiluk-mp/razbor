@@ -1,5 +1,6 @@
 import type { PrismaClient } from '@razbor/db'
 import { SUBSCRIPTION_PLANS, FATAL_CANCELLATION_REASONS, type SubscriptionPlanKey } from '@razbor/shared'
+import { getRedis } from '@razbor/cache'
 import { getPaymentInfo } from './yookassa.service'
 import { switchSubscription, renewSubscription, expireSubscription } from './subscription.service'
 
@@ -161,7 +162,7 @@ export async function handlePaymentCanceled(
     if ((FATAL_CANCELLATION_REASONS as readonly string[]).includes(reason)) {
       console.log(`[YooKassa Webhook] Fatal reason "${reason}" for ${yooPaymentId}, expiring subscription immediately`)
       if (yooPayment.subscriptionId) {
-        await expireSubscription(prisma, yooPayment.subscriptionId)
+        await expireSubscription(prisma, yooPayment.subscriptionId, getRedis())
       } else {
         console.error(`[YooKassa Webhook] Fatal cancel but no subscriptionId on yooPayment ${yooPaymentId}, userId=${yooPayment.userId}`)
       }

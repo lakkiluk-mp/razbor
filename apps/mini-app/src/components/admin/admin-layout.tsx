@@ -9,6 +9,8 @@ const tabs = [
   { label: 'Subscriptions', to: '/admin/subscriptions' },
   { label: 'Calculations', to: '/admin/calculations' },
   { label: 'Broadcasts', to: '/admin/broadcasts' },
+  { label: 'Monitor', to: '/admin/monitor', end: true },
+  { label: 'Monitor Logs', to: '/admin/monitor/logs' },
 ] as const
 
 export function AdminLayout() {

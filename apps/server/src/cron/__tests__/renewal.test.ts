@@ -13,6 +13,12 @@ vi.mock('@razbor/shared', () => ({
     monthly: { price: 799, label: '1 месяц', days: 30, credits: 25, graceDays: 3, maxRetries: 3 },
   },
   SUBSCRIPTION_MAX_RETRIES: 3,
+  MONITOR_SLOT_LIMITS: { trial: 1, premium: 3 },
+  MONITOR_SUBSCRIPTIONS_CHANNEL: 'monitor:subscriptions:changed',
+}))
+
+vi.mock('@razbor/cache', () => ({
+  getRedis: vi.fn().mockReturnValue(null),
 }))
 
 import { renewSubscription, expireSubscription, createRecurringPayment } from '@razbor/api'
@@ -39,6 +45,10 @@ function createMockPrisma() {
     user: {
       update: vi.fn().mockResolvedValue({}),
     },
+    monitorSubscription: {
+      findMany: vi.fn().mockResolvedValue([]),
+      updateMany: vi.fn().mockResolvedValue({ count: 0 }),
+    },
     $transaction: vi.fn().mockResolvedValue([]),
   } as unknown as import('@razbor/db').PrismaClient & {
     subscription: {
@@ -55,6 +65,10 @@ function createMockPrisma() {
     }
     user: {
       update: ReturnType<typeof vi.fn>
+    }
+    monitorSubscription: {
+      findMany: ReturnType<typeof vi.fn>
+      updateMany: ReturnType<typeof vi.fn>
     }
     $transaction: ReturnType<typeof vi.fn>
   }
@@ -110,6 +124,41 @@ describe('processRenewals', () => {
       where: { id: 'user-1' },
       data: { isPremium: false },
     })
+  })
+
+  it('should deactivate excess monitor subscriptions when cancelAtPeriodEnd (premium 3 → trial 1)', async () => {
+    prisma.subscription.findMany.mockResolvedValue([
+      { id: 'sub-1', userId: 'user-1', cancelAtPeriodEnd: true, status: 'active', plan: 'weekly' },
+    ])
+    prisma.monitorSubscription.findMany.mockResolvedValue([
+      { id: 'mon-1', userId: 'user-1', isActive: true, createdAt: new Date('2026-01-01') },
+      { id: 'mon-2', userId: 'user-1', isActive: true, createdAt: new Date('2026-01-02') },
+      { id: 'mon-3', userId: 'user-1', isActive: true, createdAt: new Date('2026-01-03') },
+    ])
+
+    await processRenewals(prisma)
+
+    expect(prisma.monitorSubscription.findMany).toHaveBeenCalledWith({
+      where: { userId: 'user-1', isActive: true },
+      orderBy: { createdAt: 'asc' },
+    })
+    expect(prisma.monitorSubscription.updateMany).toHaveBeenCalledWith({
+      where: { id: { in: ['mon-2', 'mon-3'] } },
+      data: { isActive: false },
+    })
+  })
+
+  it('should not deactivate monitors when active count is within trial limit', async () => {
+    prisma.subscription.findMany.mockResolvedValue([
+      { id: 'sub-1', userId: 'user-1', cancelAtPeriodEnd: true, status: 'active', plan: 'weekly' },
+    ])
+    prisma.monitorSubscription.findMany.mockResolvedValue([
+      { id: 'mon-1', userId: 'user-1', isActive: true, createdAt: new Date('2026-01-01') },
+    ])
+
+    await processRenewals(prisma)
+
+    expect(prisma.monitorSubscription.updateMany).not.toHaveBeenCalled()
   })
 
   it('should attempt charge when active subscription expires', async () => {
@@ -183,7 +232,7 @@ describe('processRenewals', () => {
 
     await processRenewals(prisma)
 
-    expect(mockExpireSubscription).toHaveBeenCalledWith(prisma, 'sub-1')
+    expect(mockExpireSubscription).toHaveBeenCalledWith(prisma, 'sub-1', null)
   })
 
   it('should expire weekly subscription when past_due retries exceed max (2) and grace expired', async () => {
@@ -202,7 +251,7 @@ describe('processRenewals', () => {
 
     await processRenewals(prisma)
 
-    expect(mockExpireSubscription).toHaveBeenCalledWith(prisma, 'sub-1')
+    expect(mockExpireSubscription).toHaveBeenCalledWith(prisma, 'sub-1', null)
   })
 
   it('should expire monthly subscription when past_due retries exceed max (3) and grace expired', async () => {
@@ -221,7 +270,7 @@ describe('processRenewals', () => {
 
     await processRenewals(prisma)
 
-    expect(mockExpireSubscription).toHaveBeenCalledWith(prisma, 'sub-1')
+    expect(mockExpireSubscription).toHaveBeenCalledWith(prisma, 'sub-1', null)
   })
 
   it('should not expire subscription when max retries but grace period still active', async () => {
@@ -399,7 +448,7 @@ describe('processRenewals', () => {
     await processRenewals(prisma)
 
     expect(prisma.$transaction).toHaveBeenCalled()
-    expect(mockExpireSubscription).toHaveBeenCalledWith(prisma, 'sub-2')
+    expect(mockExpireSubscription).toHaveBeenCalledWith(prisma, 'sub-2', null)
   })
 
   it('should continue processing other subscriptions when one fails', async () => {

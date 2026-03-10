@@ -8,6 +8,7 @@ RUN printf "shamefully-hoist=true\nstrict-peer-dependencies=false\nnode-linker=h
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/listing-monitor/package.json ./apps/listing-monitor/
 COPY packages/db/package.json ./packages/db/
+COPY packages/shared/package.json ./packages/shared/
 RUN pnpm install --frozen-lockfile
 
 FROM base AS runner
@@ -23,6 +24,7 @@ COPY --from=deps /app/package.json /app/pnpm-workspace.yaml /app/pnpm-lock.yaml 
 COPY --from=deps /app/apps/listing-monitor/node_modules ./apps/listing-monitor/node_modules
 COPY apps/listing-monitor ./apps/listing-monitor
 COPY packages/db ./packages/db
+COPY packages/shared ./packages/shared
 
 RUN pnpm --filter @razbor/db db:generate
 

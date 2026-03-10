@@ -10,6 +10,7 @@ import { type ListingCard } from '../crawler/listing-parser.js'
 import { sendAdminAlert } from '../notifier/telegram.js'
 import { createLogger } from '../logger/index.js'
 import { redis, createBullConnection } from '../storage/redis.js'
+import { writeMonitorLog } from '../storage/monitor-log.js'
 
 const logger = createLogger('crawler-worker')
 
@@ -55,11 +56,27 @@ export function createCrawlerWorker(
       if (result.notFound) {
         logger.error(`[${groupKey}] 404 — невалидный URL: ${result.url}`)
         await sendAdminAlert(`404 — страница не найдена\nГруппа: ${groupKey}\nURL: ${result.url}`)
+        writeMonitorLog({
+          type: 'CRAWL',
+          level: 'ERROR',
+          brandSlug,
+          modelSlug,
+          message: `404 — невалидный URL`,
+          meta: { groupKey, url: result.url },
+        })
         return { blocked: false, cards: 0, newCards: 0, notFound: true }
       }
 
       if (result.blocked) {
         logger.warn(`[${groupKey}] BLOCKED (${result.strategy})`)
+        writeMonitorLog({
+          type: 'CRAWL',
+          level: 'WARN',
+          brandSlug,
+          modelSlug,
+          message: `BLOCKED (${result.strategy})`,
+          meta: { groupKey, strategy: result.strategy },
+        })
         return { blocked: true, cards: 0, newCards: 0 }
       }
 
@@ -72,6 +89,16 @@ export function createCrawlerWorker(
 
         if (streak === 3) {
           await sendAdminAlert(`0 объявлений 3 раза подряд — возможно невалидный URL\nГруппа: ${groupKey}\nURL: ${result.url}`)
+        }
+        if (streak >= 3) {
+          writeMonitorLog({
+            type: 'CRAWL',
+            level: 'WARN',
+            brandSlug,
+            modelSlug,
+            message: `0 объявлений ${streak} раз подряд`,
+            meta: { groupKey, url: result.url, streak },
+          })
         }
         return { blocked: false, cards: 0, newCards: 0 }
       }
@@ -118,6 +145,14 @@ export function createCrawlerWorker(
         logger.info(
           `[${groupKey}] First run done: ${result.cards.length} seen, ${notifiedCount} notified`,
         )
+        writeMonitorLog({
+          type: 'CRAWL',
+          level: 'INFO',
+          brandSlug,
+          modelSlug,
+          message: `First run done: ${result.cards.length} seen, ${notifiedCount} notified`,
+          meta: { groupKey, totalCards: result.cards.length, notifiedCount },
+        })
         return { blocked: false, cards: result.cards.length, newCards: notifiedCount > 0 ? 1 : 0 }
       }
 
@@ -145,6 +180,14 @@ export function createCrawlerWorker(
 
       if (freshCards.length === 0) {
         logger.info(`[${groupKey}] Нет новых (всего ${result.cards.length})`)
+        writeMonitorLog({
+          type: 'CRAWL',
+          level: 'INFO',
+          brandSlug,
+          modelSlug,
+          message: `Crawl done: ${result.cards.length} total, 0 new, 0 notifications`,
+          meta: { groupKey, totalCards: result.cards.length, newCards: 0, notifications: 0 },
+        })
         return { blocked: false, cards: result.cards.length, newCards: 0 }
       }
 
@@ -195,6 +238,14 @@ export function createCrawlerWorker(
       logger.info(
         `[${groupKey}] Crawl done: ${result.cards.length} total, ${freshCards.length} new, ${notifyMap.size} notifications`,
       )
+      writeMonitorLog({
+        type: 'CRAWL',
+        level: 'INFO',
+        brandSlug,
+        modelSlug,
+        message: `Crawl done: ${result.cards.length} total, ${freshCards.length} new, ${notifyMap.size} notifications`,
+        meta: { groupKey, totalCards: result.cards.length, newCards: freshCards.length, notifications: notifyMap.size },
+      })
       return {
         blocked: false,
         cards: result.cards.length,
@@ -213,6 +264,14 @@ export function createCrawlerWorker(
       { jobId: job?.id, groupKey: job?.data.groupKey, err: err.message },
       'Crawl job failed',
     )
+    writeMonitorLog({
+      type: 'CRAWL',
+      level: 'ERROR',
+      brandSlug: job?.data.brandSlug,
+      modelSlug: job?.data.modelSlug,
+      message: `Crawl failed: ${err.message}`,
+      meta: { groupKey: job?.data.groupKey, jobId: job?.id },
+    })
   })
 
   return worker

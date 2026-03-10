@@ -1,25 +1,25 @@
 import type { PrismaClient, MonitorSubscription } from '@razbor/db'
 import type Redis from 'ioredis'
 import { GraphQLError } from 'graphql'
-import { MONITOR_SLOT_LIMITS } from '@razbor/shared'
-
-const CHANNEL = 'monitor:subscriptions:changed'
+import { MONITOR_SLOT_LIMITS, MONITOR_SUBSCRIPTIONS_CHANNEL } from '@razbor/shared'
+import { getMonitorSettings } from './monitor-settings.service'
 
 async function publishEvent(redis: Redis | null, action: string, subscriptionId: string): Promise<void> {
   if (!redis) return
   try {
-    await redis.publish(CHANNEL, JSON.stringify({ action, subscriptionId }))
+    await redis.publish(MONITOR_SUBSCRIPTIONS_CHANNEL, JSON.stringify({ action, subscriptionId }))
   } catch (err) {
     console.error('[Monitor] Failed to publish Redis event:', err)
   }
 }
 
-async function getSlotLimit(prisma: PrismaClient, userId: string): Promise<number> {
+async function getSlotLimit(prisma: PrismaClient, userId: string): Promise<{ limit: number; isPremium: boolean }> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { isPremium: true },
   })
-  return user?.isPremium ? MONITOR_SLOT_LIMITS.premium : MONITOR_SLOT_LIMITS.trial
+  const isPremium = user?.isPremium ?? false
+  return { limit: isPremium ? MONITOR_SLOT_LIMITS.premium : MONITOR_SLOT_LIMITS.trial, isPremium }
 }
 
 async function verifyOwnership(prisma: PrismaClient, userId: string, id: string): Promise<MonitorSubscription> {
@@ -92,7 +92,17 @@ export async function createMonitorSubscription(
 ): Promise<MonitorSubscription> {
   validateFilters(input)
 
-  const slotLimit = await getSlotLimit(prisma, userId)
+  const { limit: slotLimit, isPremium } = await getSlotLimit(prisma, userId)
+
+  if (!isPremium) {
+    const settings = await getMonitorSettings(redis)
+    if (settings.freeSlotsClosed || settings.freeSlotsBlocked) {
+      throw new GraphQLError(
+        'Мониторинг временно недоступен. Оформите подписку для доступа к мониторингу.',
+        { extensions: { code: 'FREE_SLOTS_BLOCKED' } },
+      )
+    }
+  }
 
   const subscription = await prisma.$transaction(async (tx) => {
     const activeCount = await tx.monitorSubscription.count({
@@ -142,8 +152,21 @@ export async function updateMonitorSubscription(
     mileageMax?: number | null
   },
 ): Promise<MonitorSubscription> {
-  await verifyOwnership(prisma, userId, id)
+  const existing = await verifyOwnership(prisma, userId, id)
   validateFilters(input)
+
+  if (input.isActive === true && !existing.isActive) {
+    const { isPremium } = await getSlotLimit(prisma, userId)
+    if (!isPremium) {
+      const settings = await getMonitorSettings(redis)
+      if (settings.freeSlotsClosed || settings.freeSlotsBlocked) {
+        throw new GraphQLError(
+          'Мониторинг временно недоступен. Оформите подписку для доступа к мониторингу.',
+          { extensions: { code: 'FREE_SLOTS_BLOCKED' } },
+        )
+      }
+    }
+  }
 
   const data: Record<string, unknown> = {}
   if (input.label != null) data.label = input.label
@@ -184,6 +207,29 @@ export async function pauseMonitorSubscription(
   id: string,
 ): Promise<MonitorSubscription> {
   const existing = await verifyOwnership(prisma, userId, id)
+
+  if (!existing.isActive) {
+    const { limit: slotLimit, isPremium } = await getSlotLimit(prisma, userId)
+
+    if (!isPremium) {
+      const settings = await getMonitorSettings(redis)
+      if (settings.freeSlotsClosed || settings.freeSlotsBlocked) {
+        throw new GraphQLError(
+          'Мониторинг временно недоступен. Оформите подписку для доступа к мониторингу.',
+          { extensions: { code: 'FREE_SLOTS_BLOCKED' } },
+        )
+      }
+    }
+
+    const activeCount = await prisma.monitorSubscription.count({
+      where: { userId, isActive: true },
+    })
+    if (activeCount >= slotLimit) {
+      throw new GraphQLError(`Достигнут лимит подписок (${slotLimit})`, {
+        extensions: { code: 'SLOT_LIMIT_REACHED', limit: slotLimit },
+      })
+    }
+  }
 
   const subscription = await prisma.monitorSubscription.update({
     where: { id },

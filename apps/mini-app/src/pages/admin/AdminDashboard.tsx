@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { Users, Calculator, Banknote, Crown, UserPlus, BarChart3 } from 'lucide-react'
+import { Users, Calculator, Banknote, Crown, UserPlus, BarChart3, Radio, Bell } from 'lucide-react'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
 import { formatMoney } from '@/lib/format'
-import type { AdminStatsResponse } from '@/types/admin'
+import type { AdminStatsResponse, AdminMonitorStatsResponse } from '@/types/admin'
 
 export function AdminDashboard() {
   const { data, isLoading } = useQuery({
@@ -11,7 +11,14 @@ export function AdminDashboard() {
     staleTime: 60 * 1000,
   })
 
+  const { data: monitorData } = useQuery({
+    queryKey: ['adminMonitorStats'],
+    queryFn: () => fetchGraphQL<AdminMonitorStatsResponse>(queries.adminMonitorStats),
+    staleTime: 60 * 1000,
+  })
+
   const stats = data?.adminStats
+  const monitorStats = monitorData?.adminMonitorStats
 
   const cards = [
     {
@@ -48,6 +55,18 @@ export function AdminDashboard() {
       label: 'Расчётов сегодня',
       value: stats?.calculationsToday ?? 0,
       icon: BarChart3,
+      format: (v: number) => v.toLocaleString('ru-RU'),
+    },
+    {
+      label: 'Подписок мониторинга',
+      value: monitorStats?.activeSubscriptions ?? 0,
+      icon: Radio,
+      format: (v: number) => v.toLocaleString('ru-RU'),
+    },
+    {
+      label: 'Уведомлений отправлено',
+      value: monitorStats?.totalNotificationsSent ?? 0,
+      icon: Bell,
       format: (v: number) => v.toLocaleString('ru-RU'),
     },
   ]

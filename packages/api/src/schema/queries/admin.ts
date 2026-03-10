@@ -1,5 +1,6 @@
 import { builder } from '../builder'
 import { assertAdmin } from '../../utils/admin'
+import { parseSortOrder, validateSortField, type SortOrder } from '../../utils/sort'
 import {
   AdminStatsType,
   AdminUserDetailType,
@@ -16,41 +17,28 @@ import {
 } from '../types/admin'
 
 const SORT_FIELDS = {
-  adminUsers: ['createdAt', 'firstName', 'totalCalculations'],
+  adminUsers: ['createdAt', 'firstName', 'totalCalculations', 'activeMonitorCount'],
   adminPayments: ['createdAt', 'amount', 'status'],
   adminSubscriptions: ['createdAt', 'plan', 'status', 'credits', 'currentPeriodEnd'],
   adminCalculations: ['createdAt', 'totalPrice'],
 } as const
 
-type SortOrder = 'asc' | 'desc'
-
-function parseSortOrder(sortOrder: string | null | undefined): SortOrder {
-  return sortOrder === 'asc' ? 'asc' : 'desc'
-}
-
-function validateSortField(
-  query: keyof typeof SORT_FIELDS,
-  sortBy: string | null | undefined,
-): string {
-  const whitelist = SORT_FIELDS[query] as readonly string[]
-  return sortBy && whitelist.includes(sortBy) ? sortBy : 'createdAt'
-}
-
 function buildUserOrderBy(sortBy: string | null | undefined, sortOrder: string | null | undefined) {
   const order = parseSortOrder(sortOrder)
-  const field = validateSortField('adminUsers', sortBy)
+  const field = validateSortField(SORT_FIELDS.adminUsers, sortBy)
 
   if (field === 'totalCalculations') return { calculations: { _count: order } }
+  if (field === 'activeMonitorCount') return { monitorSubscriptions: { _count: order } }
   return { [field]: order }
 }
 
 function buildSimpleOrderBy(
-  query: keyof typeof SORT_FIELDS,
+  whitelist: readonly string[],
   sortBy: string | null | undefined,
   sortOrder: string | null | undefined,
 ): Record<string, SortOrder> {
   const order = parseSortOrder(sortOrder)
-  const field = validateSortField(query, sortBy)
+  const field = validateSortField(whitelist, sortBy)
   return { [field]: order }
 }
 
@@ -137,6 +125,7 @@ builder.queryField('adminUsers', (t) =>
               select: {
                 calculations: true,
                 yooPayments: true,
+                monitorSubscriptions: { where: { isActive: true } },
               },
             },
             subscriptions: {
@@ -164,6 +153,7 @@ builder.queryField('adminUsers', (t) =>
           totalCalculations: u._count.calculations,
           totalPayments: u._count.yooPayments,
           activeSubscription: u.subscriptions.length > 0,
+          activeMonitorCount: u._count.monitorSubscriptions,
         })),
         totalCount,
       }
@@ -188,6 +178,7 @@ builder.queryField('adminUser', (t) =>
             select: {
               calculations: true,
               yooPayments: true,
+              monitorSubscriptions: { where: { isActive: true } },
             },
           },
           calculations: {
@@ -214,6 +205,9 @@ builder.queryField('adminUser', (t) =>
             orderBy: { createdAt: 'desc' },
             take: 50,
           },
+          monitorSubscriptions: {
+            orderBy: { createdAt: 'desc' },
+          },
         },
       })
 
@@ -231,6 +225,7 @@ builder.queryField('adminUser', (t) =>
         totalCalculations: user._count.calculations,
         totalPayments: user._count.yooPayments,
         activeSubscription: user.subscriptions.some((s) => s.status === 'active'),
+        activeMonitorCount: user._count.monitorSubscriptions,
         calculations: user.calculations.map((c) => ({
           id: c.id,
           userId: c.userId,
@@ -275,6 +270,26 @@ builder.queryField('adminUser', (t) =>
           metadata: l.metadata,
           createdAt: l.createdAt,
         })),
+        monitorSubscriptions: user.monitorSubscriptions.map((ms) => ({
+          id: ms.id,
+          label: ms.label,
+          brandSlug: ms.brandSlug,
+          modelSlug: ms.modelSlug,
+          city: ms.city,
+          priceMin: ms.priceMin,
+          priceMax: ms.priceMax,
+          yearMin: ms.yearMin,
+          yearMax: ms.yearMax,
+          mileageMax: ms.mileageMax,
+          isActive: ms.isActive,
+          notificationsSent: ms.notificationsSent,
+          lastNotifiedAt: ms.lastNotifiedAt,
+          createdAt: ms.createdAt,
+          userId: ms.userId,
+          userFirstName: user.firstName,
+          userUsername: user.username,
+          userTelegramId: user.telegramId.toString(),
+        })),
       }
     },
   })
@@ -294,7 +309,7 @@ builder.queryField('adminPayments', (t) =>
 
       const limit = Math.min(Math.max(args.limit ?? 50, 1), 100)
       const offset = Math.max(args.offset ?? 0, 0)
-      const orderBy = buildSimpleOrderBy('adminPayments', args.sortBy, args.sortOrder)
+      const orderBy = buildSimpleOrderBy(SORT_FIELDS.adminPayments, args.sortBy, args.sortOrder)
 
       const [payments, totalCount] = await Promise.all([
         ctx.prisma.yooPayment.findMany({
@@ -345,7 +360,7 @@ builder.queryField('adminSubscriptions', (t) =>
         ? { status: args.status as 'active' | 'past_due' | 'canceled' | 'expired' }
         : {}
 
-      const orderBy = buildSimpleOrderBy('adminSubscriptions', args.sortBy, args.sortOrder)
+      const orderBy = buildSimpleOrderBy(SORT_FIELDS.adminSubscriptions, args.sortBy, args.sortOrder)
 
       const [subscriptions, totalCount] = await Promise.all([
         ctx.prisma.subscription.findMany({
@@ -396,7 +411,7 @@ builder.queryField('adminCalculations', (t) =>
       const offset = Math.max(args.offset ?? 0, 0)
 
       const where = args.userId ? { userId: String(args.userId) } : {}
-      const orderBy = buildSimpleOrderBy('adminCalculations', args.sortBy, args.sortOrder)
+      const orderBy = buildSimpleOrderBy(SORT_FIELDS.adminCalculations, args.sortBy, args.sortOrder)
 
       const [calculations, totalCount] = await Promise.all([
         ctx.prisma.calculation.findMany({

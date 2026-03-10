@@ -20,6 +20,7 @@ export const prismaMock = {
   yooPayment: createMockDelegate(),
   usageLog: createMockDelegate(),
   calculation: createMockDelegate(),
+  monitorSubscription: createMockDelegate(),
   $transaction: vi.fn(),
 } as unknown as import('@razbor/db').PrismaClient & {
   user: ReturnType<typeof createMockDelegate>
@@ -28,5 +29,6 @@ export const prismaMock = {
   yooPayment: ReturnType<typeof createMockDelegate>
   usageLog: ReturnType<typeof createMockDelegate>
   calculation: ReturnType<typeof createMockDelegate>
+  monitorSubscription: ReturnType<typeof createMockDelegate>
   $transaction: ReturnType<typeof vi.fn>
 }

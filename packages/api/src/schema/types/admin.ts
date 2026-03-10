@@ -1,6 +1,10 @@
 import { SubscriptionPlan, SubscriptionStatus } from '@razbor/db'
 import { builder } from '../builder'
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from './subscription'
+import {
+  AdminMonitorSubscriptionItemType,
+  type AdminMonitorSubscriptionItemData,
+} from './admin-monitor'
 
 export interface AdminStatsData {
   totalUsers: number
@@ -36,6 +40,7 @@ export interface AdminUserData {
   totalCalculations: number
   totalPayments: number
   activeSubscription: boolean
+  activeMonitorCount: number
 }
 
 export const AdminUserType = builder.objectRef<AdminUserData>('AdminUser')
@@ -56,6 +61,7 @@ builder.objectType(AdminUserType, {
     totalCalculations: t.exposeInt('totalCalculations'),
     totalPayments: t.exposeInt('totalPayments'),
     activeSubscription: t.exposeBoolean('activeSubscription'),
+    activeMonitorCount: t.exposeInt('activeMonitorCount'),
   }),
 })
 
@@ -247,6 +253,7 @@ export interface AdminUserDetailData extends AdminUserData {
   yooPayments: AdminPaymentData[]
   subscriptions: AdminSubscriptionData[]
   recentUsageLogs: AdminUsageLogData[]
+  monitorSubscriptions: AdminMonitorSubscriptionItemData[]
 }
 
 export interface AdminUsageLogData {
@@ -292,6 +299,7 @@ builder.objectType(AdminUserDetailType, {
     totalCalculations: t.exposeInt('totalCalculations'),
     totalPayments: t.exposeInt('totalPayments'),
     activeSubscription: t.exposeBoolean('activeSubscription'),
+    activeMonitorCount: t.exposeInt('activeMonitorCount'),
     calculations: t.field({
       type: [AdminCalculationType],
       resolve: (parent) => parent.calculations,
@@ -307,6 +315,10 @@ builder.objectType(AdminUserDetailType, {
     recentUsageLogs: t.field({
       type: [AdminUsageLogType],
       resolve: (parent) => parent.recentUsageLogs,
+    }),
+    monitorSubscriptions: t.field({
+      type: [AdminMonitorSubscriptionItemType],
+      resolve: (parent) => parent.monitorSubscriptions,
     }),
   }),
 })

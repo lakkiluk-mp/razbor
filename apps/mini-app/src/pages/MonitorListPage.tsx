@@ -1,9 +1,15 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Bell, BellOff, Trash2 } from 'lucide-react'
+import { Plus, Bell, BellOff, Trash2, AlertTriangle } from 'lucide-react'
 import { fetchGraphQL, queries, mutations } from '@/lib/graphql-client'
 import { MONITOR_SLOT_LIMITS } from '@razbor/shared'
+
+interface MeResponse {
+  me: {
+    isPremium: boolean
+  }
+}
 
 interface MonitorSubscription {
   id: string
@@ -50,6 +56,14 @@ export function MonitorListPage() {
   const [pendingPauseId, setPendingPauseId] = useState<string | null>(null)
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
   const [showLimitHint, setShowLimitHint] = useState(false)
+  const [freeSlotsBlocked, setFreeSlotsBlocked] = useState(false)
+
+  const { data: meData } = useQuery({
+    queryKey: ['me'],
+    queryFn: () => fetchGraphQL<MeResponse>(queries.me),
+  })
+
+  const isPremium = meData?.me?.isPremium ?? false
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['monitorSubscriptions'],
@@ -63,6 +77,13 @@ export function MonitorListPage() {
     onSettled: () => {
       setPendingPauseId(null)
       queryClient.invalidateQueries({ queryKey: ['monitorSubscriptions'] })
+    },
+    onError: (error: Error & { code?: string }) => {
+      if (error.code === 'FREE_SLOTS_BLOCKED') {
+        setFreeSlotsBlocked(true)
+      } else {
+        alert(error.message)
+      }
     },
   })
 
@@ -94,9 +115,9 @@ export function MonitorListPage() {
   }
 
   const subscriptions = data?.monitorSubscriptions ?? []
-  const slotLimit = MONITOR_SLOT_LIMITS.trial
-  const isLimitReached = subscriptions.length >= slotLimit
-
+  const slotLimit = isPremium ? MONITOR_SLOT_LIMITS.premium : MONITOR_SLOT_LIMITS.trial
+  const activeCount = subscriptions.filter(s => s.isActive).length
+  const isLimitReached = activeCount >= slotLimit
   return (
     <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col">
       <header className="px-4 pt-6 pb-4 flex flex-col gap-2">
@@ -126,14 +147,33 @@ export function MonitorListPage() {
         )}
       </header>
 
+      {freeSlotsBlocked && (
+        <div className="mx-4 mb-3 bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
+            <p className="text-sm font-semibold text-amber-400">Мониторинг приостановлен</p>
+          </div>
+          <p className="text-xs text-zinc-400">
+            Из-за высокой нагрузки мониторинг для бесплатных аккаунтов приостановлен. Оформите подписку для восстановления мониторинга.
+          </p>
+          <button
+            type="button"
+            onClick={() => navigate('/subscribe')}
+            className="bg-amber-500 text-zinc-950 rounded-xl px-4 py-2.5 font-semibold text-sm active:scale-95 transition-transform mt-1"
+          >
+            Оформить подписку
+          </button>
+        </div>
+      )}
+
       {subscriptions.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center gap-4 px-4">
           <Bell className="w-12 h-12 text-zinc-700" />
-          <p className="text-zinc-400 text-center">
-            Нет активных подписок
+          <p className="text-zinc-400 text-center font-semibold">
+            Отслеживание объявлений на Авито
           </p>
-          <p className="text-zinc-500 text-sm text-center">
-            Создайте подписку и получайте уведомления о новых объявлениях в Telegram
+          <p className="text-zinc-500 text-sm text-center leading-relaxed">
+            Вставьте ссылку на объявление или поиск с Авито — мы определим марку и модель, и будем присылать новые объявления прямо в Telegram
           </p>
           <button
             type="button"

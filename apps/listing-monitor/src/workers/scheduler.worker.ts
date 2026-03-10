@@ -1,9 +1,11 @@
 import { Queue } from 'bullmq'
+import { MONITOR_SUBSCRIPTIONS_CHANNEL } from '@razbor/shared'
 import { SubscriptionMatcher, type CrawlGroup } from '../matcher/subscription-matcher.js'
 import { redisSub } from '../storage/redis.js'
 import { createLogger } from '../logger/index.js'
 import { config } from '../config.js'
 import { type CrawlJobData } from './crawler.worker.js'
+import { writeMonitorLog, cleanupOldLogs } from '../storage/monitor-log.js'
 
 const logger = createLogger('scheduler')
 
@@ -15,6 +17,7 @@ export class MonitorScheduler {
   private crawlQueue: Queue<CrawlJobData>
   private matcher: SubscriptionMatcher
   private activeGroupKeys = new Set<string>()
+  private lastCleanupAt: number = 0
   private isRunning = false
   private cyclePromise: Promise<void> | null = null
 
@@ -35,11 +38,17 @@ export class MonitorScheduler {
     this.cyclePromise = this.runContinuousLoop()
 
     logger.info({ groups: this.activeGroupKeys.size }, 'Scheduler started')
+    writeMonitorLog({
+      type: 'SYSTEM',
+      level: 'INFO',
+      message: `Scheduler started: ${this.activeGroupKeys.size} groups`,
+      meta: { groups: this.activeGroupKeys.size },
+    })
   }
 
   async stop(): Promise<void> {
     this.isRunning = false
-    await redisSub.unsubscribe('monitor:subscriptions:changed')
+    await redisSub.unsubscribe(MONITOR_SUBSCRIPTIONS_CHANNEL)
 
     if (this.cyclePromise) {
       await this.cyclePromise.catch(() => {})
@@ -65,8 +74,22 @@ export class MonitorScheduler {
   }
 
   private async runContinuousLoop(): Promise<void> {
+    const CLEANUP_INTERVAL_MS = 60 * 60 * 1000
+
     while (this.isRunning) {
       try {
+        if (Date.now() - this.lastCleanupAt >= CLEANUP_INTERVAL_MS) {
+          try {
+            const deleted = await cleanupOldLogs()
+            this.lastCleanupAt = Date.now()
+            if (deleted > 0) {
+              logger.info({ deleted }, `Cleanup: удалено ${deleted} старых логов`)
+            }
+          } catch (err) {
+            logger.error({ err }, 'Cleanup failed')
+          }
+        }
+
         const cycleStart = Date.now()
 
         await this.matcher.ensureFresh()
@@ -110,12 +133,24 @@ export class MonitorScheduler {
         logger.info(
           `Цикл завершён: ${groups.length} групп за ${Math.round(elapsed / 1000)}s, пауза ${Math.max(0, Math.round(remaining / 1000))}s`,
         )
+        writeMonitorLog({
+          type: 'SYSTEM',
+          level: 'INFO',
+          message: `Цикл завершён: ${groups.length} групп за ${Math.round(elapsed / 1000)}s`,
+          meta: { groups: groups.length, elapsedMs: elapsed, remainingMs: Math.max(0, remaining) },
+        })
 
         if (remaining > 0 && this.isRunning) {
           await delay(remaining)
         }
       } catch (err) {
         logger.error({ err }, 'Ошибка в цикле краулинга, повтор через 10s...')
+        writeMonitorLog({
+          type: 'SYSTEM',
+          level: 'ERROR',
+          message: `Ошибка в цикле краулинга: ${err instanceof Error ? err.message : String(err)}`,
+          meta: { error: err instanceof Error ? err.message : String(err) },
+        })
         await delay(10_000)
       }
     }
@@ -141,10 +176,10 @@ export class MonitorScheduler {
   }
 
   private async subscribeToPubSub(): Promise<void> {
-    await redisSub.subscribe('monitor:subscriptions:changed')
+    await redisSub.subscribe(MONITOR_SUBSCRIPTIONS_CHANNEL)
 
     redisSub.on('message', async (channel, message) => {
-      if (channel !== 'monitor:subscriptions:changed') return
+      if (channel !== MONITOR_SUBSCRIPTIONS_CHANNEL) return
       if (!this.isRunning) return
 
       logger.info({ message }, 'Subscriptions changed event')
