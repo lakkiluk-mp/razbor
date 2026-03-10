@@ -2,7 +2,6 @@ import { config } from '../config.js'
 import { type ListingCard } from '../crawler/listing-parser.js'
 import {
   buildListingMessage,
-  buildFirstRunMessage,
   buildBatchMessage,
 } from './message-builder.js'
 import { createLogger } from '../logger/index.js'
@@ -93,13 +92,10 @@ export async function sendListing(
   telegramId: string,
   card: ListingCard,
   label: string,
-  isFirstRun = false,
 ): Promise<boolean> {
   await waitForRateLimit(telegramId)
 
-  const text = isFirstRun
-    ? buildFirstRunMessage(card, label)
-    : buildListingMessage(card, label)
+  const text = buildListingMessage(card, label)
 
   const inlineKeyboard = {
     inline_keyboard: [[{ text: 'Открыть на Avito', url: card.url }]],

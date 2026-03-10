@@ -22,17 +22,6 @@ export function buildListingMessage(card: ListingCard, label: string): string {
   return lines.join('\n')
 }
 
-export function buildFirstRunMessage(
-  card: ListingCard,
-  label: string,
-): string {
-  const msg = buildListingMessage(card, label)
-  return (
-    msg +
-    '\n\n✅ Мониторинг запущен! Это последнее объявление на текущий момент.\nНовые объявления будут приходить автоматически.'
-  )
-}
-
 export function buildBatchMessage(
   cards: ListingCard[],
   label: string,

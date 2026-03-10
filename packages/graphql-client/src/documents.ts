@@ -380,6 +380,7 @@ export const queries = {
           yearMin
           yearMax
           mileageMax
+          searchRadius
           isActive
           notificationsSent
           lastNotifiedAt
@@ -521,6 +522,7 @@ export const queries = {
         yearMin
         yearMax
         mileageMax
+        searchRadius
         isActive
         notificationsSent
         lastNotifiedAt
@@ -541,6 +543,7 @@ export const queries = {
         yearMin
         yearMax
         mileageMax
+        searchRadius
         isActive
         notificationsSent
         lastNotifiedAt
@@ -582,6 +585,7 @@ export const queries = {
           yearMin
           yearMax
           mileageMax
+          searchRadius
           isActive
           notificationsSent
           lastNotifiedAt
@@ -748,6 +752,7 @@ export const mutations = {
         yearMin
         yearMax
         mileageMax
+        searchRadius
         isActive
         createdAt
       }
@@ -766,6 +771,7 @@ export const mutations = {
         yearMin
         yearMax
         mileageMax
+        searchRadius
         isActive
       }
     }

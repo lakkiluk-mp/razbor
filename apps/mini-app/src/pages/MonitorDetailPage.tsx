@@ -15,6 +15,7 @@ interface MonitorSubscription {
   yearMin: number | null
   yearMax: number | null
   mileageMax: number | null
+  searchRadius: number | null
   isActive: boolean
   notificationsSent: number
   lastNotifiedAt: string | null
@@ -110,6 +111,9 @@ export function MonitorDetailPage() {
   }
   if (sub.mileageMax !== null) {
     filters.push({ label: 'Макс. пробег', value: `${(sub.mileageMax / 1000).toFixed(0)} тыс. км` })
+  }
+  if (sub.searchRadius !== null) {
+    filters.push({ label: 'Радиус поиска', value: `+${sub.searchRadius} км` })
   }
 
   return (

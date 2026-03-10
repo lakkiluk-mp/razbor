@@ -11,6 +11,7 @@ export interface CrawlGroup {
   yearMin?: number
   yearMax?: number
   mileageMax?: number
+  searchRadius?: number
 }
 
 export interface MatchResult {
@@ -30,6 +31,7 @@ interface CachedSubscription {
   yearMin: number | null
   yearMax: number | null
   mileageMax: number | null
+  searchRadius: number | null
 }
 
 export class SubscriptionMatcher {
@@ -58,6 +60,7 @@ export class SubscriptionMatcher {
         yearMin: sub.yearMin,
         yearMax: sub.yearMax,
         mileageMax: sub.mileageMax,
+        searchRadius: sub.searchRadius,
       }
       const existing = this.cache.get(key) || []
       existing.push(entry)
@@ -179,6 +182,15 @@ export class SubscriptionMatcher {
     )
     const hasNoMileage = subs.some((s) => s.mileageMax == null)
 
+    let searchRadius: number | undefined
+    for (const sub of subs) {
+      if (sub.searchRadius != null)
+        searchRadius =
+          searchRadius != null
+            ? Math.max(searchRadius, sub.searchRadius)
+            : sub.searchRadius
+    }
+
     return {
       brandSlug,
       modelSlug,
@@ -188,6 +200,7 @@ export class SubscriptionMatcher {
       yearMin: hasNoYear ? undefined : yearMin,
       yearMax: hasNoYear ? undefined : yearMax,
       mileageMax: hasNoMileage ? undefined : mileageMax,
+      searchRadius,
     }
   }
 }

@@ -121,6 +121,7 @@ export class MonitorScheduler {
             yearMin: group.yearMin,
             yearMax: group.yearMax,
             mileageMax: group.mileageMax,
+            searchRadius: group.searchRadius,
             groupKey,
           })
 

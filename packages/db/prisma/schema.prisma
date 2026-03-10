@@ -399,7 +399,8 @@ model MonitorSubscription {
   priceMax  Int?
   yearMin   Int?
   yearMax   Int?
-  mileageMax Int?
+  mileageMax    Int?
+  searchRadius  Int?
 
   isActive  Boolean            @default(true)
   expiresAt DateTime?

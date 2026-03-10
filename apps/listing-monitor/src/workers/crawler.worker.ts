@@ -23,7 +23,6 @@ export interface NotifyJobData {
   cards: ListingCard[]
   subscriptionId: string
   subscriptionLabel: string
-  isFirstRun?: boolean
 }
 
 export function createCrawlerWorker(
@@ -107,53 +106,20 @@ export function createCrawlerWorker(
 
       if (isFirstRun) {
         await markAllSeen(brandSlug, modelSlug, result.cards)
-
-        const sorted = [...result.cards]
-          .filter((c) => c.publishedAt)
-          .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-        const candidates = sorted.length > 0 ? sorted : result.cards
-
-        await matcher.ensureFresh()
-
-        let notifiedCount = 0
-        for (const card of candidates) {
-          const matches = matcher.match(card, brandSlug, modelSlug)
-          if (matches.length > 0) {
-            logger.info(
-              `[${groupKey}] First run: отправляем extId=${card.extId}, ${card.title}, publishedAt=${card.publishedAt}`,
-            )
-            for (const match of matches) {
-              await notifyQueue.add('notify', {
-                telegramId: match.telegramId,
-                cards: [card],
-                subscriptionId: match.subscriptionId,
-                subscriptionLabel: match.label,
-                isFirstRun: true,
-              })
-            }
-            notifiedCount = matches.length
-            break
-          }
-        }
-
-        if (notifiedCount === 0) {
-          logger.warn(`[${groupKey}] First run: ни одна карточка не подошла под фильтры (${result.cards.length} всего)`)
-        }
-
         await redis.set(`initialized:${groupKey}`, '1', 'EX', 2592000)
 
         logger.info(
-          `[${groupKey}] First run done: ${result.cards.length} seen, ${notifiedCount} notified`,
+          `[${groupKey}] First run done: ${result.cards.length} marked as seen`,
         )
         writeMonitorLog({
           type: 'CRAWL',
           level: 'INFO',
           brandSlug,
           modelSlug,
-          message: `First run done: ${result.cards.length} seen, ${notifiedCount} notified`,
-          meta: { groupKey, totalCards: result.cards.length, notifiedCount },
+          message: `First run done: ${result.cards.length} marked as seen`,
+          meta: { groupKey, totalCards: result.cards.length },
         })
-        return { blocked: false, cards: result.cards.length, newCards: notifiedCount > 0 ? 1 : 0 }
+        return { blocked: false, cards: result.cards.length, newCards: 0 }
       }
 
       const newCards = await filterNew(brandSlug, modelSlug, result.cards)

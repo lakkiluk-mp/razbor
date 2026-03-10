@@ -13,16 +13,16 @@ export function createNotifierWorker(): Worker<NotifyJobData> {
   const worker = new Worker<NotifyJobData>(
     'notify',
     async (job: Job<NotifyJobData>) => {
-      const { telegramId, cards, subscriptionId, subscriptionLabel, isFirstRun } = job.data
+      const { telegramId, cards, subscriptionId, subscriptionLabel } = job.data
 
-      logger.info({ telegramId, cards: cards.length, subscriptionId, isFirstRun }, 'Sending notification')
+      logger.info({ telegramId, cards: cards.length, subscriptionId }, 'Sending notification')
 
       const maxCards = 5
       const limitedCards = cards.slice(0, maxCards)
 
       let sentCount = 0
       for (const card of limitedCards) {
-        const ok = await sendListing(telegramId, card, subscriptionLabel, isFirstRun)
+        const ok = await sendListing(telegramId, card, subscriptionLabel)
         if (ok) sentCount++
       }
 
@@ -42,7 +42,7 @@ export function createNotifierWorker(): Worker<NotifyJobData> {
           type: 'NOTIFICATION',
           level: 'INFO',
           message: `Sent ${sentCount} cards to ${telegramId}`,
-          meta: { telegramId, sentCount, total: cards.length, subscriptionId, subscriptionLabel, isFirstRun },
+          meta: { telegramId, sentCount, total: cards.length, subscriptionId, subscriptionLabel },
         })
       }
       return { sent: sentCount > 0, count: sentCount }

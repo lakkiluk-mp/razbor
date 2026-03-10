@@ -6,7 +6,6 @@ import { fetchGraphQL, queries, mutations } from '@/lib/graphql-client'
 
 interface MeResponse {
   me: {
-    isPremium: boolean
     monitorSlotLimit: number
   }
 }
@@ -22,6 +21,7 @@ interface MonitorSubscription {
   yearMin: number | null
   yearMax: number | null
   mileageMax: number | null
+  searchRadius: number | null
   isActive: boolean
   notificationsSent: number
   lastNotifiedAt: string | null
@@ -46,6 +46,9 @@ function formatFilters(sub: MonitorSubscription): string {
   if (sub.mileageMax) {
     parts.push(`до ${(sub.mileageMax / 1000).toFixed(0)}т км`)
   }
+  if (sub.searchRadius) {
+    parts.push(`+${sub.searchRadius} км`)
+  }
   return parts.join(' · ')
 }
 
@@ -63,7 +66,6 @@ export function MonitorListPage() {
     queryFn: () => fetchGraphQL<MeResponse>(queries.me),
   })
 
-  const isPremium = meData?.me?.isPremium ?? false
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['monitorSubscriptions'],

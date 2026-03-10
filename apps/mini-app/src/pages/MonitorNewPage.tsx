@@ -16,7 +16,15 @@ interface CreateMonitorInput {
   yearMin?: number | null
   yearMax?: number | null
   mileageMax?: number | null
+  searchRadius?: number | null
 }
+
+const RADIUS_OPTIONS = [
+  { value: '', label: 'Только город' },
+  { value: '50', label: '+50 км' },
+  { value: '100', label: '+100 км' },
+  { value: '200', label: '+200 км' },
+]
 
 function formatLocation(slug: string): string {
   return slug
@@ -63,6 +71,7 @@ export function MonitorNewPage() {
   const [yearMin, setYearMin] = useState('')
   const [yearMax, setYearMax] = useState('')
   const [mileageMax, setMileageMax] = useState('')
+  const [searchRadius, setSearchRadius] = useState('')
   const [formError, setFormError] = useState('')
   const [freeSlotsBlocked, setFreeSlotsBlocked] = useState(false)
 
@@ -166,6 +175,7 @@ export function MonitorNewPage() {
       yearMin: yMin,
       yearMax: yMax,
       mileageMax: parseIntOrNull(mileageMax),
+      searchRadius: searchRadius ? parseInt(searchRadius, 10) : null,
     }
 
     createMutation.mutate(input)
@@ -320,6 +330,23 @@ export function MonitorNewPage() {
                 onChange={(e) => setMileageMax(onlyDigits(e.target.value))}
                 className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 w-full focus:border-amber-500 focus:outline-none placeholder:text-zinc-500"
               />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <span className="text-zinc-400 text-xs uppercase tracking-wider">
+                Радиус поиска
+              </span>
+              <select
+                value={searchRadius}
+                onChange={(e) => setSearchRadius(e.target.value)}
+                className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 w-full focus:border-amber-500 focus:outline-none appearance-none"
+              >
+                {RADIUS_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {formError && (

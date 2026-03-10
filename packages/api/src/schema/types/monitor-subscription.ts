@@ -12,6 +12,7 @@ builder.prismaObject('MonitorSubscription', {
     yearMin: t.exposeInt('yearMin', { nullable: true }),
     yearMax: t.exposeInt('yearMax', { nullable: true }),
     mileageMax: t.exposeInt('mileageMax', { nullable: true }),
+    searchRadius: t.exposeInt('searchRadius', { nullable: true }),
     isActive: t.exposeBoolean('isActive'),
     notificationsSent: t.exposeInt('notificationsSent'),
     lastNotifiedAt: t.field({
@@ -41,6 +42,7 @@ export const CreateMonitorSubscriptionInput = builder.inputType('CreateMonitorSu
     yearMin: t.int(),
     yearMax: t.int(),
     mileageMax: t.int(),
+    searchRadius: t.int(),
   }),
 })
 
@@ -54,5 +56,6 @@ export const UpdateMonitorSubscriptionInput = builder.inputType('UpdateMonitorSu
     yearMin: t.int(),
     yearMax: t.int(),
     mileageMax: t.int(),
+    searchRadius: t.int(),
   }),
 })

@@ -30,12 +30,15 @@ async function verifyOwnership(prisma: PrismaClient, userId: string, id: string)
   return sub
 }
 
+const ALLOWED_RADIUS_VALUES = new Set([50, 100, 200])
+
 function validateFilters(input: {
   priceMin?: number | null
   priceMax?: number | null
   yearMin?: number | null
   yearMax?: number | null
   mileageMax?: number | null
+  searchRadius?: number | null
 }): void {
   if (input.priceMin != null && input.priceMin <= 0) {
     throw new GraphQLError('priceMin должен быть положительным числом', {
@@ -72,6 +75,11 @@ function validateFilters(input: {
       extensions: { code: 'INVALID_INPUT' },
     })
   }
+  if (input.searchRadius != null && !ALLOWED_RADIUS_VALUES.has(input.searchRadius)) {
+    throw new GraphQLError('searchRadius должен быть 50, 100 или 200', {
+      extensions: { code: 'INVALID_INPUT' },
+    })
+  }
 }
 
 export async function createMonitorSubscription(
@@ -88,6 +96,7 @@ export async function createMonitorSubscription(
     yearMin?: number | null
     yearMax?: number | null
     mileageMax?: number | null
+    searchRadius?: number | null
   },
 ): Promise<MonitorSubscription> {
   validateFilters(input)
@@ -128,6 +137,7 @@ export async function createMonitorSubscription(
         yearMin: input.yearMin ?? undefined,
         yearMax: input.yearMax ?? undefined,
         mileageMax: input.mileageMax ?? undefined,
+        searchRadius: input.searchRadius ?? undefined,
       },
     })
   })
@@ -150,6 +160,7 @@ export async function updateMonitorSubscription(
     yearMin?: number | null
     yearMax?: number | null
     mileageMax?: number | null
+    searchRadius?: number | null
   },
 ): Promise<MonitorSubscription> {
   const existing = await verifyOwnership(prisma, userId, id)
@@ -177,6 +188,7 @@ export async function updateMonitorSubscription(
   if (input.yearMin !== undefined) data.yearMin = input.yearMin
   if (input.yearMax !== undefined) data.yearMax = input.yearMax
   if (input.mileageMax !== undefined) data.mileageMax = input.mileageMax
+  if (input.searchRadius !== undefined) data.searchRadius = input.searchRadius
 
   const subscription = await prisma.monitorSubscription.update({
     where: { id },
