@@ -159,7 +159,7 @@ export class MonitorScheduler {
 
   private async waitForJob(groupKey: string): Promise<void> {
     const maxWait = 120_000
-    const pollInterval = 500
+    const pollInterval = 1000
     const start = Date.now()
 
     while (this.isRunning && Date.now() - start < maxWait) {

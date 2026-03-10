@@ -119,6 +119,7 @@ export function createCrawlerWorker(
             subscriptionLabel: string
           }
         >()
+        const sentToUser = new Set<string>()
 
         for (const card of result.cards) {
           if (!card.publishedAt) continue
@@ -128,6 +129,10 @@ export function createCrawlerWorker(
           const matches = matcher.match(card, brandSlug, modelSlug)
           for (const match of matches) {
             if (publishedAt <= match.createdAt.getTime()) continue
+
+            const userCardKey = `${match.telegramId}:${card.extId}`
+            if (sentToUser.has(userCardKey)) continue
+            sentToUser.add(userCardKey)
 
             const key = `${match.telegramId}:${match.subscriptionId}`
             const existing = notifyMap.get(key)
@@ -178,7 +183,7 @@ export function createCrawlerWorker(
         )
       }
 
-      const CRAWL_TIME_BUFFER_MS = 15 * 60 * 1000
+      const CRAWL_TIME_BUFFER_MS = 16 * 60 * 1000
       const maxAgeMs = 24 * 60 * 60 * 1000
       const now = Date.now()
 
@@ -283,13 +288,13 @@ export function createCrawlerWorker(
       return {
         blocked: false,
         cards: result.cards.length,
-        newCards: newCards.length,
+        newCards: freshCards.length,
       }
     },
     {
       connection: createBullConnection(),
       concurrency: 1,
-      limiter: { max: 1, duration: 3000 },
+      limiter: { max: 1, duration: 1500 },
     },
   )
 
