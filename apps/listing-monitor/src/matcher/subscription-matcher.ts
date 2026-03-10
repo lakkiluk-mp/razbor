@@ -18,6 +18,7 @@ export interface MatchResult {
   subscriptionId: string
   telegramId: string
   label: string
+  createdAt: Date
 }
 
 interface CachedSubscription {
@@ -32,6 +33,7 @@ interface CachedSubscription {
   yearMax: number | null
   mileageMax: number | null
   searchRadius: number | null
+  createdAt: Date
 }
 
 export class SubscriptionMatcher {
@@ -61,6 +63,7 @@ export class SubscriptionMatcher {
         yearMax: sub.yearMax,
         mileageMax: sub.mileageMax,
         searchRadius: sub.searchRadius,
+        createdAt: sub.createdAt,
       }
       const existing = this.cache.get(key) || []
       existing.push(entry)
@@ -111,6 +114,7 @@ export class SubscriptionMatcher {
         subscriptionId: sub.id,
         telegramId: sub.telegramId,
         label: sub.label,
+        createdAt: sub.createdAt,
       })
     }
 
