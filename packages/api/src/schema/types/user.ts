@@ -7,6 +7,7 @@ export interface UserProfileData {
   lastName: string | null
   username: string | null
   isPremium: boolean
+  monitorSlotLimit: number
   totalCalculations: number
   trialCredits: number
   subscriptionCredits: number
@@ -23,6 +24,7 @@ builder.objectType(UserProfileType, {
     lastName: t.exposeString('lastName', { nullable: true }),
     username: t.exposeString('username', { nullable: true }),
     isPremium: t.exposeBoolean('isPremium'),
+    monitorSlotLimit: t.exposeInt('monitorSlotLimit'),
     totalCalculations: t.exposeInt('totalCalculations'),
     trialCredits: t.exposeInt('trialCredits'),
     subscriptionCredits: t.exposeInt('subscriptionCredits'),

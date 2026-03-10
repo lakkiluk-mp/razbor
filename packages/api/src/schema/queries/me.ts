@@ -2,6 +2,7 @@ import { builder } from '../builder'
 import { UserProfileType, type UserProfileData } from '../types/user'
 import { getRemainingCredits } from '../../services/credits.service'
 import { getActiveSubscription } from '../../services/subscription.service'
+import { MONITOR_SLOT_LIMITS } from '@razbor/shared'
 
 builder.queryField('me', (t) =>
   t.field({
@@ -40,6 +41,7 @@ builder.queryField('me', (t) =>
         lastName: user.lastName,
         username: user.username,
         isPremium: user.isPremium,
+        monitorSlotLimit: user.isPremium ? MONITOR_SLOT_LIMITS.premium : MONITOR_SLOT_LIMITS.trial,
         totalCalculations,
         trialCredits: credits.trial,
         subscriptionCredits: credits.subscription,

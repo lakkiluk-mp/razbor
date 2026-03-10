@@ -3,11 +3,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Bell, BellOff, Trash2, AlertTriangle } from 'lucide-react'
 import { fetchGraphQL, queries, mutations } from '@/lib/graphql-client'
-import { MONITOR_SLOT_LIMITS } from '@razbor/shared'
 
 interface MeResponse {
   me: {
     isPremium: boolean
+    monitorSlotLimit: number
   }
 }
 
@@ -115,7 +115,7 @@ export function MonitorListPage() {
   }
 
   const subscriptions = data?.monitorSubscriptions ?? []
-  const slotLimit = isPremium ? MONITOR_SLOT_LIMITS.premium : MONITOR_SLOT_LIMITS.trial
+  const slotLimit = meData?.me?.monitorSlotLimit ?? 1
   const activeCount = subscriptions.filter(s => s.isActive).length
   const isLimitReached = activeCount >= slotLimit
   return (

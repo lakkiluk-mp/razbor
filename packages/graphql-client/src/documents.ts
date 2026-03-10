@@ -199,6 +199,7 @@ export const queries = {
         lastName
         username
         isPremium
+        monitorSlotLimit
         totalCalculations
         trialCredits
         subscriptionCredits
