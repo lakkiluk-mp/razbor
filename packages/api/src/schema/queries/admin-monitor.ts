@@ -119,6 +119,7 @@ builder.queryField('adminMonitorSubscriptions', (t) =>
           yearMin: s.yearMin,
           yearMax: s.yearMax,
           mileageMax: s.mileageMax,
+          searchRadius: s.searchRadius,
           isActive: s.isActive,
           notificationsSent: s.notificationsSent,
           lastNotifiedAt: s.lastNotifiedAt,

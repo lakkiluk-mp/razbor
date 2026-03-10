@@ -281,6 +281,7 @@ builder.queryField('adminUser', (t) =>
           yearMin: ms.yearMin,
           yearMax: ms.yearMax,
           mileageMax: ms.mileageMax,
+          searchRadius: ms.searchRadius,
           isActive: ms.isActive,
           notificationsSent: ms.notificationsSent,
           lastNotifiedAt: ms.lastNotifiedAt,

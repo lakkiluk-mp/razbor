@@ -32,6 +32,7 @@ export interface AdminMonitorSubscriptionItemData {
   yearMin: number | null
   yearMax: number | null
   mileageMax: number | null
+  searchRadius: number | null
   isActive: boolean
   notificationsSent: number
   lastNotifiedAt: Date | null
@@ -57,6 +58,7 @@ builder.objectType(AdminMonitorSubscriptionItemType, {
     yearMin: t.exposeInt('yearMin', { nullable: true }),
     yearMax: t.exposeInt('yearMax', { nullable: true }),
     mileageMax: t.exposeInt('mileageMax', { nullable: true }),
+    searchRadius: t.exposeInt('searchRadius', { nullable: true }),
     isActive: t.exposeBoolean('isActive'),
     notificationsSent: t.exposeInt('notificationsSent'),
     lastNotifiedAt: t.field({
