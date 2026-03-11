@@ -33,6 +33,7 @@ export function AdminMonitorPage() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [showStopConfirm, setShowStopConfirm] = useState(false)
+  const [toggleConfirm, setToggleConfirm] = useState<AdminMonitorSubscriptionItem | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   const handleSearchChange = (value: string) => {
@@ -239,7 +240,7 @@ export function AdminMonitorPage() {
           type="button"
           onClick={(e) => {
             e.stopPropagation()
-            toggleMutation.mutate(item.id)
+            setToggleConfirm(item)
           }}
           disabled={toggleMutation.isPending && toggleMutation.variables === item.id}
           className={cn(
@@ -466,6 +467,45 @@ export function AdminMonitorPage() {
         sortOrder={sortOrder}
         onSort={handleSort}
       />
+
+      {toggleConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setToggleConfirm(null)}>
+          <div className="bg-zinc-900 rounded-xl p-5 mx-4 max-w-sm w-full space-y-3" onClick={(e) => e.stopPropagation()}>
+            <p className="text-sm text-zinc-200">
+              {toggleConfirm.isActive ? 'Деактивировать' : 'Активировать'} подписку{' '}
+              <span className="font-medium text-amber-400">{toggleConfirm.label}</span>
+              {toggleConfirm.userUsername && (
+                <span className="text-zinc-400"> (@{toggleConfirm.userUsername})</span>
+              )}
+              ?
+            </p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  toggleMutation.mutate(toggleConfirm.id)
+                  setToggleConfirm(null)
+                }}
+                className={cn(
+                  'flex-1 rounded-lg py-2 text-sm font-medium active:scale-95 transition-transform',
+                  toggleConfirm.isActive
+                    ? 'bg-red-500/20 text-red-400'
+                    : 'bg-green-500/20 text-green-400'
+                )}
+              >
+                {toggleConfirm.isActive ? 'Деактивировать' : 'Активировать'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setToggleConfirm(null)}
+                className="flex-1 bg-zinc-800 text-zinc-300 rounded-lg py-2 text-sm active:scale-95 transition-transform"
+              >
+                Отмена
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
