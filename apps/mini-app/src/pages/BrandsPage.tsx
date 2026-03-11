@@ -4,6 +4,7 @@ import { fetchGraphQL, queries } from '@/lib/graphql-client'
 import type { BrandsResponse } from '@razbor/hooks'
 import { BrandIcon } from '@/components/ui/brand-icon'
 import { VinInput } from '@/components/features/vin-input'
+import { MonitorPromo } from '@/components/features/monitor-promo'
 
 function getBrandNameClass(name: string) {
   if (name.length > 10) return 'text-[10px]'
@@ -40,6 +41,7 @@ export function BrandsPage() {
           <h1 className="text-2xl font-bold">Оценка авто по запчастям</h1>
           <p className="text-zinc-500 text-sm mt-1">Введите VIN или выберите марку</p>
         </div>
+        <MonitorPromo />
         <VinInput brands={data?.brands} />
       </header>
 
