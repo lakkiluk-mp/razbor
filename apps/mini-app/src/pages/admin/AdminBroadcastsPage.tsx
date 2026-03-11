@@ -39,6 +39,7 @@ export function AdminBroadcastsPage() {
   const [uploading, setUploading] = useState(false)
   const [pendingActionId, setPendingActionId] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
+  const savingRef = useRef(false)
 
   const { data, isLoading } = useQuery({
     queryKey: ['adminBroadcasts'],
@@ -56,6 +57,7 @@ export function AdminBroadcastsPage() {
       queryClient.invalidateQueries({ queryKey: ['adminBroadcasts'] })
       resetForm()
     },
+    onSettled: () => { savingRef.current = false },
   })
 
   const sendMutation = useMutation({
@@ -122,7 +124,9 @@ export function AdminBroadcastsPage() {
   }
 
   const handleSave = () => {
+    if (savingRef.current) return
     if (!message.trim() && imageUrls.length === 0) return
+    savingRef.current = true
     createMutation.mutate({
       message: message.trim() || undefined,
       imageUrls: imageUrls.length > 0 ? imageUrls : undefined,
@@ -131,6 +135,7 @@ export function AdminBroadcastsPage() {
   }
 
   const handleSend = (id: string) => {
+    if (sendMutation.isPending) return
     if (!confirm('Отправить рассылку всем пользователям?')) return
     sendMutation.mutate(id)
   }
