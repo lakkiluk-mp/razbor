@@ -1,7 +1,7 @@
 import type { PrismaClient, MonitorSubscription } from '@razbor/db'
 import type Redis from 'ioredis'
 import { GraphQLError } from 'graphql'
-import { MONITOR_SLOT_LIMITS, MONITOR_SUBSCRIPTIONS_CHANNEL } from '@razbor/shared'
+import { getMonitorSlotLimits, MONITOR_SUBSCRIPTIONS_CHANNEL } from '@razbor/shared'
 import { getMonitorSettings } from './monitor-settings.service'
 
 async function publishEvent(redis: Redis | null, action: string, subscriptionId: string): Promise<void> {
@@ -19,7 +19,8 @@ async function getSlotLimit(prisma: PrismaClient, userId: string): Promise<{ lim
     select: { isPremium: true },
   })
   const isPremium = user?.isPremium ?? false
-  return { limit: isPremium ? MONITOR_SLOT_LIMITS.premium : MONITOR_SLOT_LIMITS.trial, isPremium }
+  const limits = getMonitorSlotLimits()
+  return { limit: isPremium ? limits.premium : limits.trial, isPremium }
 }
 
 async function verifyOwnership(prisma: PrismaClient, userId: string, id: string): Promise<MonitorSubscription> {

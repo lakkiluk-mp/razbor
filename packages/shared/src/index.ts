@@ -51,9 +51,11 @@ export const CACHE_TTL = {
 
 export { MONITOR_CITIES, type MonitorCity } from './cities'
 
-export const MONITOR_SLOT_LIMITS = {
-  trial: Number(typeof process !== 'undefined' && process.env?.MONITOR_SLOTS_TRIAL || 1),
-  premium: Number(typeof process !== 'undefined' && process.env?.MONITOR_SLOTS_PREMIUM || 3),
+export function getMonitorSlotLimits(): { trial: number; premium: number } {
+  return {
+    trial: Number((typeof process !== 'undefined' && process.env?.MONITOR_SLOTS_TRIAL) || 1),
+    premium: Number((typeof process !== 'undefined' && process.env?.MONITOR_SLOTS_PREMIUM) || 3),
+  }
 }
 
 export const MONITOR_SUBSCRIPTIONS_CHANNEL = 'monitor:subscriptions:changed'

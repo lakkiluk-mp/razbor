@@ -10,6 +10,7 @@ import { prisma } from '@razbor/db'
 import { yoga } from './graphql.js'
 import { bot } from './bot/index.js'
 import { startRenewalCron } from './cron/renewal.js'
+import { startMonitorLimitsCron } from './cron/monitor-limits.js'
 import { createYooKassaWebhookHandler } from './payments/yookassa-webhook.js'
 import { authenticateUser } from './auth.js'
 
@@ -246,6 +247,7 @@ server.listen(PORT, async () => {
 
   if (isMainWorker) {
     startRenewalCron(prisma)
+    startMonitorLimitsCron(prisma)
 
     if (bot && BOT_WEBHOOK_URL && BOT_TOKEN) {
       try {

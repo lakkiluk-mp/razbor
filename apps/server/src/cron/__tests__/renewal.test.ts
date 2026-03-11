@@ -13,7 +13,7 @@ vi.mock('@razbor/shared', () => ({
     monthly: { price: 799, label: '1 месяц', days: 30, credits: 25, graceDays: 3, maxRetries: 3 },
   },
   SUBSCRIPTION_MAX_RETRIES: 3,
-  MONITOR_SLOT_LIMITS: { trial: 1, premium: 3 },
+  getMonitorSlotLimits: () => ({ trial: 1, premium: 3 }),
   MONITOR_SUBSCRIPTIONS_CHANNEL: 'monitor:subscriptions:changed',
 }))
 

@@ -38,10 +38,15 @@ async function waitForRateLimit(chatId: string): Promise<void> {
   rateLimiter.perChat.set(chatId, Date.now())
 }
 
+export interface SendResult {
+  sent: boolean
+  blocked: boolean
+}
+
 async function sendTelegram(
   method: string,
   body: Record<string, unknown>,
-): Promise<boolean> {
+): Promise<SendResult> {
   const url = `${API_BASE}/${method}`
   const maxRetries = 3
 
@@ -55,7 +60,7 @@ async function sendTelegram(
 
       if (res.ok) {
         await res.text()
-        return true
+        return { sent: true, blocked: false }
       }
 
       if (res.status === 429) {
@@ -72,11 +77,20 @@ async function sendTelegram(
       }
 
       const errorText = await res.text()
+
+      if (res.status === 403 && (
+        errorText.includes('blocked by the user') ||
+        errorText.includes('user is deactivated')
+      )) {
+        logger.warn({ method, chatId: body.chat_id, error: errorText }, 'Bot blocked/deactivated by user')
+        return { sent: false, blocked: true }
+      }
+
       logger.error(
         { method, status: res.status, error: errorText },
         'Telegram API error',
       )
-      return false
+      return { sent: false, blocked: false }
     } catch (err) {
       logger.error({ method, attempt, err }, 'Telegram request failed')
       if (attempt < maxRetries - 1) {
@@ -85,14 +99,14 @@ async function sendTelegram(
     }
   }
 
-  return false
+  return { sent: false, blocked: false }
 }
 
 export async function sendListing(
   telegramId: string,
   card: ListingCard,
   label: string,
-): Promise<boolean> {
+): Promise<SendResult> {
   await waitForRateLimit(telegramId)
 
   const text = buildListingMessage(card, label)
@@ -123,7 +137,7 @@ export async function sendBatch(
   telegramId: string,
   cards: ListingCard[],
   label: string,
-): Promise<boolean> {
+): Promise<SendResult> {
   await waitForRateLimit(telegramId)
   const text = buildBatchMessage(cards, label)
   return sendTelegram('sendMessage', {
@@ -135,8 +149,9 @@ export async function sendBatch(
 
 export async function sendAdminAlert(message: string): Promise<boolean> {
   if (!config.telegram.adminChatId) return false
-  return sendTelegram('sendMessage', {
+  const result = await sendTelegram('sendMessage', {
     chat_id: config.telegram.adminChatId,
     text: `⚠️ Listing Monitor Alert:\n${message}`,
   })
+  return result.sent
 }

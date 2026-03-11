@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@razbor/db'
-import { SUBSCRIPTION_PLANS, SUBSCRIPTION_MAX_RETRIES, MONITOR_SLOT_LIMITS, MONITOR_SUBSCRIPTIONS_CHANNEL } from '@razbor/shared'
+import { SUBSCRIPTION_PLANS, SUBSCRIPTION_MAX_RETRIES, getMonitorSlotLimits, MONITOR_SUBSCRIPTIONS_CHANNEL } from '@razbor/shared'
 import { renewSubscription, expireSubscription, createRecurringPayment, ACTIVE_STATUSES } from '@razbor/api'
 import { getRedis } from '@razbor/cache'
 
@@ -124,8 +124,9 @@ export async function processRenewals(prisma: PrismaClient): Promise<void> {
           orderBy: { createdAt: 'asc' },
         })
 
-        if (activeMonitorSubs.length > MONITOR_SLOT_LIMITS.trial) {
-          const subsToDeactivate = activeMonitorSubs.slice(MONITOR_SLOT_LIMITS.trial)
+        const trialLimit = getMonitorSlotLimits().trial
+        if (activeMonitorSubs.length > trialLimit) {
+          const subsToDeactivate = activeMonitorSubs.slice(trialLimit)
           const idsToDeactivate = subsToDeactivate.map((s) => s.id)
 
           await prisma.monitorSubscription.updateMany({

@@ -1,11 +1,11 @@
 import { type Job, Worker } from 'bullmq'
-import { sendListing } from '../notifier/telegram.js'
+import { sendListing, sendAdminAlert } from '../notifier/telegram.js'
 import { prisma } from '../storage/prisma.js'
 import { createLogger } from '../logger/index.js'
-import { config } from '../config.js'
-import { createBullConnection } from '../storage/redis.js'
+import { createBullConnection, redis } from '../storage/redis.js'
 import { type NotifyJobData } from './crawler.worker.js'
 import { writeMonitorLog } from '../storage/monitor-log.js'
+import { MONITOR_SUBSCRIPTIONS_CHANNEL } from '@razbor/shared'
 
 const logger = createLogger('notifier-worker')
 
@@ -21,9 +21,48 @@ export function createNotifierWorker(): Worker<NotifyJobData> {
       const limitedCards = cards.slice(0, maxCards)
 
       let sentCount = 0
+      let blocked = false
       for (const card of limitedCards) {
-        const ok = await sendListing(telegramId, card, subscriptionLabel)
-        if (ok) sentCount++
+        const result = await sendListing(telegramId, card, subscriptionLabel)
+        if (result.blocked) {
+          blocked = true
+          break
+        }
+        if (result.sent) sentCount++
+      }
+
+      if (blocked) {
+        const userSubs = await prisma.monitorSubscription.findMany({
+          where: { user: { telegramId: BigInt(telegramId) }, isActive: true },
+          select: { id: true },
+        })
+        const ids = userSubs.map((s) => s.id)
+
+        if (ids.length > 0) {
+          await prisma.monitorSubscription.updateMany({
+            where: { id: { in: ids } },
+            data: { isActive: false },
+          })
+          for (const id of ids) {
+            try {
+              await redis.publish(
+                MONITOR_SUBSCRIPTIONS_CHANNEL,
+                JSON.stringify({ action: 'deactivated', subscriptionId: id }),
+              )
+            } catch (err) {
+              logger.error({ err }, 'Failed to publish deactivated event')
+            }
+          }
+        }
+
+        await sendAdminAlert(`Бот заблокирован пользователем ${telegramId}, деактивировано ${ids.length} подписок`)
+        writeMonitorLog({
+          type: 'NOTIFICATION',
+          level: 'WARN',
+          message: `Bot blocked by user ${telegramId}, deactivated ${ids.length} subscriptions`,
+          meta: { telegramId, subscriptionIds: ids, subscriptionLabel },
+        })
+        return { sent: false, count: 0, blocked: true }
       }
 
       if (sentCount > 0) {

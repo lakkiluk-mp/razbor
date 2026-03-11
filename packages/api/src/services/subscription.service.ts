@@ -1,6 +1,6 @@
 import type { PrismaClient, Subscription } from '@razbor/db'
 import type Redis from 'ioredis'
-import { SUBSCRIPTION_PLANS, MONITOR_SLOT_LIMITS, MONITOR_SUBSCRIPTIONS_CHANNEL, type SubscriptionPlanKey } from '@razbor/shared'
+import { SUBSCRIPTION_PLANS, getMonitorSlotLimits, MONITOR_SUBSCRIPTIONS_CHANNEL, type SubscriptionPlanKey } from '@razbor/shared'
 import { GraphQLError } from 'graphql'
 
 import { ACTIVE_STATUSES } from './credits.service'
@@ -213,8 +213,9 @@ export async function expireSubscription(
     orderBy: { createdAt: 'asc' },
   })
 
-  if (activeMonitorSubs.length > MONITOR_SLOT_LIMITS.trial) {
-    const subsToDeactivate = activeMonitorSubs.slice(MONITOR_SLOT_LIMITS.trial)
+  const trialLimit = getMonitorSlotLimits().trial
+  if (activeMonitorSubs.length > trialLimit) {
+    const subsToDeactivate = activeMonitorSubs.slice(trialLimit)
     const idsToDeactivate = subsToDeactivate.map((s) => s.id)
 
     await prisma.monitorSubscription.updateMany({
