@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Send, Square, Plus, Upload, X, Loader2 } from 'lucide-react'
+import { Send, Square, Plus, Upload, X, Loader2, Pin } from 'lucide-react'
 import { fetchGraphQL, queries, mutations } from '@/lib/graphql-client'
 import type {
   AdminBroadcastsResponse,
@@ -35,6 +35,7 @@ export function AdminBroadcastsPage() {
   const [showForm, setShowForm] = useState(false)
   const [message, setMessage] = useState('')
   const [imageUrls, setImageUrls] = useState<string[]>([])
+  const [pinMessage, setPinMessage] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [pendingActionId, setPendingActionId] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -49,7 +50,7 @@ export function AdminBroadcastsPage() {
   })
 
   const createMutation = useMutation({
-    mutationFn: (vars: { message?: string; imageUrls?: string[] }) =>
+    mutationFn: (vars: { message?: string; imageUrls?: string[]; pinMessage?: boolean }) =>
       fetchGraphQL<CreateBroadcastResponse>(mutations.createBroadcast, vars),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminBroadcasts'] })
@@ -79,6 +80,7 @@ export function AdminBroadcastsPage() {
     setShowForm(false)
     setMessage('')
     setImageUrls([])
+    setPinMessage(false)
   }, [])
 
   const MAX_PHOTOS = 10
@@ -124,6 +126,7 @@ export function AdminBroadcastsPage() {
     createMutation.mutate({
       message: message.trim() || undefined,
       imageUrls: imageUrls.length > 0 ? imageUrls : undefined,
+      pinMessage: pinMessage || undefined,
     })
   }
 
@@ -224,6 +227,17 @@ export function AdminBroadcastsPage() {
             )}
           </div>
 
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={pinMessage}
+              onChange={(e) => setPinMessage(e.target.checked)}
+              className="w-4 h-4 rounded border-zinc-600 bg-zinc-800 text-amber-500 focus:ring-amber-500/50"
+            />
+            <Pin className="w-3.5 h-3.5 text-zinc-400" />
+            <span className="text-sm text-zinc-300">Закрепить в чате</span>
+          </label>
+
           <button
             type="button"
             onClick={handleSave}
@@ -246,6 +260,7 @@ export function AdminBroadcastsPage() {
                   <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${STATUS_COLORS[b.status]}`}>
                     {STATUS_LABELS[b.status]}
                   </span>
+                  {b.pinMessage && <Pin className="inline w-3 h-3 text-amber-400 ml-1.5" />}
                   <span className="text-xs text-zinc-600 ml-2">
                     {new Date(b.createdAt).toLocaleString('ru-RU', {
                       day: '2-digit',

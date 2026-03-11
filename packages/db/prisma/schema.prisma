@@ -376,6 +376,7 @@ model Broadcast {
   id          String          @id @default(cuid())
   message     String?
   imageUrls   String[]        @default([])
+  pinMessage  Boolean         @default(false)
   status      BroadcastStatus @default(draft)
   totalUsers  Int             @default(0)
   sentCount   Int             @default(0)

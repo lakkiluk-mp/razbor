@@ -499,6 +499,7 @@ export const queries = {
           id
           message
           imageUrls
+          pinMessage
           status
           totalUsers
           sentCount
@@ -705,11 +706,12 @@ export const mutations = {
     }
   `,
   createBroadcast: `
-    mutation CreateBroadcast($message: String, $imageUrls: [String!]) {
-      createBroadcast(message: $message, imageUrls: $imageUrls) {
+    mutation CreateBroadcast($message: String, $imageUrls: [String!], $pinMessage: Boolean) {
+      createBroadcast(message: $message, imageUrls: $imageUrls, pinMessage: $pinMessage) {
         id
         message
         imageUrls
+        pinMessage
         status
         totalUsers
         sentCount
@@ -814,6 +816,11 @@ export const mutations = {
         freeSlotsClosed
         freeSlotsBlocked
       }
+    }
+  `,
+  adminToggleMonitorSubscription: `
+    mutation AdminToggleMonitorSubscription($id: ID!) {
+      adminToggleMonitorSubscription(id: $id)
     }
   `,
 }

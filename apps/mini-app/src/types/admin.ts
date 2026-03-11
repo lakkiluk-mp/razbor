@@ -90,3 +90,7 @@ export interface AdminStopFreeSlotsResponse {
 export interface AdminResumeFreeSlotsResponse {
   adminResumeFreeSlots: AdminMonitorSettings
 }
+
+export interface AdminToggleMonitorSubscriptionResponse {
+  adminToggleMonitorSubscription: boolean
+}

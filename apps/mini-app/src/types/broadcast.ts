@@ -4,6 +4,7 @@ export interface Broadcast {
   id: string
   message: string | null
   imageUrls: string[]
+  pinMessage: boolean
   status: BroadcastStatus
   totalUsers: number
   sentCount: number

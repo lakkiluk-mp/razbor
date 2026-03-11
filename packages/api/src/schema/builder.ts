@@ -19,6 +19,7 @@ export interface TelegramApi {
   sendMessage(chatId: number | string, text: string, extra?: Record<string, unknown>): Promise<unknown>
   sendPhoto(chatId: number | string, photo: TelegramPhoto, extra?: Record<string, unknown>): Promise<unknown>
   sendMediaGroup(chatId: number | string, media: InputMediaPhoto[]): Promise<unknown>
+  pinChatMessage(chatId: number | string, messageId: number, extra?: Record<string, unknown>): Promise<unknown>
 }
 
 export interface Context {

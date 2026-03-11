@@ -8,6 +8,7 @@ function toBroadcastData(b: {
   id: string
   message: string | null
   imageUrls: string[]
+  pinMessage: boolean
   status: string
   totalUsers: number
   sentCount: number
@@ -19,6 +20,7 @@ function toBroadcastData(b: {
     id: b.id,
     message: b.message,
     imageUrls: b.imageUrls,
+    pinMessage: b.pinMessage,
     status: b.status as BroadcastData['status'],
     totalUsers: b.totalUsers,
     sentCount: b.sentCount,
@@ -34,6 +36,7 @@ builder.mutationField('createBroadcast', (t) =>
     args: {
       message: t.arg.string({ required: false }),
       imageUrls: t.arg.stringList({ required: false }),
+      pinMessage: t.arg.boolean({ required: false }),
     },
     resolve: async (_root, args, ctx): Promise<BroadcastData> => {
       assertAdmin(ctx)
@@ -63,6 +66,7 @@ builder.mutationField('createBroadcast', (t) =>
         data: {
           message: args.message ?? null,
           imageUrls,
+          pinMessage: args.pinMessage ?? false,
           status: 'draft',
         },
       })

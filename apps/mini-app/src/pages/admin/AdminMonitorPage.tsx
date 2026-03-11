@@ -15,6 +15,7 @@ import type {
   AdminSetFreeSlotsClosed,
   AdminStopFreeSlotsResponse,
   AdminResumeFreeSlotsResponse,
+  AdminToggleMonitorSubscriptionResponse,
 } from '@/types/admin'
 
 const PAGE_SIZE = 20
@@ -97,6 +98,34 @@ export function AdminMonitorPage() {
       invalidateAll()
     },
     onError: (error: Error) => setToastMessage(error.message),
+  })
+
+  const toggleMutation = useMutation({
+    mutationFn: (id: string) =>
+      fetchGraphQL<AdminToggleMonitorSubscriptionResponse>(mutations.adminToggleMonitorSubscription, { id }),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ['adminMonitorSubscriptions'] })
+      const queryKey = ['adminMonitorSubscriptions', page, debouncedSearch, filterStatus, sortBy, sortOrder]
+      const prev = queryClient.getQueryData<AdminMonitorSubscriptionsResponse>(queryKey)
+      if (prev) {
+        queryClient.setQueryData<AdminMonitorSubscriptionsResponse>(queryKey, {
+          adminMonitorSubscriptions: {
+            ...prev.adminMonitorSubscriptions,
+            items: prev.adminMonitorSubscriptions.items.map((item) =>
+              item.id === id ? { ...item, isActive: !item.isActive } : item
+            ),
+          },
+        })
+      }
+      return { prev, queryKey }
+    },
+    onError: (error: Error, _id, context) => {
+      if (context?.prev) {
+        queryClient.setQueryData(context.queryKey, context.prev)
+      }
+      setToastMessage(error.message)
+    },
+    onSettled: () => invalidateAll(),
   })
 
   const settings = settingsData?.adminMonitorSettings
@@ -206,16 +235,25 @@ export function AdminMonitorPage() {
       header: '\u0421\u0442\u0430\u0442\u0443\u0441',
       sortable: true,
       render: (item: AdminMonitorSubscriptionItem) => (
-        <span
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            toggleMutation.mutate(item.id)
+          }}
+          disabled={toggleMutation.isPending && toggleMutation.variables === item.id}
           className={cn(
-            'px-2 py-0.5 rounded-md text-xs font-medium',
-            item.isActive
-              ? 'bg-green-500/15 text-green-500'
-              : 'bg-zinc-700/50 text-zinc-400'
+            'relative w-11 h-6 rounded-full transition-colors shrink-0 disabled:opacity-50',
+            item.isActive ? 'bg-green-500' : 'bg-zinc-700'
           )}
         >
-          {item.isActive ? '\u0410\u043A\u0442\u0438\u0432\u043D\u0430' : '\u041F\u0430\u0443\u0437\u0430'}
-        </span>
+          <span
+            className={cn(
+              'absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform',
+              item.isActive && 'translate-x-5'
+            )}
+          />
+        </button>
       ),
     },
     {
@@ -229,6 +267,7 @@ export function AdminMonitorPage() {
     {
       key: 'lastNotifiedAt',
       header: '\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u0435\u0435',
+      sortable: true,
       render: (item: AdminMonitorSubscriptionItem) => (
         <span className="text-xs text-zinc-400">
           {item.lastNotifiedAt ? formatDate(item.lastNotifiedAt) : '\u2014'}

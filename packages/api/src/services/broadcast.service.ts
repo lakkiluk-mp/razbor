@@ -4,6 +4,7 @@ import type { PrismaClient } from '@razbor/db'
 import type { TelegramApi, TelegramPhoto, InputMediaPhoto } from '../schema/builder'
 
 const DELAY_MS = 50
+const PIN_DELAY_MS = 100
 const MEDIA_GROUP_DELAY_MS = 150
 const MAX_RETRIES = 3
 const UPLOADS_DIR = join(process.cwd(), 'uploads')
@@ -21,6 +22,13 @@ function extractRetryAfter(err: unknown): number {
 function isRateLimited(err: unknown): boolean {
   const msg = err instanceof Error ? err.message : String(err)
   return msg.includes('429') || msg.toLowerCase().includes('too many requests')
+}
+
+function extractMessageId(result: unknown): number | null {
+  if (!result || typeof result !== 'object') return null
+  const msg = result as Record<string, unknown>
+  if (typeof msg.message_id === 'number') return msg.message_id
+  return null
 }
 
 function extractFileId(result: unknown): string | null {
@@ -166,6 +174,22 @@ export async function executeBroadcast(
         }
       }
 
+      if (broadcast.pinMessage) {
+        let messageId: number | null = null
+        if (Array.isArray(result) && result.length > 0) {
+          messageId = extractMessageId(result[0])
+        } else {
+          messageId = extractMessageId(result)
+        }
+        if (messageId) {
+          try {
+            await withRetry(() => telegram.pinChatMessage(chatId, messageId, { disable_notification: true }))
+          } catch (pinErr) {
+            console.error(`[Broadcast] Pin failed for ${chatId}:`, pinErr instanceof Error ? pinErr.message : pinErr)
+          }
+        }
+      }
+
       sentCount++
     } catch (err) {
       failedCount++
@@ -182,7 +206,8 @@ export async function executeBroadcast(
       })
     }
 
-    await delay(photos.length > 1 ? MEDIA_GROUP_DELAY_MS : DELAY_MS)
+    const baseDelay = photos.length > 1 ? MEDIA_GROUP_DELAY_MS : DELAY_MS
+    await delay(broadcast.pinMessage ? baseDelay + PIN_DELAY_MS : baseDelay)
   }
 
   await prisma.broadcast.update({

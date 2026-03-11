@@ -14,7 +14,7 @@ import {
 import { getMonitorSettings } from '../../services/monitor-settings.service'
 
 const MONITOR_SORT_FIELDS = {
-  subscriptions: ['createdAt', 'notificationsSent', 'isActive', 'brandSlug', 'label'],
+  subscriptions: ['createdAt', 'notificationsSent', 'isActive', 'brandSlug', 'label', 'lastNotifiedAt'],
   logs: ['createdAt', 'type', 'level'],
 } as const
 

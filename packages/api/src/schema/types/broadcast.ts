@@ -8,6 +8,7 @@ export interface BroadcastData {
   id: string
   message: string | null
   imageUrls: string[]
+  pinMessage: boolean
   status: 'draft' | 'sending' | 'completed' | 'failed' | 'cancelled'
   totalUsers: number
   sentCount: number
@@ -23,6 +24,7 @@ builder.objectType(BroadcastType, {
     id: t.exposeID('id'),
     message: t.exposeString('message', { nullable: true }),
     imageUrls: t.exposeStringList('imageUrls'),
+    pinMessage: t.exposeBoolean('pinMessage'),
     status: t.field({
       type: BroadcastStatusEnum,
       resolve: (parent) => parent.status,
