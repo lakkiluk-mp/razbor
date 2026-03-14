@@ -82,6 +82,7 @@ export interface AdminRegionCrawlStatsResponse {
 export interface AdminMonitorSettings {
   freeSlotsClosed: boolean
   freeSlotsBlocked: boolean
+  regionCrawlPaused: boolean
 }
 
 export interface AdminMonitorSettingsResponse {
@@ -105,4 +106,8 @@ export interface AdminResumeFreeSlotsResponse {
 
 export interface AdminToggleMonitorSubscriptionResponse {
   adminToggleMonitorSubscription: boolean
+}
+
+export interface AdminSetRegionCrawlPausedResponse {
+  adminSetRegionCrawlPaused: AdminMonitorSettings
 }

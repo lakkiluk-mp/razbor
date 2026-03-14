@@ -1,7 +1,7 @@
 import { Queue } from 'bullmq'
 import { MONITOR_SUBSCRIPTIONS_CHANNEL, MONITOR_REGIONS } from '@razbor/shared'
 import { SubscriptionMatcher, type CrawlGroup } from '../matcher/subscription-matcher.js'
-import { redisSub } from '../storage/redis.js'
+import { redis, redisSub } from '../storage/redis.js'
 import { createLogger } from '../logger/index.js'
 import { config } from '../config.js'
 import { type CrawlJobData } from './crawler.worker.js'
@@ -216,10 +216,24 @@ export class MonitorScheduler {
     return false
   }
 
+  private async isRegionCrawlPaused(): Promise<boolean> {
+    try {
+      const val = await redis.get('monitor:settings:regionCrawlPaused')
+      return val === 'true'
+    } catch {
+      return false
+    }
+  }
+
   private async runRegionCrawlLoop(): Promise<void> {
     while (this.isRunning) {
       if (!config.regionCrawl.enabled) {
         await delay(60_000)
+        continue
+      }
+
+      if (await this.isRegionCrawlPaused()) {
+        await delay(30_000)
         continue
       }
 
@@ -236,6 +250,7 @@ export class MonitorScheduler {
 
       for (const region of MONITOR_REGIONS) {
         if (!this.isRunning) break
+        if (await this.isRegionCrawlPaused()) break
 
         if (this.checkDeepCrawlCron()) {
           this.deepCrawlRequested = true
@@ -272,6 +287,10 @@ export class MonitorScheduler {
 
     for (let i = 0; i < MONITOR_REGIONS.length; i++) {
       if (!this.isRunning) break
+      if (await this.isRegionCrawlPaused()) {
+        logger.info('Deep crawl paused by admin')
+        break
+      }
 
       const region = MONITOR_REGIONS[i]
 

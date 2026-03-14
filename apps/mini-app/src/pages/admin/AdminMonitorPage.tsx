@@ -17,6 +17,7 @@ import type {
   AdminResumeFreeSlotsResponse,
   AdminToggleMonitorSubscriptionResponse,
   AdminRegionCrawlStatsResponse,
+  AdminSetRegionCrawlPausedResponse,
 } from '@/types/admin'
 
 const PAGE_SIZE = 20
@@ -130,6 +131,15 @@ export function AdminMonitorPage() {
     onSettled: () => invalidateAll(),
   })
 
+  const regionCrawlMutation = useMutation({
+    mutationFn: (paused: boolean) =>
+      fetchGraphQL<AdminSetRegionCrawlPausedResponse>(mutations.adminSetRegionCrawlPaused, { paused }),
+    onSuccess: () => {
+      invalidateAll()
+    },
+    onError: (error: Error) => setToastMessage(error.message),
+  })
+
   const settings = settingsData?.adminMonitorSettings
 
   const { data: statsData, isLoading: statsLoading } = useQuery({
@@ -138,7 +148,7 @@ export function AdminMonitorPage() {
     staleTime: 60 * 1000,
   })
 
-  const { data: regionData, isLoading: regionLoading } = useQuery({
+  const { data: regionData, isLoading: regionLoading, error: regionError } = useQuery({
     queryKey: ['adminRegionCrawlStats'],
     queryFn: () => fetchGraphQL<AdminRegionCrawlStatsResponse>(queries.adminRegionCrawlStats),
     staleTime: 60 * 1000,
@@ -428,12 +438,35 @@ export function AdminMonitorPage() {
       )}
 
       <div className="bg-zinc-900 rounded-xl p-4 space-y-3">
-        <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-amber-500" />
-          <span className="text-sm font-semibold text-zinc-200">Областной парсинг</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-amber-500" />
+            <span className="text-sm font-semibold text-zinc-200">Областной парсинг</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => regionCrawlMutation.mutate(!settings?.regionCrawlPaused)}
+            disabled={regionCrawlMutation.isPending || settingsLoading}
+            className={cn(
+              'relative w-11 h-6 rounded-full transition-colors shrink-0 disabled:opacity-50',
+              settings?.regionCrawlPaused ? 'bg-red-500' : 'bg-green-500'
+            )}
+          >
+            <span
+              className={cn(
+                'absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform',
+                settings?.regionCrawlPaused && 'translate-x-5'
+              )}
+            />
+          </button>
         </div>
+        {settings?.regionCrawlPaused && (
+          <p className="text-xs text-red-400">Парсинг по областям приостановлен</p>
+        )}
 
-        {regionLoading ? (
+        {regionError ? (
+          <p className="text-xs text-red-400 py-2">Ошибка: {regionError.message}</p>
+        ) : regionLoading ? (
           <div className="flex justify-center py-4">
             <div className="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
           </div>

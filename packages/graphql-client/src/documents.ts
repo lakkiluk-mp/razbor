@@ -622,6 +622,7 @@ export const queries = {
       adminMonitorSettings {
         freeSlotsClosed
         freeSlotsBlocked
+        regionCrawlPaused
       }
     }
   `,
@@ -877,6 +878,15 @@ export const mutations = {
   adminToggleMonitorSubscription: `
     mutation AdminToggleMonitorSubscription($id: ID!) {
       adminToggleMonitorSubscription(id: $id)
+    }
+  `,
+  adminSetRegionCrawlPaused: `
+    mutation AdminSetRegionCrawlPaused($paused: Boolean!) {
+      adminSetRegionCrawlPaused(paused: $paused) {
+        freeSlotsClosed
+        freeSlotsBlocked
+        regionCrawlPaused
+      }
     }
   `,
 }

@@ -174,6 +174,7 @@ builder.objectType(AdminRegionCrawlStatType, {
 export interface AdminMonitorSettingsData {
   freeSlotsClosed: boolean
   freeSlotsBlocked: boolean
+  regionCrawlPaused: boolean
 }
 
 export const AdminMonitorSettingsType =
@@ -183,6 +184,7 @@ builder.objectType(AdminMonitorSettingsType, {
   fields: (t) => ({
     freeSlotsClosed: t.exposeBoolean('freeSlotsClosed'),
     freeSlotsBlocked: t.exposeBoolean('freeSlotsBlocked'),
+    regionCrawlPaused: t.exposeBoolean('regionCrawlPaused'),
   }),
 })
 

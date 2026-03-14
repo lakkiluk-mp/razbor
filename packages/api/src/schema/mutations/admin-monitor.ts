@@ -11,6 +11,7 @@ import {
   getMonitorSettings,
   setFreeSlotsClosed,
   setFreeSlotsBlocked,
+  setRegionCrawlPaused,
 } from '../../services/monitor-settings.service'
 import { MONITOR_SUBSCRIPTIONS_CHANNEL } from '@razbor/shared'
 
@@ -146,6 +147,20 @@ builder.mutationField('adminToggleMonitorSubscription', (t) =>
       }
 
       return newIsActive
+    },
+  }),
+)
+
+builder.mutationField('adminSetRegionCrawlPaused', (t) =>
+  t.field({
+    type: AdminMonitorSettingsType,
+    args: {
+      paused: t.arg.boolean({ required: true }),
+    },
+    resolve: async (_root, args, ctx): Promise<AdminMonitorSettingsData> => {
+      assertAdmin(ctx)
+      await setRegionCrawlPaused(ctx.redis, args.paused)
+      return getMonitorSettings(ctx.redis)
     },
   }),
 )
