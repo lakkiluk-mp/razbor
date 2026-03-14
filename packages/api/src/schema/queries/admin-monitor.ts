@@ -1,4 +1,5 @@
 import { builder } from '../builder'
+import { MONITOR_REGIONS } from '@razbor/shared'
 import { assertAdmin } from '../../utils/admin'
 import { parseSortOrder, validateSortField } from '../../utils/sort'
 import {
@@ -6,10 +7,12 @@ import {
   AdminMonitorSubscriptionsListType,
   AdminMonitorLogsListType,
   AdminMonitorSettingsType,
+  AdminRegionCrawlStatType,
   type AdminMonitorStatsData,
   type AdminMonitorSubscriptionsListData,
   type AdminMonitorLogsListData,
   type AdminMonitorSettingsData,
+  type AdminRegionCrawlStatData,
 } from '../types/admin-monitor'
 import { getMonitorSettings } from '../../services/monitor-settings.service'
 
@@ -199,6 +202,42 @@ builder.queryField('adminMonitorSettings', (t) =>
     resolve: async (_root, _args, ctx): Promise<AdminMonitorSettingsData> => {
       assertAdmin(ctx)
       return getMonitorSettings(ctx.redis)
+    },
+  }),
+)
+
+builder.queryField('adminRegionCrawlStats', (t) =>
+  t.field({
+    type: [AdminRegionCrawlStatType],
+    resolve: async (_root, _args, ctx): Promise<AdminRegionCrawlStatData[]> => {
+      assertAdmin(ctx)
+
+      const stats = await ctx.prisma.monitorListing.groupBy({
+        by: ['regionSlug'],
+        _count: { id: true },
+        _max: { lastSeenAt: true },
+      })
+
+      const activeStats = await ctx.prisma.monitorListing.groupBy({
+        by: ['regionSlug'],
+        where: { isActive: true },
+        _count: { id: true },
+      })
+
+      const activeMap = new Map(activeStats.map((s) => [s.regionSlug, s._count.id]))
+
+      const regionMap = new Map(MONITOR_REGIONS.map((r) => [r.slug, r.name]))
+
+      return MONITOR_REGIONS.map((region) => {
+        const stat = stats.find((s) => s.regionSlug === region.slug)
+        return {
+          regionSlug: region.slug,
+          regionName: regionMap.get(region.slug) ?? region.slug,
+          totalListings: stat?._count.id ?? 0,
+          activeListings: activeMap.get(region.slug) ?? 0,
+          lastSeenAt: stat?._max.lastSeenAt ?? null,
+        }
+      })
     },
   }),
 )

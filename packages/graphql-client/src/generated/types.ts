@@ -35,6 +35,68 @@ export type AdminCalculationsList = {
   totalCount: Maybe<Scalars['Int']['output']>;
 };
 
+export type AdminMonitorLogItem = {
+  __typename?: 'AdminMonitorLogItem';
+  brandSlug: Maybe<Scalars['String']['output']>;
+  createdAt: Maybe<Scalars['DateTime']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  level: Maybe<Scalars['String']['output']>;
+  message: Maybe<Scalars['String']['output']>;
+  meta: Maybe<Scalars['String']['output']>;
+  modelSlug: Maybe<Scalars['String']['output']>;
+  type: Maybe<Scalars['String']['output']>;
+};
+
+export type AdminMonitorLogsList = {
+  __typename?: 'AdminMonitorLogsList';
+  items: Maybe<Array<AdminMonitorLogItem>>;
+  totalCount: Maybe<Scalars['Int']['output']>;
+};
+
+export type AdminMonitorSettings = {
+  __typename?: 'AdminMonitorSettings';
+  freeSlotsBlocked: Maybe<Scalars['Boolean']['output']>;
+  freeSlotsClosed: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type AdminMonitorStats = {
+  __typename?: 'AdminMonitorStats';
+  activeSubscriptions: Maybe<Scalars['Int']['output']>;
+  totalMonitorUsers: Maybe<Scalars['Int']['output']>;
+  totalNotificationsSent: Maybe<Scalars['Int']['output']>;
+  totalSubscriptions: Maybe<Scalars['Int']['output']>;
+  uniqueGroups: Maybe<Scalars['Int']['output']>;
+};
+
+export type AdminMonitorSubscriptionItem = {
+  __typename?: 'AdminMonitorSubscriptionItem';
+  brandSlug: Maybe<Scalars['String']['output']>;
+  city: Maybe<Scalars['String']['output']>;
+  createdAt: Maybe<Scalars['DateTime']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  isActive: Maybe<Scalars['Boolean']['output']>;
+  label: Maybe<Scalars['String']['output']>;
+  lastNotifiedAt: Maybe<Scalars['DateTime']['output']>;
+  mileageMax: Maybe<Scalars['Int']['output']>;
+  modelSlug: Maybe<Scalars['String']['output']>;
+  notificationsSent: Maybe<Scalars['Int']['output']>;
+  priceMax: Maybe<Scalars['Int']['output']>;
+  priceMin: Maybe<Scalars['Int']['output']>;
+  searchRadius: Maybe<Scalars['Int']['output']>;
+  userFirstName: Maybe<Scalars['String']['output']>;
+  userId: Maybe<Scalars['String']['output']>;
+  userTelegramId: Maybe<Scalars['String']['output']>;
+  userUsername: Maybe<Scalars['String']['output']>;
+  yearMax: Maybe<Scalars['Int']['output']>;
+  yearMin: Maybe<Scalars['Int']['output']>;
+};
+
+export type AdminMonitorSubscriptionsList = {
+  __typename?: 'AdminMonitorSubscriptionsList';
+  items: Maybe<Array<AdminMonitorSubscriptionItem>>;
+  totalCount: Maybe<Scalars['Int']['output']>;
+};
+
 export type AdminPayment = {
   __typename?: 'AdminPayment';
   amount: Maybe<Scalars['Int']['output']>;
@@ -65,6 +127,12 @@ export type AdminStats = {
   totalUsers: Maybe<Scalars['Int']['output']>;
 };
 
+export type AdminStopFreeSlotsResult = {
+  __typename?: 'AdminStopFreeSlotsResult';
+  deactivatedCount: Maybe<Scalars['Int']['output']>;
+  settings: Maybe<AdminMonitorSettings>;
+};
+
 export type AdminSubscription = {
   __typename?: 'AdminSubscription';
   cancelAtPeriodEnd: Maybe<Scalars['Boolean']['output']>;
@@ -87,24 +155,6 @@ export type AdminSubscriptionsList = {
   totalCount: Maybe<Scalars['Int']['output']>;
 };
 
-export type AdminTelegramPayment = {
-  __typename?: 'AdminTelegramPayment';
-  amount: Maybe<Scalars['Int']['output']>;
-  calculationsCount: Maybe<Scalars['Int']['output']>;
-  createdAt: Maybe<Scalars['DateTime']['output']>;
-  id: Maybe<Scalars['ID']['output']>;
-  telegramPaymentId: Maybe<Scalars['String']['output']>;
-  userId: Maybe<Scalars['String']['output']>;
-  userName: Maybe<Scalars['String']['output']>;
-  userUsername: Maybe<Scalars['String']['output']>;
-};
-
-export type AdminTelegramPaymentsList = {
-  __typename?: 'AdminTelegramPaymentsList';
-  items: Maybe<Array<AdminTelegramPayment>>;
-  totalCount: Maybe<Scalars['Int']['output']>;
-};
-
 export type AdminUsageLog = {
   __typename?: 'AdminUsageLog';
   action: Maybe<Scalars['String']['output']>;
@@ -115,6 +165,7 @@ export type AdminUsageLog = {
 
 export type AdminUser = {
   __typename?: 'AdminUser';
+  activeMonitorCount: Maybe<Scalars['Int']['output']>;
   activeSubscription: Maybe<Scalars['Boolean']['output']>;
   createdAt: Maybe<Scalars['DateTime']['output']>;
   firstName: Maybe<Scalars['String']['output']>;
@@ -130,6 +181,7 @@ export type AdminUser = {
 
 export type AdminUserDetail = {
   __typename?: 'AdminUserDetail';
+  activeMonitorCount: Maybe<Scalars['Int']['output']>;
   activeSubscription: Maybe<Scalars['Boolean']['output']>;
   calculations: Maybe<Array<AdminCalculation>>;
   createdAt: Maybe<Scalars['DateTime']['output']>;
@@ -137,10 +189,10 @@ export type AdminUserDetail = {
   id: Maybe<Scalars['ID']['output']>;
   isPremium: Maybe<Scalars['Boolean']['output']>;
   lastName: Maybe<Scalars['String']['output']>;
+  monitorSubscriptions: Maybe<Array<AdminMonitorSubscriptionItem>>;
   recentUsageLogs: Maybe<Array<AdminUsageLog>>;
   subscriptions: Maybe<Array<AdminSubscription>>;
   telegramId: Maybe<Scalars['String']['output']>;
-  telegramPayments: Maybe<Array<AdminTelegramPayment>>;
   totalCalculations: Maybe<Scalars['Int']['output']>;
   totalPayments: Maybe<Scalars['Int']['output']>;
   trialCredits: Maybe<Scalars['Int']['output']>;
@@ -172,6 +224,33 @@ export type Brand = {
   models: Maybe<Array<Model>>;
   name: Maybe<Scalars['String']['output']>;
   slug: Maybe<Scalars['String']['output']>;
+};
+
+export type Broadcast = {
+  __typename?: 'Broadcast';
+  createdAt: Maybe<Scalars['DateTime']['output']>;
+  failedCount: Maybe<Scalars['Int']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  imageUrls: Maybe<Array<Scalars['String']['output']>>;
+  message: Maybe<Scalars['String']['output']>;
+  pinMessage: Maybe<Scalars['Boolean']['output']>;
+  sentCount: Maybe<Scalars['Int']['output']>;
+  status: Maybe<BroadcastStatus>;
+  totalUsers: Maybe<Scalars['Int']['output']>;
+  updatedAt: Maybe<Scalars['DateTime']['output']>;
+};
+
+export type BroadcastStatus =
+  | 'cancelled'
+  | 'completed'
+  | 'draft'
+  | 'failed'
+  | 'sending';
+
+export type BroadcastsList = {
+  __typename?: 'BroadcastsList';
+  items: Maybe<Array<Broadcast>>;
+  totalCount: Maybe<Scalars['Int']['output']>;
 };
 
 export type CalculateInput = {
@@ -232,6 +311,19 @@ export type ConfigOption = {
   price: Maybe<Scalars['Int']['output']>;
 };
 
+export type CreateMonitorSubscriptionInput = {
+  brandSlug: Scalars['String']['input'];
+  city?: InputMaybe<Scalars['String']['input']>;
+  label: Scalars['String']['input'];
+  mileageMax?: InputMaybe<Scalars['Int']['input']>;
+  modelSlug: Scalars['String']['input'];
+  priceMax?: InputMaybe<Scalars['Int']['input']>;
+  priceMin?: InputMaybe<Scalars['Int']['input']>;
+  searchRadius?: InputMaybe<Scalars['Int']['input']>;
+  yearMax?: InputMaybe<Scalars['Int']['input']>;
+  yearMin?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type CreateSubscriptionResult = {
   __typename?: 'CreateSubscriptionResult';
   confirmationToken: Maybe<Scalars['String']['output']>;
@@ -267,13 +359,67 @@ export type Model = {
   slug: Maybe<Scalars['String']['output']>;
 };
 
+export type MonitorCity = {
+  __typename?: 'MonitorCity';
+  name: Maybe<Scalars['String']['output']>;
+  slug: Maybe<Scalars['String']['output']>;
+};
+
+export type MonitorRegion = {
+  __typename?: 'MonitorRegion';
+  enabled: Maybe<Scalars['Boolean']['output']>;
+  name: Maybe<Scalars['String']['output']>;
+  slug: Maybe<Scalars['String']['output']>;
+};
+
+export type MonitorSubscription = {
+  __typename?: 'MonitorSubscription';
+  brandSlug: Maybe<Scalars['String']['output']>;
+  city: Maybe<Scalars['String']['output']>;
+  createdAt: Maybe<Scalars['DateTime']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  isActive: Maybe<Scalars['Boolean']['output']>;
+  label: Maybe<Scalars['String']['output']>;
+  lastNotifiedAt: Maybe<Scalars['DateTime']['output']>;
+  mileageMax: Maybe<Scalars['Int']['output']>;
+  modelSlug: Maybe<Scalars['String']['output']>;
+  notificationsSent: Maybe<Scalars['Int']['output']>;
+  priceMax: Maybe<Scalars['Int']['output']>;
+  priceMin: Maybe<Scalars['Int']['output']>;
+  searchRadius: Maybe<Scalars['Int']['output']>;
+  updatedAt: Maybe<Scalars['DateTime']['output']>;
+  yearMax: Maybe<Scalars['Int']['output']>;
+  yearMin: Maybe<Scalars['Int']['output']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  adminResumeFreeSlots: Maybe<AdminMonitorSettings>;
+  adminSetFreeSlotsClosed: Maybe<AdminMonitorSettings>;
+  adminStopFreeSlots: Maybe<AdminStopFreeSlotsResult>;
+  adminToggleMonitorSubscription: Maybe<Scalars['Boolean']['output']>;
   calculate: Maybe<CalculationResult>;
+  cancelBroadcast: Maybe<Broadcast>;
   cancelSubscription: Maybe<SubscriptionInfo>;
+  createBroadcast: Maybe<Broadcast>;
+  createMonitorSubscription: Maybe<MonitorSubscription>;
   createSubscription: Maybe<CreateSubscriptionResult>;
+  deleteMonitorSubscription: Maybe<Scalars['Boolean']['output']>;
+  pauseMonitorSubscription: Maybe<MonitorSubscription>;
   removePaymentMethod: Maybe<Scalars['Boolean']['output']>;
   resumeSubscription: Maybe<SubscriptionInfo>;
+  sendBroadcast: Maybe<Broadcast>;
+  updateMonitorSubscription: Maybe<MonitorSubscription>;
+};
+
+
+export type MutationAdminSetFreeSlotsClosedArgs = {
+  closed: Scalars['Boolean']['input'];
+};
+
+
+export type MutationAdminToggleMonitorSubscriptionArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -282,13 +428,51 @@ export type MutationCalculateArgs = {
 };
 
 
+export type MutationCancelBroadcastArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationCreateBroadcastArgs = {
+  imageUrls: InputMaybe<Array<Scalars['String']['input']>>;
+  message: InputMaybe<Scalars['String']['input']>;
+  pinMessage: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type MutationCreateMonitorSubscriptionArgs = {
+  input: CreateMonitorSubscriptionInput;
+};
+
+
 export type MutationCreateSubscriptionArgs = {
   plan: SubscriptionPlan;
 };
 
 
+export type MutationDeleteMonitorSubscriptionArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationPauseMonitorSubscriptionArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationRemovePaymentMethodArgs = {
   paymentMethodId: Scalars['ID']['input'];
+};
+
+
+export type MutationSendBroadcastArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationUpdateMonitorSubscriptionArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdateMonitorSubscriptionInput;
 };
 
 export type Part = {
@@ -350,11 +534,15 @@ export type Price = {
 
 export type Query = {
   __typename?: 'Query';
+  adminBroadcasts: Maybe<BroadcastsList>;
   adminCalculations: Maybe<AdminCalculationsList>;
+  adminMonitorLogs: Maybe<AdminMonitorLogsList>;
+  adminMonitorSettings: Maybe<AdminMonitorSettings>;
+  adminMonitorStats: Maybe<AdminMonitorStats>;
+  adminMonitorSubscriptions: Maybe<AdminMonitorSubscriptionsList>;
   adminPayments: Maybe<AdminPaymentsList>;
   adminStats: Maybe<AdminStats>;
   adminSubscriptions: Maybe<AdminSubscriptionsList>;
-  adminTelegramPayments: Maybe<AdminTelegramPaymentsList>;
   adminUser: Maybe<AdminUserDetail>;
   adminUsers: Maybe<AdminUsersList>;
   brand: Maybe<Brand>;
@@ -365,38 +553,70 @@ export type Query = {
   generationConfigs: Maybe<GenerationConfigs>;
   me: Maybe<UserProfile>;
   model: Maybe<Model>;
+  monitorCities: Maybe<Array<MonitorCity>>;
+  monitorRegions: Maybe<Array<MonitorRegion>>;
+  monitorSubscription: Maybe<MonitorSubscription>;
+  monitorSubscriptions: Maybe<Array<MonitorSubscription>>;
   myCalculations: Maybe<Array<CalculationHistoryItem>>;
   myPaymentMethods: Maybe<Array<PaymentMethodInfo>>;
   mySubscription: Maybe<SubscriptionInfo>;
+  regionBrands: Maybe<Array<Scalars['String']['output']>>;
+  regionListings: Maybe<Array<RegionListing>>;
   schematicZones: Maybe<Array<SchematicZone>>;
   subscriptionPlans: Maybe<Array<SubscriptionPlanInfo>>;
   usageInfo: Maybe<UsageInfo>;
 };
 
 
+export type QueryAdminBroadcastsArgs = {
+  limit: InputMaybe<Scalars['Int']['input']>;
+  offset: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryAdminCalculationsArgs = {
   limit: InputMaybe<Scalars['Int']['input']>;
   offset: InputMaybe<Scalars['Int']['input']>;
+  sortBy: InputMaybe<Scalars['String']['input']>;
+  sortOrder: InputMaybe<Scalars['String']['input']>;
   userId: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type QueryAdminMonitorLogsArgs = {
+  level: InputMaybe<Scalars['String']['input']>;
+  limit: InputMaybe<Scalars['Int']['input']>;
+  offset: InputMaybe<Scalars['Int']['input']>;
+  sortBy: InputMaybe<Scalars['String']['input']>;
+  sortOrder: InputMaybe<Scalars['String']['input']>;
+  type: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryAdminMonitorSubscriptionsArgs = {
+  isActive: InputMaybe<Scalars['Boolean']['input']>;
+  limit: InputMaybe<Scalars['Int']['input']>;
+  offset: InputMaybe<Scalars['Int']['input']>;
+  search: InputMaybe<Scalars['String']['input']>;
+  sortBy: InputMaybe<Scalars['String']['input']>;
+  sortOrder: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryAdminPaymentsArgs = {
   limit: InputMaybe<Scalars['Int']['input']>;
   offset: InputMaybe<Scalars['Int']['input']>;
+  sortBy: InputMaybe<Scalars['String']['input']>;
+  sortOrder: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryAdminSubscriptionsArgs = {
   limit: InputMaybe<Scalars['Int']['input']>;
   offset: InputMaybe<Scalars['Int']['input']>;
+  sortBy: InputMaybe<Scalars['String']['input']>;
+  sortOrder: InputMaybe<Scalars['String']['input']>;
   status: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryAdminTelegramPaymentsArgs = {
-  limit: InputMaybe<Scalars['Int']['input']>;
-  offset: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -409,6 +629,8 @@ export type QueryAdminUsersArgs = {
   limit: InputMaybe<Scalars['Int']['input']>;
   offset: InputMaybe<Scalars['Int']['input']>;
   search: InputMaybe<Scalars['String']['input']>;
+  sortBy: InputMaybe<Scalars['String']['input']>;
+  sortOrder: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -445,15 +667,75 @@ export type QueryModelArgs = {
 };
 
 
+export type QueryMonitorSubscriptionArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type QueryMyCalculationsArgs = {
   limit: InputMaybe<Scalars['Int']['input']>;
   offset: InputMaybe<Scalars['Int']['input']>;
 };
 
 
+export type QueryRegionBrandsArgs = {
+  regionSlug: Scalars['String']['input'];
+};
+
+
+export type QueryRegionListingsArgs = {
+  brand: InputMaybe<Scalars['String']['input']>;
+  hideDamaged?: InputMaybe<Scalars['Boolean']['input']>;
+  hideInactive?: InputMaybe<Scalars['Boolean']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  minProfit: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  regionSlug: Scalars['String']['input'];
+  sortBy?: InputMaybe<RegionListingSortBy>;
+};
+
+
 export type QuerySchematicZonesArgs = {
   bodyType: BodyType;
 };
+
+export type RegionListing = {
+  __typename?: 'RegionListing';
+  brand: Maybe<Scalars['String']['output']>;
+  city: Maybe<Scalars['String']['output']>;
+  configGroups: Maybe<Scalars['String']['output']>;
+  createdAt: Maybe<Scalars['DateTime']['output']>;
+  engineVolume: Maybe<Scalars['String']['output']>;
+  estimateAvg: Maybe<Scalars['Int']['output']>;
+  estimateExact: Maybe<Scalars['Boolean']['output']>;
+  estimateMax: Maybe<Scalars['Int']['output']>;
+  estimateMin: Maybe<Scalars['Int']['output']>;
+  extId: Maybe<Scalars['String']['output']>;
+  generationId: Maybe<Scalars['String']['output']>;
+  id: Maybe<Scalars['ID']['output']>;
+  imageUrl: Maybe<Scalars['String']['output']>;
+  isActive: Maybe<Scalars['Boolean']['output']>;
+  isDamaged: Maybe<Scalars['Boolean']['output']>;
+  lastSeenAt: Maybe<Scalars['DateTime']['output']>;
+  mileage: Maybe<Scalars['Int']['output']>;
+  model: Maybe<Scalars['String']['output']>;
+  price: Maybe<Scalars['Int']['output']>;
+  profit: Maybe<Scalars['Int']['output']>;
+  profitPercent: Maybe<Scalars['Float']['output']>;
+  publishedAt: Maybe<Scalars['DateTime']['output']>;
+  regionSlug: Maybe<Scalars['String']['output']>;
+  sellerType: Maybe<Scalars['String']['output']>;
+  title: Maybe<Scalars['String']['output']>;
+  transmission: Maybe<Scalars['String']['output']>;
+  url: Maybe<Scalars['String']['output']>;
+  year: Maybe<Scalars['Int']['output']>;
+};
+
+export type RegionListingSortBy =
+  | 'DATE_DESC'
+  | 'PRICE_ASC'
+  | 'PRICE_DESC'
+  | 'PROFIT_DESC';
 
 export type SchematicZone = {
   __typename?: 'SchematicZone';
@@ -506,6 +788,18 @@ export type SubscriptionStatus =
   | 'expired'
   | 'past_due';
 
+export type UpdateMonitorSubscriptionInput = {
+  city?: InputMaybe<Scalars['String']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  mileageMax?: InputMaybe<Scalars['Int']['input']>;
+  priceMax?: InputMaybe<Scalars['Int']['input']>;
+  priceMin?: InputMaybe<Scalars['Int']['input']>;
+  searchRadius?: InputMaybe<Scalars['Int']['input']>;
+  yearMax?: InputMaybe<Scalars['Int']['input']>;
+  yearMin?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type UsageInfo = {
   __typename?: 'UsageInfo';
   hasActiveSubscription: Maybe<Scalars['Boolean']['output']>;
@@ -520,6 +814,7 @@ export type UserProfile = {
   id: Maybe<Scalars['ID']['output']>;
   isPremium: Maybe<Scalars['Boolean']['output']>;
   lastName: Maybe<Scalars['String']['output']>;
+  monitorSlotLimit: Maybe<Scalars['Int']['output']>;
   subscription: Maybe<SubscriptionInfo>;
   subscriptionCredits: Maybe<Scalars['Int']['output']>;
   totalCalculations: Maybe<Scalars['Int']['output']>;

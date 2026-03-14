@@ -1,9 +1,10 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Calculator, Clock, Bell, User } from 'lucide-react'
+import { Calculator, Clock, Bell, Search, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const tabs = [
   { key: 'calc', label: 'Расчёт', icon: Calculator, to: '/' },
+  { key: 'region', label: 'Лента', icon: Search, to: '/region-feed' },
   { key: 'history', label: 'История', icon: Clock, to: '/history' },
   { key: 'monitor', label: 'Мониторинг', icon: Bell, to: '/monitor' },
   { key: 'profile', label: 'Профиль', icon: User, to: '/profile' },
@@ -12,6 +13,7 @@ const tabs = [
 function getActiveTab(pathname: string) {
   if (pathname.startsWith('/history')) return 'history'
   if (pathname.startsWith('/monitor')) return 'monitor'
+  if (pathname.startsWith('/region-feed')) return 'region'
   if (pathname.startsWith('/profile') || pathname.startsWith('/subscribe')) return 'profile'
   if (pathname === '/' || pathname.startsWith('/brand') || pathname.startsWith('/estimation') || pathname.startsWith('/result')) return 'calc'
   return null

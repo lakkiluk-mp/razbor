@@ -1,6 +1,6 @@
 import { prisma } from './prisma.js'
 
-export async function cleanupOldLogs(retentionDays: number = 7): Promise<number> {
+export async function cleanupOldLogs(retentionDays: number = 2): Promise<number> {
   try {
     const cutoff = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000)
     const result = await prisma.monitorLog.deleteMany({

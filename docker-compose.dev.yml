@@ -98,6 +98,7 @@ services:
     volumes:
       - ./apps/listing-monitor/src:/app/apps/listing-monitor/src
       - ./packages/db/prisma:/app/packages/db/prisma
+      - ./packages/shared/src:/app/packages/shared/src
     env_file:
       - .env
     environment:
@@ -112,6 +113,8 @@ services:
       LOG_LEVEL: debug
       NODE_ENV: development
       CRAWL_INTERVAL_MS: ${CRAWL_INTERVAL_MS}
+      REGION_CRAWL_ENABLED: ${REGION_CRAWL_ENABLED:-true}
+      REGION_DEEP_CRAWL_CRON: ${REGION_DEEP_CRAWL_CRON:-0 22 * * *}
     depends_on:
       postgres:
         condition: service_healthy

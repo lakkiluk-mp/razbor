@@ -5,6 +5,7 @@ import { prisma } from './storage/prisma.js'
 import { SubscriptionMatcher } from './matcher/subscription-matcher.js'
 import { createCrawlerWorker } from './workers/crawler.worker.js'
 import { createNotifierWorker } from './workers/notifier.worker.js'
+import { createRegionCrawlerWorker, destroyRegionFetcher, type RegionCrawlJobData } from './workers/region-crawler.worker.js'
 import { MonitorScheduler } from './workers/scheduler.worker.js'
 import { destroyFetcher } from './crawler/avito-listings.js'
 import { createAdminServer } from './admin/server.js'
@@ -22,13 +23,20 @@ async function main() {
   const notifyQueue = new Queue<NotifyJobData>('notify', {
     connection: createBullConnection(),
   })
+  const regionCrawlQueue = new Queue<RegionCrawlJobData>('region-crawl', {
+    connection: createBullConnection(),
+  })
+
+  await regionCrawlQueue.drain()
+  logger.info('Region crawl queue drained on startup')
 
   const matcher = new SubscriptionMatcher()
 
   const crawlerWorker = createCrawlerWorker(notifyQueue, matcher)
   const notifierWorker = createNotifierWorker()
+  const regionCrawlerWorker = createRegionCrawlerWorker(prisma)
 
-  const scheduler = new MonitorScheduler(crawlQueue, matcher)
+  const scheduler = new MonitorScheduler(crawlQueue, regionCrawlQueue, matcher)
   await scheduler.start()
 
   const adminServer = createAdminServer(scheduler, crawlQueue, notifyQueue)
@@ -57,11 +65,14 @@ async function main() {
     try {
       adminServer.close()
       await scheduler.stop()
+      await regionCrawlerWorker.close()
+      await regionCrawlQueue.close()
       await crawlerWorker.close()
       await notifierWorker.close()
       await crawlQueue.close()
       await notifyQueue.close()
       await destroyFetcher()
+      destroyRegionFetcher()
       await disconnectRedis()
       await prisma.$disconnect()
 

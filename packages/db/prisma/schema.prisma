@@ -432,3 +432,61 @@ model MonitorLog {
   @@index([brandSlug, modelSlug, createdAt])
   @@map("monitor_logs")
 }
+
+model MonitorListing {
+  id             String   @id @default(cuid())
+  extId          String
+  regionSlug     String
+  title          String
+  brand          String   @default("")
+  model          String   @default("")
+  engineVolume   String   @default("")
+  transmission   String   @default("")
+  price          Int
+  year           Int?
+  url            String
+  city           String
+  imageUrl       String   @default("")
+  publishedAt    DateTime
+  sellerType     String   @default("Частное лицо")
+  mileage        Int?
+
+  isDamaged      Boolean  @default(false)
+
+  generationId   String?
+  configGroups   String   @default("")
+  estimateMin    Int?
+  estimateMax    Int?
+  estimateAvg    Int?
+  estimateExact  Boolean  @default(false)
+  profit         Int?
+
+  createdAt      DateTime @default(now())
+  lastSeenAt     DateTime @default(now())
+  isActive       Boolean  @default(true)
+
+  @@unique([extId, regionSlug])
+  @@index([regionSlug, isActive, publishedAt(sort: Desc)])
+  @@index([regionSlug, brand])
+  @@index([regionSlug, profit(sort: Desc)])
+  @@index([lastSeenAt])
+  @@map("monitor_listings")
+}
+
+model UnmatchedListing {
+  id             String   @id @default(cuid())
+  regionSlug     String
+  extId          String
+  title          String
+  brand          String   @default("")
+  model          String   @default("")
+  year           Int?
+  price          Int
+  reason         String
+  createdAt      DateTime @default(now())
+
+  @@unique([extId, regionSlug])
+  @@index([regionSlug, reason])
+  @@index([brand, model])
+  @@map("unmatched_listings")
+}

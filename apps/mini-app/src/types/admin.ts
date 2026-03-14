@@ -67,6 +67,18 @@ export interface AdminMonitorLogsResponse {
   }
 }
 
+export interface AdminRegionCrawlStat {
+  regionSlug: string
+  regionName: string
+  totalListings: number
+  activeListings: number
+  lastSeenAt: string | null
+}
+
+export interface AdminRegionCrawlStatsResponse {
+  adminRegionCrawlStats: AdminRegionCrawlStat[]
+}
+
 export interface AdminMonitorSettings {
   freeSlotsClosed: boolean
   freeSlotsBlocked: boolean

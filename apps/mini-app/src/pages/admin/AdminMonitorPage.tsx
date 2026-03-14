@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { Search, Users, Bell, Radio, Layers, ShieldAlert } from 'lucide-react'
+import { Search, Users, Bell, Radio, Layers, ShieldAlert, MapPin } from 'lucide-react'
 import { fetchGraphQL, queries, mutations } from '@/lib/graphql-client'
 import { DataTable } from '@/components/admin/data-table'
 import { formatDate } from '@/lib/format'
@@ -16,6 +16,7 @@ import type {
   AdminStopFreeSlotsResponse,
   AdminResumeFreeSlotsResponse,
   AdminToggleMonitorSubscriptionResponse,
+  AdminRegionCrawlStatsResponse,
 } from '@/types/admin'
 
 const PAGE_SIZE = 20
@@ -134,6 +135,12 @@ export function AdminMonitorPage() {
   const { data: statsData, isLoading: statsLoading } = useQuery({
     queryKey: ['adminMonitorStats'],
     queryFn: () => fetchGraphQL<AdminMonitorStatsResponse>(queries.adminMonitorStats),
+    staleTime: 60 * 1000,
+  })
+
+  const { data: regionData, isLoading: regionLoading } = useQuery({
+    queryKey: ['adminRegionCrawlStats'],
+    queryFn: () => fetchGraphQL<AdminRegionCrawlStatsResponse>(queries.adminRegionCrawlStats),
     staleTime: 60 * 1000,
   })
 
@@ -419,6 +426,44 @@ export function AdminMonitorPage() {
           ))}
         </div>
       )}
+
+      <div className="bg-zinc-900 rounded-xl p-4 space-y-3">
+        <div className="flex items-center gap-2">
+          <MapPin className="w-4 h-4 text-amber-500" />
+          <span className="text-sm font-semibold text-zinc-200">Областной парсинг</span>
+        </div>
+
+        {regionLoading ? (
+          <div className="flex justify-center py-4">
+            <div className="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : (
+          <div className="space-y-1">
+            {(regionData?.adminRegionCrawlStats ?? []).map((r) => {
+              const age = r.lastSeenAt
+                ? Math.round((Date.now() - new Date(r.lastSeenAt).getTime()) / 60000)
+                : null
+              const isStale = age !== null && age > 15
+              return (
+                <div key={r.regionSlug} className="flex items-center justify-between gap-2 py-1.5 border-b border-zinc-800 last:border-0">
+                  <span className="text-sm text-zinc-300">{r.regionName}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-zinc-500">
+                      {r.activeListings}/{r.totalListings}
+                    </span>
+                    <span className={cn(
+                      'text-xs whitespace-nowrap',
+                      isStale ? 'text-red-400' : 'text-green-400'
+                    )}>
+                      {age !== null ? (age < 60 ? `${age} мин назад` : `${Math.round(age / 60)} ч назад`) : 'нет данных'}
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">

@@ -61,3 +61,11 @@ export function getMonitorSlotLimits(): { trial: number; premium: number } {
 export const MONITOR_SUBSCRIPTIONS_CHANNEL = 'monitor:subscriptions:changed'
 
 export { parseAvitoUrl, type AvitoUrlParseResult } from './avito-url-parser'
+
+export { MONITOR_REGIONS, type MonitorRegion, type RegionSlug } from './regions'
+
+export { AVITO_BRAND_MAP, mapAvitoBrand } from './avito-brand-map'
+
+export { AVITO_MODEL_MAP, mapAvitoModel } from './avito-model-map'
+
+export const DAMAGED_TITLE_RE = /(?<!\p{L})бит(?:ый|ая|ое|\.)(?!\p{L})|(?<!\p{L})аварийн|(?<!\p{L})после\s*дтп(?!\p{L})|(?<!\p{L})на\s+запчасти(?!\p{L})|(?<!\p{L})под\s+разбор(?!\p{L})|(?<!\p{L})в\s+разбор(?!\p{L})|(?<!\p{L})тотал/iu

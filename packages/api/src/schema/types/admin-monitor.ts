@@ -146,6 +146,31 @@ builder.objectType(AdminMonitorLogsListType, {
   }),
 })
 
+export interface AdminRegionCrawlStatData {
+  regionSlug: string
+  regionName: string
+  totalListings: number
+  activeListings: number
+  lastSeenAt: Date | null
+}
+
+export const AdminRegionCrawlStatType =
+  builder.objectRef<AdminRegionCrawlStatData>('AdminRegionCrawlStat')
+
+builder.objectType(AdminRegionCrawlStatType, {
+  fields: (t) => ({
+    regionSlug: t.exposeString('regionSlug'),
+    regionName: t.exposeString('regionName'),
+    totalListings: t.exposeInt('totalListings'),
+    activeListings: t.exposeInt('activeListings'),
+    lastSeenAt: t.field({
+      type: 'DateTime',
+      nullable: true,
+      resolve: (parent) => parent.lastSeenAt,
+    }),
+  }),
+})
+
 export interface AdminMonitorSettingsData {
   freeSlotsClosed: boolean
   freeSlotsBlocked: boolean

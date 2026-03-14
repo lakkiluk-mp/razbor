@@ -20,6 +20,7 @@ import { TelegramRequired } from '@/components/TelegramRequired'
 import { MonitorListPage } from '@/pages/MonitorListPage'
 import { MonitorNewPage } from '@/pages/MonitorNewPage'
 import { MonitorDetailPage } from '@/pages/MonitorDetailPage'
+import { RegionFeedPage } from '@/pages/RegionFeedPage'
 import { OffersPage } from '@/pages/static/OffersPage'
 import { PrivacyPage } from '@/pages/static/PrivacyPage'
 import { AdminGuard } from '@/components/admin/admin-guard'
@@ -90,6 +91,7 @@ export function App() {
             <Route path="/monitor" element={<MonitorListPage />} />
             <Route path="/monitor/new" element={<MonitorNewPage />} />
             <Route path="/monitor/:id" element={<MonitorDetailPage />} />
+            <Route path="/region-feed" element={<RegionFeedPage />} />
             <Route path="/:brandSlug" element={<ModelsPage />} />
             <Route path="/:brandSlug/:modelSlug" element={<GenerationsPage />} />
             <Route path="/:brandSlug/:modelSlug/:generationSlug/config" element={<ConfigPage />} />

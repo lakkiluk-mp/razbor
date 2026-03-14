@@ -625,6 +625,62 @@ export const queries = {
       }
     }
   `,
+  adminRegionCrawlStats: `
+    query AdminRegionCrawlStats {
+      adminRegionCrawlStats {
+        regionSlug
+        regionName
+        totalListings
+        activeListings
+        lastSeenAt
+      }
+    }
+  `,
+  monitorRegions: `
+    query MonitorRegions {
+      monitorRegions {
+        name
+        slug
+      }
+    }
+  `,
+  regionListings: `
+    query RegionListings($regionSlug: String!, $limit: Int, $offset: Int, $brand: String, $minProfit: Int, $hideDamaged: Boolean, $hideInactive: Boolean, $sortBy: RegionListingSortBy) {
+      regionListings(regionSlug: $regionSlug, limit: $limit, offset: $offset, brand: $brand, minProfit: $minProfit, hideDamaged: $hideDamaged, hideInactive: $hideInactive, sortBy: $sortBy) {
+        id
+        extId
+        title
+        brand
+        model
+        engineVolume
+        transmission
+        price
+        year
+        url
+        city
+        imageUrl
+        publishedAt
+        sellerType
+        mileage
+        isDamaged
+        isActive
+        generationId
+        configGroups
+        estimateMin
+        estimateMax
+        estimateAvg
+        estimateExact
+        profit
+        profitPercent
+        regionSlug
+      }
+    }
+  `,
+  regionBrands: `
+    query RegionBrands($regionSlug: String!) {
+      regionBrands(regionSlug: $regionSlug)
+    }
+  `,
 }
 
 export const mutations = {

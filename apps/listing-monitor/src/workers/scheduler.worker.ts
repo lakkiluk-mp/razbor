@@ -1,10 +1,11 @@
 import { Queue } from 'bullmq'
-import { MONITOR_SUBSCRIPTIONS_CHANNEL } from '@razbor/shared'
+import { MONITOR_SUBSCRIPTIONS_CHANNEL, MONITOR_REGIONS } from '@razbor/shared'
 import { SubscriptionMatcher, type CrawlGroup } from '../matcher/subscription-matcher.js'
 import { redisSub } from '../storage/redis.js'
 import { createLogger } from '../logger/index.js'
 import { config } from '../config.js'
 import { type CrawlJobData } from './crawler.worker.js'
+import { type RegionCrawlJobData } from './region-crawler.worker.js'
 import { writeMonitorLog, cleanupOldLogs } from '../storage/monitor-log.js'
 
 const logger = createLogger('scheduler')
@@ -15,14 +16,23 @@ function delay(ms: number): Promise<void> {
 
 export class MonitorScheduler {
   private crawlQueue: Queue<CrawlJobData>
+  private regionCrawlQueue: Queue<RegionCrawlJobData>
   private matcher: SubscriptionMatcher
   private activeGroupKeys = new Set<string>()
   private lastCleanupAt: number = 0
   private isRunning = false
   private cyclePromise: Promise<void> | null = null
+  private regionCyclePromise: Promise<void> | null = null
+  private deepCrawlRequested = false
+  private lastDeepCrawlDate = ''
 
-  constructor(crawlQueue: Queue<CrawlJobData>, matcher: SubscriptionMatcher) {
+  constructor(
+    crawlQueue: Queue<CrawlJobData>,
+    regionCrawlQueue: Queue<RegionCrawlJobData>,
+    matcher: SubscriptionMatcher,
+  ) {
     this.crawlQueue = crawlQueue
+    this.regionCrawlQueue = regionCrawlQueue
     this.matcher = matcher
   }
 
@@ -37,12 +47,16 @@ export class MonitorScheduler {
     this.isRunning = true
     this.cyclePromise = this.runContinuousLoop()
 
+    if (config.regionCrawl.enabled) {
+      this.regionCyclePromise = this.runRegionCrawlLoop()
+    }
+
     logger.info({ groups: this.activeGroupKeys.size }, 'Scheduler started')
     writeMonitorLog({
       type: 'SYSTEM',
       level: 'INFO',
-      message: `Scheduler started: ${this.activeGroupKeys.size} groups`,
-      meta: { groups: this.activeGroupKeys.size },
+      message: `Scheduler started: ${this.activeGroupKeys.size} groups, region crawl: ${config.regionCrawl.enabled ? 'ON' : 'OFF'}`,
+      meta: { groups: this.activeGroupKeys.size, regionCrawl: config.regionCrawl.enabled },
     })
   }
 
@@ -52,6 +66,10 @@ export class MonitorScheduler {
 
     if (this.cyclePromise) {
       await this.cyclePromise.catch(() => {})
+    }
+
+    if (this.regionCyclePromise) {
+      await this.regionCyclePromise.catch(() => {})
     }
 
     this.activeGroupKeys.clear()
@@ -66,6 +84,15 @@ export class MonitorScheduler {
     if (repeatableJobs.length > 0) {
       logger.info({ count: repeatableJobs.length }, 'Cleaned up old repeatable jobs')
     }
+
+    const regionRepeatableJobs = await this.regionCrawlQueue.getRepeatableJobs()
+    for (const job of regionRepeatableJobs) {
+      await this.regionCrawlQueue.removeRepeatableByKey(job.key)
+    }
+    if (regionRepeatableJobs.length > 0) {
+      logger.info({ count: regionRepeatableJobs.length }, 'Cleaned up old region repeatable jobs')
+    }
+
   }
 
   private refreshGroups(): void {
@@ -154,6 +181,143 @@ export class MonitorScheduler {
         })
         await delay(10_000)
       }
+    }
+  }
+
+  private checkDeepCrawlCron(): boolean {
+    const now = new Date()
+    const todayKey = now.toISOString().slice(0, 10)
+
+    const cronParts = config.regionCrawl.deepCrawlCron.split(' ')
+    const cronMinute = parseInt(cronParts[0] ?? '0', 10)
+    const cronHourPart = cronParts[1] ?? '0'
+
+    let cronHours: number[]
+    if (cronHourPart.startsWith('*/')) {
+      const interval = parseInt(cronHourPart.slice(2), 10)
+      cronHours = Array.from({ length: Math.floor(24 / interval) }, (_, i) => i * interval)
+    } else {
+      cronHours = [parseInt(cronHourPart, 10)]
+    }
+
+    const currentHour = now.getUTCHours()
+    const currentMinute = now.getUTCMinutes()
+
+    for (const h of cronHours) {
+      const key = `${todayKey}-${h}`
+      if (currentHour === h && currentMinute >= cronMinute && currentMinute < cronMinute + 10) {
+        if (this.lastDeepCrawlDate !== key) {
+          this.lastDeepCrawlDate = key
+          return true
+        }
+      }
+    }
+
+    return false
+  }
+
+  private async runRegionCrawlLoop(): Promise<void> {
+    while (this.isRunning) {
+      if (!config.regionCrawl.enabled) {
+        await delay(60_000)
+        continue
+      }
+
+      if (this.checkDeepCrawlCron()) {
+        this.deepCrawlRequested = true
+      }
+
+      if (this.deepCrawlRequested) {
+        this.deepCrawlRequested = false
+        await this.runInterleavedDeepCrawl()
+      }
+
+      const cycleStart = Date.now()
+
+      for (const region of MONITOR_REGIONS) {
+        if (!this.isRunning) break
+
+        if (this.checkDeepCrawlCron()) {
+          this.deepCrawlRequested = true
+          break
+        }
+
+        const job = await this.regionCrawlQueue.add(`region:${region.slug}`, {
+          regionSlug: region.slug,
+          mode: 'quick' as const,
+        })
+
+        await this.waitForRegionJob(job.id!)
+      }
+
+      const elapsed = Date.now() - cycleStart
+      const remaining = config.regionCrawl.quickCrawlIntervalMs - elapsed
+
+      if (remaining > 0 && this.isRunning) {
+        await delay(remaining)
+      }
+    }
+  }
+
+  private async runInterleavedDeepCrawl(): Promise<void> {
+    logger.info(`Deep crawl started: ${MONITOR_REGIONS.length} regions, interleaved`)
+    writeMonitorLog({
+      type: 'CRAWL',
+      level: 'INFO',
+      message: `Deep crawl начат: ${MONITOR_REGIONS.length} регионов с интерливингом`,
+      meta: { regions: MONITOR_REGIONS.length, pages: config.regionCrawl.deepCrawlPages },
+    })
+
+    const cycleStart = Date.now()
+
+    for (let i = 0; i < MONITOR_REGIONS.length; i++) {
+      if (!this.isRunning) break
+
+      const region = MONITOR_REGIONS[i]
+
+      const deepJob = await this.regionCrawlQueue.add(`region-deep:${region.slug}`, {
+        regionSlug: region.slug,
+        mode: 'deep' as const,
+      })
+      await this.waitForRegionJob(deepJob.id!)
+
+      logger.info({ regionSlug: region.slug, progress: `${i + 1}/${MONITOR_REGIONS.length}` }, 'Deep crawl region done, running quick refresh')
+
+      for (const r of MONITOR_REGIONS) {
+        if (!this.isRunning) break
+        const quickJob = await this.regionCrawlQueue.add(`region-quick:${r.slug}`, {
+          regionSlug: r.slug,
+          mode: 'quick' as const,
+        })
+        await this.waitForRegionJob(quickJob.id!)
+      }
+    }
+
+    const elapsedMin = Math.round((Date.now() - cycleStart) / 60000)
+    logger.info({ elapsedMin }, 'Deep crawl cycle complete')
+    writeMonitorLog({
+      type: 'CRAWL',
+      level: 'INFO',
+      message: `Deep crawl завершён за ${elapsedMin} мин`,
+      meta: { regions: MONITOR_REGIONS.length, elapsedMin },
+    })
+  }
+
+  private async waitForRegionJob(jobId: string): Promise<void> {
+    const maxWait = 900_000
+    const pollInterval = 2000
+    const start = Date.now()
+
+    while (this.isRunning && Date.now() - start < maxWait) {
+      const job = await this.regionCrawlQueue.getJob(jobId)
+      if (!job) return
+      const state = await job.getState()
+      if (state === 'completed' || state === 'failed') return
+      await delay(pollInterval)
+    }
+
+    if (Date.now() - start >= maxWait) {
+      logger.warn({ jobId }, 'Timed out waiting for region job')
     }
   }
 
