@@ -4,9 +4,9 @@ import { cn } from '@/lib/utils'
 
 const tabs = [
   { key: 'calc', label: 'Расчёт', icon: Calculator, to: '/' },
-  { key: 'region', label: 'Лента', icon: Search, to: '/region-feed' },
+  { key: 'monitor', label: 'Лента', icon: Bell, to: '/monitor' },
+  { key: 'region', label: 'Авто', icon: Search, to: '/region-feed' },
   { key: 'history', label: 'История', icon: Clock, to: '/history' },
-  { key: 'monitor', label: 'Мониторинг', icon: Bell, to: '/monitor' },
   { key: 'profile', label: 'Профиль', icon: User, to: '/profile' },
 ] as const
 
