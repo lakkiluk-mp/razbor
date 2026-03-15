@@ -1,7 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { HashRouter, Routes, Route } from 'react-router-dom'
 import { getQueryClient } from '@/lib/query-client'
+import { fetchGraphQL, mutations } from '@/lib/graphql-client'
 import { AppLayout } from '@/components/layout/app-layout'
 import { BrandsPage } from '@/pages/BrandsPage'
 import { ModelsPage } from '@/pages/ModelsPage'
@@ -64,8 +65,18 @@ function useTelegramApp() {
   }, [])
 }
 
+function useLogAppOpen() {
+  const sent = useRef(false)
+  useEffect(() => {
+    if (sent.current) return
+    sent.current = true
+    fetchGraphQL(mutations.logAppOpen).catch(() => {})
+  }, [])
+}
+
 export function App() {
   useTelegramApp()
+  useLogAppOpen()
 
   const isTelegram = Boolean(window.Telegram?.WebApp?.initData)
 

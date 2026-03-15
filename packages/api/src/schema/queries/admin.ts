@@ -8,12 +8,14 @@ import {
   AdminPaymentsListType,
   AdminSubscriptionsListType,
   AdminCalculationsListType,
+  AdminUserAnalyticsType,
   type AdminStatsData,
   type AdminUserDetailData,
   type AdminUsersListData,
   type AdminPaymentsListData,
   type AdminSubscriptionsListData,
   type AdminCalculationsListData,
+  type AdminUserAnalyticsData,
 } from '../types/admin'
 
 const SORT_FIELDS = {
@@ -448,6 +450,97 @@ builder.queryField('adminCalculations', (t) =>
           generationName: c.generation.name,
         })),
         totalCount,
+      }
+    },
+  })
+)
+
+builder.queryField('adminUserAnalytics', (t) =>
+  t.field({
+    type: AdminUserAnalyticsType,
+    args: {
+      days: t.arg.int({ required: false }),
+    },
+    resolve: async (_root, args, ctx): Promise<AdminUserAnalyticsData> => {
+      assertAdmin(ctx)
+
+      const days = Math.min(Math.max(args.days ?? 14, 1), 90)
+      const since = new Date()
+      since.setDate(since.getDate() - days)
+      since.setHours(0, 0, 0, 0)
+
+      const todayStart = new Date()
+      todayStart.setHours(0, 0, 0, 0)
+
+      const weekAgo = new Date()
+      weekAgo.setDate(weekAgo.getDate() - 7)
+      weekAgo.setHours(0, 0, 0, 0)
+
+      const monthAgo = new Date()
+      monthAgo.setDate(monthAgo.getDate() - 30)
+      monthAgo.setHours(0, 0, 0, 0)
+
+      const [users, calculations, usageLogs, todayUsers, weekUsers, monthUsers] = await Promise.all([
+        ctx.prisma.user.findMany({
+          where: { createdAt: { gte: since } },
+          select: { createdAt: true },
+        }),
+        ctx.prisma.calculation.findMany({
+          where: { createdAt: { gte: since } },
+          select: { createdAt: true },
+        }),
+        ctx.prisma.usageLog.findMany({
+          where: { createdAt: { gte: since } },
+          select: { userId: true, createdAt: true },
+        }),
+        ctx.prisma.user.count({ where: { createdAt: { gte: todayStart } } }),
+        ctx.prisma.user.count({ where: { createdAt: { gte: weekAgo } } }),
+        ctx.prisma.user.count({ where: { createdAt: { gte: monthAgo } } }),
+      ])
+
+      const dateMap = new Map<string, { newUsers: number; calculations: number; activeUserIds: Set<string> }>()
+
+      for (let i = 0; i < days; i++) {
+        const d = new Date()
+        d.setDate(d.getDate() - i)
+        const key = d.toISOString().slice(0, 10)
+        dateMap.set(key, { newUsers: 0, calculations: 0, activeUserIds: new Set() })
+      }
+
+      for (const u of users) {
+        const key = u.createdAt.toISOString().slice(0, 10)
+        const entry = dateMap.get(key)
+        if (entry) entry.newUsers++
+      }
+
+      for (const c of calculations) {
+        const key = c.createdAt.toISOString().slice(0, 10)
+        const entry = dateMap.get(key)
+        if (entry) entry.calculations++
+      }
+
+      for (const l of usageLogs) {
+        const key = l.createdAt.toISOString().slice(0, 10)
+        const entry = dateMap.get(key)
+        if (entry) entry.activeUserIds.add(l.userId)
+      }
+
+      const dailyStats = Array.from(dateMap.entries())
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([date, data]) => ({
+          date,
+          newUsers: data.newUsers,
+          calculations: data.calculations,
+          activeUsers: data.activeUserIds.size,
+        }))
+
+      return {
+        dailyStats,
+        totals: {
+          today: todayUsers,
+          week: weekUsers,
+          month: monthUsers,
+        },
       }
     },
   })

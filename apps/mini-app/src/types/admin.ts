@@ -111,3 +111,23 @@ export interface AdminToggleMonitorSubscriptionResponse {
 export interface AdminSetRegionCrawlPausedResponse {
   adminSetRegionCrawlPaused: AdminMonitorSettings
 }
+
+export interface AdminDailyStat {
+  date: string
+  newUsers: number
+  calculations: number
+  activeUsers: number
+}
+
+export interface AdminUserAnalytics {
+  dailyStats: AdminDailyStat[]
+  totals: {
+    today: number
+    week: number
+    month: number
+  }
+}
+
+export interface AdminUserAnalyticsResponse {
+  adminUserAnalytics: AdminUserAnalytics
+}

@@ -182,6 +182,58 @@ builder.objectType(AdminCalculationType, {
   }),
 })
 
+export interface AdminDailyStatData {
+  date: string
+  newUsers: number
+  calculations: number
+  activeUsers: number
+}
+
+export const AdminDailyStatType = builder.objectRef<AdminDailyStatData>('AdminDailyStat')
+
+builder.objectType(AdminDailyStatType, {
+  fields: (t) => ({
+    date: t.exposeString('date'),
+    newUsers: t.exposeInt('newUsers'),
+    calculations: t.exposeInt('calculations'),
+    activeUsers: t.exposeInt('activeUsers'),
+  }),
+})
+
+export interface AdminUserAnalyticsData {
+  dailyStats: AdminDailyStatData[]
+  totals: {
+    today: number
+    week: number
+    month: number
+  }
+}
+
+export const AdminUserAnalyticsTotalsType = builder.objectRef<AdminUserAnalyticsData['totals']>('AdminUserAnalyticsTotals')
+
+builder.objectType(AdminUserAnalyticsTotalsType, {
+  fields: (t) => ({
+    today: t.exposeInt('today'),
+    week: t.exposeInt('week'),
+    month: t.exposeInt('month'),
+  }),
+})
+
+export const AdminUserAnalyticsType = builder.objectRef<AdminUserAnalyticsData>('AdminUserAnalytics')
+
+builder.objectType(AdminUserAnalyticsType, {
+  fields: (t) => ({
+    dailyStats: t.field({
+      type: [AdminDailyStatType],
+      resolve: (parent) => parent.dailyStats,
+    }),
+    totals: t.field({
+      type: AdminUserAnalyticsTotalsType,
+      resolve: (parent) => parent.totals,
+    }),
+  }),
+})
+
 export interface AdminUsersListData {
   items: AdminUserData[]
   totalCount: number

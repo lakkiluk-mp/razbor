@@ -1,10 +1,24 @@
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Users, Calculator, Banknote, Crown, UserPlus, BarChart3, Radio, Bell } from 'lucide-react'
+import { Users, Calculator, Banknote, Crown, UserPlus, BarChart3, Radio, Bell, TrendingUp } from 'lucide-react'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
 import { formatMoney } from '@/lib/format'
-import type { AdminStatsResponse, AdminMonitorStatsResponse } from '@/types/admin'
+import type { AdminStatsResponse, AdminMonitorStatsResponse, AdminUserAnalyticsResponse } from '@/types/admin'
+
+const PERIOD_OPTIONS = [
+  { label: '7д', value: 7 },
+  { label: '14д', value: 14 },
+  { label: '30д', value: 30 },
+] as const
+
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr + 'T00:00:00')
+  return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })
+}
 
 export function AdminDashboard() {
+  const [analyticsDays, setAnalyticsDays] = useState(14)
+
   const { data, isLoading } = useQuery({
     queryKey: ['adminStats'],
     queryFn: () => fetchGraphQL<AdminStatsResponse>(queries.adminStats),
@@ -17,8 +31,15 @@ export function AdminDashboard() {
     staleTime: 60 * 1000,
   })
 
+  const { data: analyticsData } = useQuery({
+    queryKey: ['adminUserAnalytics', analyticsDays],
+    queryFn: () => fetchGraphQL<AdminUserAnalyticsResponse>(queries.adminUserAnalytics, { days: analyticsDays }),
+    staleTime: 60 * 1000,
+  })
+
   const stats = data?.adminStats
   const monitorStats = monitorData?.adminMonitorStats
+  const analytics = analyticsData?.adminUserAnalytics
 
   const cards = [
     {
@@ -80,25 +101,116 @@ export function AdminDashboard() {
   }
 
   return (
-    <div>
-      <h2 className="text-lg font-bold mb-4">Dashboard</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {cards.map((card) => (
-          <div
-            key={card.label}
-            className="bg-zinc-900 rounded-xl p-4 flex flex-col gap-2"
-          >
-            <div className="flex items-center gap-2">
-              <card.icon className="w-4 h-4 text-amber-500/60" />
-              <span className="text-xs text-zinc-500 leading-tight">
-                {card.label}
-              </span>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-lg font-bold mb-4">Dashboard</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {cards.map((card) => (
+            <div
+              key={card.label}
+              className="bg-zinc-900 rounded-xl p-4 flex flex-col gap-2"
+            >
+              <div className="flex items-center gap-2">
+                <card.icon className="w-4 h-4 text-amber-500/60" />
+                <span className="text-xs text-zinc-500 leading-tight">
+                  {card.label}
+                </span>
+              </div>
+              <p className="text-xl font-bold text-amber-500">
+                {card.format(card.value)}
+              </p>
             </div>
-            <p className="text-xl font-bold text-amber-500">
-              {card.format(card.value)}
-            </p>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-amber-500/60" />
+            <h2 className="text-lg font-bold">Аналитика</h2>
           </div>
-        ))}
+          <div className="flex gap-1">
+            {PERIOD_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setAnalyticsDays(opt.value)}
+                className={`px-3 py-1 text-xs rounded-lg font-medium transition-colors ${
+                  analyticsDays === opt.value
+                    ? 'bg-amber-500 text-zinc-950'
+                    : 'bg-zinc-800 text-zinc-400'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {analytics?.totals && (
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="bg-zinc-900 rounded-xl p-3 text-center">
+              <p className="text-xs text-zinc-500">Сегодня</p>
+              <p className="text-lg font-bold text-amber-500">{analytics.totals.today}</p>
+            </div>
+            <div className="bg-zinc-900 rounded-xl p-3 text-center">
+              <p className="text-xs text-zinc-500">За 7 дней</p>
+              <p className="text-lg font-bold text-amber-500">{analytics.totals.week}</p>
+            </div>
+            <div className="bg-zinc-900 rounded-xl p-3 text-center">
+              <p className="text-xs text-zinc-500">За 30 дней</p>
+              <p className="text-lg font-bold text-amber-500">{analytics.totals.month}</p>
+            </div>
+          </div>
+        )}
+
+        {analytics?.dailyStats && analytics.dailyStats.length > 0 && (
+          <div className="bg-zinc-900 rounded-xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-zinc-800">
+                    <th className="text-left px-3 py-2 text-xs text-zinc-500 font-medium">Дата</th>
+                    <th className="text-right px-3 py-2 text-xs text-zinc-500 font-medium">Новые</th>
+                    <th className="text-right px-3 py-2 text-xs text-zinc-500 font-medium">Расчёты</th>
+                    <th className="text-right px-3 py-2 text-xs text-zinc-500 font-medium">Активные</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...analytics.dailyStats].reverse().map((day) => {
+                    const isToday = day.date === new Date().toISOString().slice(0, 10)
+                    return (
+                      <tr
+                        key={day.date}
+                        className={`border-b border-zinc-800/50 last:border-0 ${isToday ? 'bg-amber-500/5' : ''}`}
+                      >
+                        <td className="px-3 py-2 text-zinc-300">
+                          {formatDate(day.date)}
+                          {isToday && <span className="ml-1 text-[10px] text-amber-500">сегодня</span>}
+                        </td>
+                        <td className="text-right px-3 py-2">
+                          <span className={day.newUsers > 0 ? 'text-green-400' : 'text-zinc-600'}>
+                            {day.newUsers > 0 ? `+${day.newUsers}` : '0'}
+                          </span>
+                        </td>
+                        <td className="text-right px-3 py-2">
+                          <span className={day.calculations > 0 ? 'text-blue-400' : 'text-zinc-600'}>
+                            {day.calculations}
+                          </span>
+                        </td>
+                        <td className="text-right px-3 py-2">
+                          <span className={day.activeUsers > 0 ? 'text-amber-400' : 'text-zinc-600'}>
+                            {day.activeUsers}
+                          </span>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

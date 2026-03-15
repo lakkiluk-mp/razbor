@@ -637,6 +637,23 @@ export const queries = {
       }
     }
   `,
+  adminUserAnalytics: `
+    query AdminUserAnalytics($days: Int) {
+      adminUserAnalytics(days: $days) {
+        dailyStats {
+          date
+          newUsers
+          calculations
+          activeUsers
+        }
+        totals {
+          today
+          week
+          month
+        }
+      }
+    }
+  `,
   monitorRegions: `
     query MonitorRegions {
       monitorRegions {
@@ -878,6 +895,11 @@ export const mutations = {
   adminToggleMonitorSubscription: `
     mutation AdminToggleMonitorSubscription($id: ID!) {
       adminToggleMonitorSubscription(id: $id)
+    }
+  `,
+  logAppOpen: `
+    mutation LogAppOpen {
+      logAppOpen
     }
   `,
   adminSetRegionCrawlPaused: `
