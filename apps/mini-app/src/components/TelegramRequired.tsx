@@ -15,7 +15,7 @@ import screenshotBrands from "../assets/Screenshot_20260311_102957.jpg";
 import screenshotConfig from "../assets/Screenshot_20260311_103037.jpg";
 import screenshotEstimation from "../assets/Screenshot_20260311_103044.jpg";
 import screenshotResult from "../assets/Screenshot_20260311_103107.jpg";
-import screenshotMonitorEmpty from "../assets/Screenshot_20260311_103116.jpg";
+import screenshotFeed from "../assets/image.png";
 import screenshotMonitor from "../assets/Screenshot_20260311_103502.jpg";
 
 const BOT_URL = "https://t.me/vrazbore_bot";
@@ -227,11 +227,11 @@ export function TelegramRequired() {
           className="flex flex-col items-center gap-6 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-8"
         >
           <PhoneMockup src={screenshotBrands} alt="Каталог марок и моделей" label="Каталог марок" />
+          <PhoneMockup src={screenshotFeed} alt="Лента авто на разбор" label="Лента объявлений" />
           <PhoneMockup src={screenshotConfig} alt="Выбор конфигурации" label="Конфигурация" />
           <PhoneMockup src={screenshotEstimation} alt="Трафарет повреждений" label="Дефектовка" />
           <PhoneMockup src={screenshotResult} alt="Результат оценки" label="Результат" />
-          <PhoneMockup src={screenshotMonitorEmpty} alt="Мониторинг объявлений" label="Мониторинг" />
-          <PhoneMockup src={screenshotMonitor} alt="Активные подписки" label="Подписки" />
+          <PhoneMockup src={screenshotMonitor} alt="Активные подписки" label="Мониторинг" />
         </motion.div>
       </section>
 
