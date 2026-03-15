@@ -1,4 +1,6 @@
 export const MONITOR_REGIONS = [
+  { name: 'Москва', slug: 'moskva' },
+  { name: 'Санкт-Петербург', slug: 'sankt-peterburg' },
   { name: 'Белгородская область', slug: 'belgorodskaya_oblast' },
   { name: 'Воронежская область', slug: 'voronezhskaya_oblast' },
   { name: 'Курская область', slug: 'kurskaya_oblast' },

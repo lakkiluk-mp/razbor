@@ -186,7 +186,7 @@ export function ListingDetailDrawer({ listing, open, onOpenChange }: ListingDeta
             {hasProfit && listing.profit !== null && (
               <div className="mb-3 text-center">
                 <div className="flex items-center justify-center gap-1.5">
-                  <span className="text-sm text-zinc-400">Маржа разбора</span>
+                  <span className="text-sm text-zinc-400">Прибыль разбора</span>
                   <button
                     type="button"
                     className="text-zinc-500 text-[11px] leading-none border border-zinc-600 rounded-full w-4 h-4 inline-flex items-center justify-center active:opacity-70"
