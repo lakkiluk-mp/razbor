@@ -131,7 +131,8 @@ export function ListingDetailDrawer({ listing, open, onOpenChange }: ListingDeta
 
   const handleShare = () => {
     const tg = window.Telegram?.WebApp
-    const deepLink = `https://t.me/vrazbore_bot?startapp=listing_${listing.id}`
+    const botUsername = import.meta.env.VITE_BOT_USERNAME || 'vrazbore_bot'
+    const deepLink = `https://t.me/${botUsername}?startapp=listing_${listing.id}`
 
     let shareText = `${listing.title} — ${formatMoney(listing.price)}`
     if (hasProfit && listing.profit !== null) {

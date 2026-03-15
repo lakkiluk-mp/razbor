@@ -40,6 +40,17 @@ const queryClient = getQueryClient()
 const isDev = import.meta.env.DEV
 const allowWebAccess = import.meta.env.VITE_ALLOW_WEB_ACCESS === 'true'
 
+;(() => {
+  const sp = window.Telegram?.WebApp?.initDataUnsafe?.start_param
+  if (typeof sp !== 'string' || !sp.startsWith('listing_')) return
+  const listingId = sp.slice(8)
+  try {
+    const key = `deepLinkHandled_${listingId}`
+    if (sessionStorage.getItem(key)) return
+    window.location.hash = `/region-feed?listing=${listingId}`
+  } catch {}
+})()
+
 function useTelegramApp() {
   useEffect(() => {
     const tg = window.Telegram?.WebApp

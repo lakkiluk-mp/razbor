@@ -5,6 +5,9 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  define: {
+    'import.meta.env.VITE_BOT_USERNAME': JSON.stringify(process.env.VITE_BOT_USERNAME || ''),
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
