@@ -36,12 +36,17 @@ export function TabBar() {
               key={tab.key}
               to={tab.to}
               className={cn(
-                'flex flex-col items-center justify-center gap-0.5 min-w-[64px] min-h-[44px] transition-colors',
+                'flex flex-col items-center justify-center gap-0.5 min-w-[64px] min-h-[44px] transition-colors relative',
                 isActive ? 'text-amber-500' : 'text-zinc-500'
               )}
             >
               <tab.icon className="w-6 h-6" strokeWidth={isActive ? 2.2 : 1.8} />
               <span className="text-[10px] leading-tight">{tab.label}</span>
+              {tab.key === 'region' && (
+                <span className="absolute -top-0.5 right-1 bg-amber-500/20 text-amber-500 text-[7px] font-bold px-1 py-px rounded-full leading-none">
+                  beta
+                </span>
+              )}
             </Link>
           )
         })}

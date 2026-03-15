@@ -265,7 +265,10 @@ export function RegionFeedPage() {
   return (
     <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col">
       <header className="px-4 pt-6 pb-3 flex flex-col gap-3">
-        <h1 className="text-2xl font-bold">Авто на разбор</h1>
+        <h1 className="text-2xl font-bold">
+          Авто на разбор
+          <span className="ml-2 align-middle bg-amber-500/20 text-amber-500 text-xs font-semibold px-2 py-0.5 rounded-full">beta</span>
+        </h1>
 
         <div className="relative">
           <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500 pointer-events-none" />
