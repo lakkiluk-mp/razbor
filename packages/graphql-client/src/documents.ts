@@ -694,6 +694,38 @@ export const queries = {
       }
     }
   `,
+  regionListing: `
+    query RegionListing($id: String!) {
+      regionListing(id: $id) {
+        id
+        extId
+        title
+        brand
+        model
+        engineVolume
+        transmission
+        price
+        year
+        url
+        city
+        imageUrl
+        publishedAt
+        sellerType
+        mileage
+        isDamaged
+        isActive
+        generationId
+        configGroups
+        estimateMin
+        estimateMax
+        estimateAvg
+        estimateExact
+        profit
+        profitPercent
+        regionSlug
+      }
+    }
+  `,
   regionBrands: `
     query RegionBrands($regionSlug: String!) {
       regionBrands(regionSlug: $regionSlug)

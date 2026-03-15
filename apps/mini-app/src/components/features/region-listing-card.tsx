@@ -1,30 +1,32 @@
-import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { formatMoney } from '@/lib/format'
 import { DAMAGED_TITLE_RE } from '@razbor/shared'
 
+interface RegionListingItem {
+  id: string
+  title: string
+  brand: string
+  model: string
+  price: number
+  year: number | null
+  city: string
+  url: string
+  mileage: number | null
+  publishedAt: string
+  sellerType: string
+  isDamaged: boolean
+  isActive: boolean
+  generationId: string | null
+  configGroups: string | null
+  estimateAvg: number | null
+  estimateExact: boolean
+  profit: number | null
+  profitPercent: number | null
+}
+
 interface RegionListingCardProps {
-  listing: {
-    id: string
-    title: string
-    brand: string
-    model: string
-    price: number
-    year: number | null
-    city: string
-    url: string
-    mileage: number | null
-    publishedAt: string
-    sellerType: string
-    isDamaged: boolean
-    isActive: boolean
-    generationId: string | null
-    configGroups: string | null
-    estimateAvg: number | null
-    estimateExact: boolean
-    profit: number | null
-    profitPercent: number | null
-  }
+  listing: RegionListingItem
+  onSelect?: () => void
 }
 
 function getBadgeClass(profitPercent: number, isDamaged: boolean): string {
@@ -79,37 +81,7 @@ function formatMileage(km: number): string {
   return km.toLocaleString('ru-RU') + ' км'
 }
 
-function buildEstimationPath(
-  generationId: string,
-  configGroups: string | null,
-): string {
-  let path = `/estimation/${generationId}`
-  if (!configGroups) return path
-
-  const params = new URLSearchParams()
-  const firstCombo = configGroups.split(',')[0]
-  if (!firstCombo) return path
-  const segments = firstCombo.split('|').map((s) => s.trim())
-
-  for (const segment of segments) {
-    if (segment.startsWith('engine:')) {
-      params.set('engine', segment)
-    } else if (segment.startsWith('transmission:')) {
-      params.set('transmission', segment)
-    } else if (segment.startsWith('drivetrain:')) {
-      params.set('drivetrain', segment)
-    }
-  }
-
-  const qs = params.toString()
-  if (qs) path += `?${qs}`
-
-  return path
-}
-
-export function RegionListingCard({ listing }: RegionListingCardProps) {
-  const navigate = useNavigate()
-
+export function RegionListingCard({ listing, onSelect }: RegionListingCardProps) {
   const {
     title,
     price,
@@ -118,8 +90,6 @@ export function RegionListingCard({ listing }: RegionListingCardProps) {
     mileage,
     publishedAt,
     isDamaged,
-    generationId,
-    configGroups,
     estimateAvg,
     profit,
     profitPercent,
@@ -127,37 +97,18 @@ export function RegionListingCard({ listing }: RegionListingCardProps) {
 
   const damaged = isDamaged || DAMAGED_TITLE_RE.test(title)
   const hasEstimate = estimateAvg !== null
-  const hasCta = hasEstimate && generationId
   const showBadge = profitPercent !== null
 
-  const handleExternalLink = () => {
+  const handleCardClick = () => {
+    if (onSelect) {
+      onSelect()
+      return
+    }
     const tg = window.Telegram?.WebApp
     if (tg?.openLink) {
       tg.openLink(url)
     } else {
       window.open(url, '_blank')
-    }
-  }
-
-  const handleCta = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (generationId) {
-      navigate(buildEstimationPath(generationId, configGroups))
-    }
-  }
-
-  const handleInfoTap = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    const tg = window.Telegram?.WebApp
-    if (tg?.showPopup) {
-      tg.showPopup({
-        message: 'Маржа разбора — расчётная прибыль при условии, что все кузовные элементы и силовые агрегаты целые.\n\nЕсли есть повреждения — нажмите «Подробный расчёт» для точной оценки с учётом дефектов.',
-        buttons: [{ type: 'ok' }],
-      })
-    } else {
-      alert(
-        'Маржа разбора — расчётная прибыль при условии, что все кузовные элементы и силовые агрегаты целые.\n\nЕсли есть повреждения — нажмите «Подробный расчёт» для точной оценки с учётом дефектов.',
-      )
     }
   }
 
@@ -170,7 +121,7 @@ export function RegionListingCard({ listing }: RegionListingCardProps) {
     >
       <div
         className="cursor-pointer active:opacity-80"
-        onClick={handleExternalLink}
+        onClick={handleCardClick}
       >
         <div className="flex justify-between gap-2">
           <span className="text-[13px] font-medium text-zinc-100 leading-tight line-clamp-2 min-w-0">
@@ -182,15 +133,8 @@ export function RegionListingCard({ listing }: RegionListingCardProps) {
         </div>
 
         <div className="flex justify-between items-baseline gap-2 mt-0.5">
-          <span className="text-sm text-zinc-400 flex items-center gap-1">
+          <span className="text-sm text-zinc-400">
             Прибыль разбора:
-            <button
-              type="button"
-              className="relative text-zinc-500 text-[11px] leading-none border border-zinc-600 rounded-full w-4 h-4 inline-flex items-center justify-center active:opacity-70 after:content-[''] after:absolute after:-inset-3"
-              onClick={handleInfoTap}
-            >
-              ?
-            </button>
           </span>
           {hasEstimate && profit !== null ? (
             <span
@@ -236,18 +180,6 @@ export function RegionListingCard({ listing }: RegionListingCardProps) {
         </div>
       </div>
 
-      {hasCta && (
-        <div className="mt-1 flex justify-end">
-          <button
-            className="text-amber-500 text-xs font-medium active:opacity-70 whitespace-nowrap"
-            onClick={handleCta}
-          >
-            {damaged
-              ? 'Уточнить повреждения → Подробный расчёт'
-              : 'Есть повреждения? Подробный расчёт →'}
-          </button>
-        </div>
-      )}
     </div>
   )
 }

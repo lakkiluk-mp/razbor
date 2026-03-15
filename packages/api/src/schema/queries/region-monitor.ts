@@ -98,6 +98,23 @@ builder.queryField('regionListings', (t) =>
   })
 )
 
+builder.queryField('regionListing', (t) =>
+  t.prismaField({
+    type: 'MonitorListing',
+    nullable: true,
+    args: {
+      id: t.arg.string({ required: true }),
+    },
+    resolve: async (query, _root, args, ctx) => {
+      requireAuth(ctx)
+      return ctx.prisma.monitorListing.findUnique({
+        ...query,
+        where: { id: args.id },
+      })
+    },
+  })
+)
+
 builder.queryField('regionBrands', (t) =>
   t.stringList({
     args: {

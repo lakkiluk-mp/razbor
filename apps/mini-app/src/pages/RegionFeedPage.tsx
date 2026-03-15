@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
+import { useSearchParams } from 'react-router-dom'
 import { MapPin, ChevronDown, Search, AlertCircle } from 'lucide-react'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
 import { cn } from '@/lib/utils'
 import { RegionListingCard } from '@/components/features/region-listing-card'
+import { ListingDetailDrawer } from '@/components/features/listing-detail-drawer'
 import { DAMAGED_TITLE_RE } from '@razbor/shared'
 
 interface MonitorRegion {
@@ -88,6 +90,7 @@ function writeSS(key: string, value: string): void {
 }
 
 export function RegionFeedPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [regionSlug, setRegionSlug] = useState<string>(() => readSS(SS_REGION))
   const [brandFilter, setBrandFilter] = useState<string>(() => readSS(SS_BRAND))
   const [damagedFilter, setDamagedFilter] = useState<DamagedFilter>(
@@ -96,6 +99,8 @@ export function RegionFeedPage() {
   const [sortBy, setSortBy] = useState<SortOption>(
     () => (readSS(SS_SORT) as SortOption) || 'DATE_DESC',
   )
+
+  const [selectedListing, setSelectedListing] = useState<RegionListingItem | null>(null)
 
   const observerRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -171,6 +176,31 @@ export function RegionFeedPage() {
     }
     return unique
   }, [listingsData, damagedFilter])
+
+  const deepLinkHandledRef = useRef(false)
+  useEffect(() => {
+    if (deepLinkHandledRef.current) return
+    const listingId = searchParams.get('listing')
+      || (() => {
+        const sp = window.Telegram?.WebApp?.initDataUnsafe?.start_param
+        if (typeof sp === 'string' && sp.startsWith('listing_')) return sp.slice(8)
+        return null
+      })()
+    if (!listingId) return
+
+    const handledKey = `deepLinkHandled_${listingId}`
+    try { if (sessionStorage.getItem(handledKey)) return } catch {}
+
+    deepLinkHandledRef.current = true
+    try { sessionStorage.setItem(handledKey, '1') } catch {}
+    setSearchParams({}, { replace: true })
+
+    fetchGraphQL<{ regionListing: RegionListingItem | null }>(queries.regionListing, { id: listingId })
+      .then((res) => {
+        if (res.regionListing) setSelectedListing(res.regionListing)
+      })
+      .catch(() => {})
+  }, [searchParams, setSearchParams])
 
   useEffect(() => {
     if (!filteredListings.length || scrollRestoredRef.current) return
@@ -384,7 +414,7 @@ export function RegionFeedPage() {
       ) : (
         <div ref={scrollRef} className="flex-1 overflow-auto px-4 pb-4 flex flex-col gap-2">
           {filteredListings.map((listing) => (
-            <RegionListingCard key={listing.id} listing={listing} />
+            <RegionListingCard key={listing.id} listing={listing} onSelect={() => setSelectedListing(listing)} />
           ))}
 
           {isFetchingNextPage && (
@@ -397,6 +427,12 @@ export function RegionFeedPage() {
           <div ref={observerRef} className="h-10 shrink-0" />
         </div>
       )}
+
+      <ListingDetailDrawer
+        listing={selectedListing}
+        open={!!selectedListing}
+        onOpenChange={(open) => { if (!open) setSelectedListing(null) }}
+      />
     </div>
   )
 }

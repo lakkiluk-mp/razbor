@@ -12,6 +12,21 @@ if (!bot) {
 }
 
 bot?.command('start', (ctx) => {
+  const text = ctx.message?.text ?? ''
+  const payload = text.split(' ').slice(1).join(' ').trim()
+
+  if (payload.startsWith('listing_') && /^[a-zA-Z0-9_-]+$/.test(payload.slice(8))) {
+    const listingId = payload.slice(8)
+    return ctx.reply(
+      'Объявление из ленты «В разборе»\n\nНажмите кнопку ниже, чтобы посмотреть детали.',
+      {
+        ...Markup.inlineKeyboard([
+          [Markup.button.webApp('Открыть объявление', `${MINI_APP_URL}#/region-feed?listing=${listingId}`)],
+        ]),
+      },
+    )
+  }
+
   return ctx.reply(
     'Добро пожаловать в «В разборе»!\n\n' +
       'Оценка авто по запчастям — узнайте стоимость запчастей вашего автомобиля на основе актуальных рыночных данных.\n\n' +
