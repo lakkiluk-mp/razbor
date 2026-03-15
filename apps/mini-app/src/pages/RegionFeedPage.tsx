@@ -110,10 +110,10 @@ export function RegionFeedPage() {
   const regions = regionsData?.monitorRegions ?? []
 
   useEffect(() => {
-    if (regions.length > 0 && (!regionSlug || !regions.find((r) => r.slug === regionSlug))) {
-      const first = regions[0].slug
-      setRegionSlug(first)
-      writeSS(SS_REGION, first)
+    const first = regions[0]
+    if (regions.length > 0 && first && (!regionSlug || !regions.find((r) => r.slug === regionSlug))) {
+      setRegionSlug(first.slug)
+      writeSS(SS_REGION, first.slug)
     }
   }, [regions, regionSlug])
 

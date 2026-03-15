@@ -88,6 +88,7 @@ function buildEstimationPath(
 
   const params = new URLSearchParams()
   const firstCombo = configGroups.split(',')[0]
+  if (!firstCombo) return path
   const segments = firstCombo.split('|').map((s) => s.trim())
 
   for (const segment of segments) {
@@ -117,7 +118,6 @@ export function RegionListingCard({ listing }: RegionListingCardProps) {
     mileage,
     publishedAt,
     isDamaged,
-    isActive,
     generationId,
     configGroups,
     estimateAvg,
@@ -149,10 +149,11 @@ export function RegionListingCard({ listing }: RegionListingCardProps) {
   const handleInfoTap = (e: React.MouseEvent) => {
     e.stopPropagation()
     const tg = window.Telegram?.WebApp
-    if (tg?.showAlert) {
-      tg.showAlert(
-        'Маржа разбора — расчётная прибыль при условии, что все кузовные элементы и силовые агрегаты целые.\n\nЕсли есть повреждения — нажмите «Подробный расчёт» для точной оценки с учётом дефектов.',
-      )
+    if (tg?.showPopup) {
+      tg.showPopup({
+        message: 'Маржа разбора — расчётная прибыль при условии, что все кузовные элементы и силовые агрегаты целые.\n\nЕсли есть повреждения — нажмите «Подробный расчёт» для точной оценки с учётом дефектов.',
+        buttons: [{ type: 'ok' }],
+      })
     } else {
       alert(
         'Маржа разбора — расчётная прибыль при условии, что все кузовные элементы и силовые агрегаты целые.\n\nЕсли есть повреждения — нажмите «Подробный расчёт» для точной оценки с учётом дефектов.',
