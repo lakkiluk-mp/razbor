@@ -1,7 +1,7 @@
 const BOT_URL = 'https://t.me/vrazbore_bot'
 const SUPPORT_BOT_URL = 'https://t.me/vrazbore_support_bot'
 const SITE_URL = 'https://vrazbore.tech'
-const EMAIL = 'mf.postika@gmail.com'
+const EMAIL = 'vrazboreapp@gmail.com'
 
 export function PrivacyPage() {
   return (
