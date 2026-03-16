@@ -33,7 +33,7 @@ test.describe('E2E-3: Subscribe page (active subscription)', () => {
 
     await page.goto('/?web=1#/subscribe')
 
-    await expect(page.getByText(/Осталось:.*20.*из 25/)).toBeVisible()
+    await expect(page.getByText(/Осталось:.*20.*из 60/)).toBeVisible()
     await expect(page.getByText('80%')).toBeVisible()
   })
 

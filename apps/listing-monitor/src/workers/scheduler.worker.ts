@@ -5,8 +5,9 @@ import { redis, redisSub } from '../storage/redis.js'
 import { createLogger } from '../logger/index.js'
 import { config } from '../config.js'
 import { type CrawlJobData } from './crawler.worker.js'
-import { type RegionCrawlJobData } from './region-crawler.worker.js'
+import { type RegionCrawlJobData, type RegionCrawlResult } from './region-crawler.worker.js'
 import { writeMonitorLog, cleanupOldLogs } from '../storage/monitor-log.js'
+import { RegionPrioritizer } from './region-prioritizer.js'
 
 const logger = createLogger('scheduler')
 
@@ -25,6 +26,7 @@ export class MonitorScheduler {
   private regionCyclePromise: Promise<void> | null = null
   private deepCrawlRequested = false
   private lastDeepCrawlDate = ''
+  private regionPrioritizer: RegionPrioritizer
 
   constructor(
     crawlQueue: Queue<CrawlJobData>,
@@ -34,6 +36,7 @@ export class MonitorScheduler {
     this.crawlQueue = crawlQueue
     this.regionCrawlQueue = regionCrawlQueue
     this.matcher = matcher
+    this.regionPrioritizer = new RegionPrioritizer(config.regionCrawl.quickCrawlIntervalMs)
   }
 
   async start(): Promise<void> {
@@ -247,8 +250,9 @@ export class MonitorScheduler {
       }
 
       const cycleStart = Date.now()
+      const orderedSlugs = this.regionPrioritizer.getOrderedRegions()
 
-      for (const region of MONITOR_REGIONS) {
+      for (const slug of orderedSlugs) {
         if (!this.isRunning) break
         if (await this.isRegionCrawlPaused()) break
 
@@ -257,12 +261,13 @@ export class MonitorScheduler {
           break
         }
 
-        const job = await this.regionCrawlQueue.add(`region:${region.slug}`, {
-          regionSlug: region.slug,
+        const job = await this.regionCrawlQueue.add(`region:${slug}`, {
+          regionSlug: slug,
           mode: 'quick' as const,
         })
 
-        await this.waitForRegionJob(job.id!)
+        const result = await this.waitForRegionJob(job.id!)
+        this.applyRegionResult(slug, result)
       }
 
       const elapsed = Date.now() - cycleStart
@@ -275,40 +280,45 @@ export class MonitorScheduler {
   }
 
   private async runInterleavedDeepCrawl(): Promise<void> {
-    logger.info(`Deep crawl started: ${MONITOR_REGIONS.length} regions, interleaved`)
+    const deepOrder = this.regionPrioritizer.getOrderedRegions()
+
+    logger.info(`Deep crawl started: ${deepOrder.length} regions, interleaved`)
     writeMonitorLog({
       type: 'CRAWL',
       level: 'INFO',
-      message: `Deep crawl начат: ${MONITOR_REGIONS.length} регионов с интерливингом`,
-      meta: { regions: MONITOR_REGIONS.length, pages: config.regionCrawl.deepCrawlPages },
+      message: `Deep crawl начат: ${deepOrder.length} регионов с интерливингом`,
+      meta: { regions: deepOrder.length, pages: config.regionCrawl.deepCrawlPages },
     })
 
     const cycleStart = Date.now()
 
-    for (let i = 0; i < MONITOR_REGIONS.length; i++) {
+    for (let i = 0; i < deepOrder.length; i++) {
       if (!this.isRunning) break
       if (await this.isRegionCrawlPaused()) {
         logger.info('Deep crawl paused by admin')
         break
       }
 
-      const region = MONITOR_REGIONS[i]
+      const slug = deepOrder[i]
 
-      const deepJob = await this.regionCrawlQueue.add(`region-deep:${region.slug}`, {
-        regionSlug: region.slug,
+      const deepJob = await this.regionCrawlQueue.add(`region-deep:${slug}`, {
+        regionSlug: slug,
         mode: 'deep' as const,
       })
-      await this.waitForRegionJob(deepJob.id!)
+      const deepResult = await this.waitForRegionJob(deepJob.id!)
+      this.applyRegionResult(slug, deepResult)
 
-      logger.info({ regionSlug: region.slug, progress: `${i + 1}/${MONITOR_REGIONS.length}` }, 'Deep crawl region done, running quick refresh')
+      logger.info({ regionSlug: slug, progress: `${i + 1}/${deepOrder.length}` }, 'Deep crawl region done, running quick refresh')
 
-      for (const r of MONITOR_REGIONS) {
+      const quickOrder = this.regionPrioritizer.getOrderedRegions()
+      for (const qSlug of quickOrder) {
         if (!this.isRunning) break
-        const quickJob = await this.regionCrawlQueue.add(`region-quick:${r.slug}`, {
-          regionSlug: r.slug,
+        const quickJob = await this.regionCrawlQueue.add(`region-quick:${qSlug}`, {
+          regionSlug: qSlug,
           mode: 'quick' as const,
         })
-        await this.waitForRegionJob(quickJob.id!)
+        const quickResult = await this.waitForRegionJob(quickJob.id!)
+        this.applyRegionResult(qSlug, quickResult)
       }
     }
 
@@ -318,25 +328,46 @@ export class MonitorScheduler {
       type: 'CRAWL',
       level: 'INFO',
       message: `Deep crawl завершён за ${elapsedMin} мин`,
-      meta: { regions: MONITOR_REGIONS.length, elapsedMin },
+      meta: { regions: deepOrder.length, elapsedMin },
     })
   }
 
-  private async waitForRegionJob(jobId: string): Promise<void> {
+  private async waitForRegionJob(jobId: string): Promise<RegionCrawlResult | null> {
     const maxWait = 900_000
     const pollInterval = 2000
     const start = Date.now()
 
     while (this.isRunning && Date.now() - start < maxWait) {
       const job = await this.regionCrawlQueue.getJob(jobId)
-      if (!job) return
+      if (!job) return null
+
       const state = await job.getState()
-      if (state === 'completed' || state === 'failed') return
+      if (state === 'completed') {
+        try {
+          const raw = job.returnvalue
+          if (!raw) return null
+          const rv: RegionCrawlResult = typeof raw === 'string' ? JSON.parse(raw) : raw
+          return rv
+        } catch {
+          return null
+        }
+      }
+      if (state === 'failed') return null
+
       await delay(pollInterval)
     }
 
     if (Date.now() - start >= maxWait) {
       logger.warn({ jobId }, 'Timed out waiting for region job')
+    }
+    return null
+  }
+
+  private applyRegionResult(slug: string, result: RegionCrawlResult | null): void {
+    if (result && result.totalCards > 0) {
+      this.regionPrioritizer.recordSuccess(slug, result.newCards)
+    } else {
+      this.regionPrioritizer.recordFailure(slug)
     }
   }
 

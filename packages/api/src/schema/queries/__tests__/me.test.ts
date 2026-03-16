@@ -94,7 +94,7 @@ describe('me', () => {
       plan: 'monthly',
       status: 'active',
       credits: 20,
-      creditsTotal: 25,
+      creditsTotal: 60,
       currentPeriodStart: now,
       currentPeriodEnd: end,
       cancelAtPeriodEnd: false,
@@ -113,7 +113,7 @@ describe('me', () => {
       plan: 'monthly',
       status: 'active',
       credits: 20,
-      creditsTotal: 25,
+      creditsTotal: 60,
       cancelAtPeriodEnd: false,
     })
     expect(result.data?.me.isPremium).toBe(true)
@@ -148,13 +148,13 @@ describe('me', () => {
       isPremium: true,
     })
     prismaMock.calculation.count.mockResolvedValue(0)
-    getRemainingCreditsMock.mockResolvedValue({ trial: 3, subscription: 5, total: 8 })
+    getRemainingCreditsMock.mockResolvedValue({ trial: 10, subscription: 15, total: 25 })
     getActiveSubscriptionMock.mockResolvedValue({
       id: 'sub-p',
       plan: 'weekly',
       status: 'active',
-      credits: 5,
-      creditsTotal: 5,
+      credits: 15,
+      creditsTotal: 15,
       currentPeriodStart: now,
       currentPeriodEnd: end,
       cancelAtPeriodEnd: false,
@@ -203,7 +203,7 @@ describe('me', () => {
       plan: 'weekly',
       status: 'active',
       credits: 3,
-      creditsTotal: 5,
+      creditsTotal: 15,
       currentPeriodStart: now,
       currentPeriodEnd: futureEnd,
       cancelAtPeriodEnd: false,

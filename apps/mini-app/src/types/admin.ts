@@ -117,17 +117,44 @@ export interface AdminDailyStat {
   newUsers: number
   calculations: number
   activeUsers: number
+  calculationsPerUser: number
+  conversionRate: number
 }
 
 export interface AdminUserAnalytics {
   dailyStats: AdminDailyStat[]
   totals: {
-    today: number
-    week: number
-    month: number
+    dau: number
+    wau: number
+    mau: number
+    newToday: number
+    newWeek: number
+    newMonth: number
   }
 }
 
 export interface AdminUserAnalyticsResponse {
   adminUserAnalytics: AdminUserAnalytics
+}
+
+export interface AdminRetentionCohort {
+  cohortDate: string
+  cohortSize: number
+  retainedDay1: number
+  retainedDay7: number
+  retainedDay30: number
+  rateDay1: number
+  rateDay7: number
+  rateDay30: number
+}
+
+export interface AdminRetention {
+  cohorts: AdminRetentionCohort[]
+  averageDay1: number
+  averageDay7: number
+  averageDay30: number
+}
+
+export interface AdminRetentionResponse {
+  adminRetention: AdminRetention
 }

@@ -62,8 +62,8 @@ describe('mySubscription', () => {
       id: 'sub-1',
       plan: 'weekly',
       status: 'active',
-      credits: 5,
-      creditsTotal: 5,
+      credits: 15,
+      creditsTotal: 15,
       currentPeriodStart: now,
       currentPeriodEnd: end,
       cancelAtPeriodEnd: false,
@@ -81,8 +81,8 @@ describe('mySubscription', () => {
       id: 'sub-1',
       plan: 'weekly',
       status: 'active',
-      credits: 5,
-      creditsTotal: 5,
+      credits: 15,
+      creditsTotal: 15,
       cancelAtPeriodEnd: false,
     })
     expect(result.data?.mySubscription.daysRemaining).toBeGreaterThanOrEqual(6)
@@ -112,8 +112,8 @@ describe('mySubscription', () => {
       id: 'sub-2',
       plan: 'monthly',
       status: 'past_due',
-      credits: 20,
-      creditsTotal: 25,
+      credits: 55,
+      creditsTotal: 60,
       currentPeriodStart: now,
       currentPeriodEnd: end,
       cancelAtPeriodEnd: false,
@@ -131,7 +131,7 @@ describe('mySubscription', () => {
       id: 'sub-2',
       plan: 'monthly',
       status: 'past_due',
-      credits: 20,
+      credits: 55,
     })
   })
 
@@ -152,7 +152,7 @@ describe('mySubscription', () => {
       plan: 'weekly',
       status: 'past_due',
       credits: 0,
-      creditsTotal: 5,
+      creditsTotal: 15,
       currentPeriodStart: past,
       currentPeriodEnd: pastEnd,
       cancelAtPeriodEnd: false,
@@ -191,7 +191,7 @@ describe('subscriptionPlans', () => {
       price: 249,
       label: '1 неделя',
       days: 7,
-      credits: 5,
+      credits: 15,
     })
 
     const monthly = result.data?.subscriptionPlans.find((p: { plan: string }) => p.plan === 'monthly')
@@ -200,7 +200,7 @@ describe('subscriptionPlans', () => {
       price: 799,
       label: '1 месяц',
       days: 30,
-      credits: 25,
+      credits: 60,
     })
   })
 

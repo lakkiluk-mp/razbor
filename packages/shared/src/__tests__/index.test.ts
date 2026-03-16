@@ -20,8 +20,8 @@ describe('SUBSCRIPTION_PLANS', () => {
     expect(SUBSCRIPTION_PLANS.weekly.days).toBe(7)
   })
 
-  it('should have weekly plan with 5 credits', () => {
-    expect(SUBSCRIPTION_PLANS.weekly.credits).toBe(5)
+  it('should have weekly plan with 15 credits', () => {
+    expect(SUBSCRIPTION_PLANS.weekly.credits).toBe(15)
   })
 
   it('should have monthly plan with correct price', () => {
@@ -32,8 +32,8 @@ describe('SUBSCRIPTION_PLANS', () => {
     expect(SUBSCRIPTION_PLANS.monthly.days).toBe(30)
   })
 
-  it('should have monthly plan with 25 credits', () => {
-    expect(SUBSCRIPTION_PLANS.monthly.credits).toBe(25)
+  it('should have monthly plan with 60 credits', () => {
+    expect(SUBSCRIPTION_PLANS.monthly.credits).toBe(60)
   })
 
   it('should have labels for both plans', () => {
@@ -53,8 +53,8 @@ describe('SUBSCRIPTION_PLANS', () => {
 })
 
 describe('TRIAL_CREDITS', () => {
-  it('should be 3', () => {
-    expect(TRIAL_CREDITS).toBe(3)
+  it('should be 10', () => {
+    expect(TRIAL_CREDITS).toBe(10)
   })
 })
 

@@ -358,7 +358,7 @@ export function SubscribePage() {
         <ul className="space-y-2">
           <li className="flex items-center gap-2 text-zinc-300">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-            До 25 расчётов в месячной подписке
+            До 60 расчётов в месячной подписке
           </li>
           <li className="flex items-center gap-2 text-zinc-300">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />

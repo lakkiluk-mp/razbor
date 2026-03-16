@@ -72,7 +72,7 @@ test.describe('E2E-6: Profile page', () => {
     })
 
     test('shows subscription credits info', async ({ page }) => {
-      await expect(page.getByText(/Осталось:.*20.*из 25/)).toBeVisible()
+      await expect(page.getByText(/Осталось:.*20.*из 60/)).toBeVisible()
     })
 
     test('premium card navigates to subscribe page', async ({ page }) => {

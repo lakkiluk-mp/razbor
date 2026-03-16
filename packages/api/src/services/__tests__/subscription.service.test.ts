@@ -64,7 +64,7 @@ describe('createSubscription', () => {
     const txMock = {
       subscription: {
         findFirst: vi.fn().mockResolvedValue(null),
-        create: vi.fn().mockResolvedValue({ id: 'sub-new', plan: 'weekly', credits: 5 }),
+        create: vi.fn().mockResolvedValue({ id: 'sub-new', plan: 'weekly', credits: 15 }),
       },
       user: { update: vi.fn().mockResolvedValue({}) },
     }
@@ -72,14 +72,14 @@ describe('createSubscription', () => {
 
     const result = await createSubscription(prismaMock, 'user-1', 'weekly')
 
-    expect(result).toEqual({ id: 'sub-new', plan: 'weekly', credits: 5 })
+    expect(result).toEqual({ id: 'sub-new', plan: 'weekly', credits: 15 })
     expect(txMock.subscription.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         userId: 'user-1',
         plan: 'weekly',
         status: 'active',
-        credits: 5,
-        creditsTotal: 5,
+        credits: 15,
+        creditsTotal: 15,
       }),
     })
   })
@@ -88,7 +88,7 @@ describe('createSubscription', () => {
     const txMock = {
       subscription: {
         findFirst: vi.fn().mockResolvedValue(null),
-        create: vi.fn().mockResolvedValue({ id: 'sub-new', plan: 'monthly', credits: 25 }),
+        create: vi.fn().mockResolvedValue({ id: 'sub-new', plan: 'monthly', credits: 60 }),
       },
       user: { update: vi.fn().mockResolvedValue({}) },
     }
@@ -96,11 +96,11 @@ describe('createSubscription', () => {
 
     const result = await createSubscription(prismaMock, 'user-1', 'monthly')
 
-    expect(result).toEqual({ id: 'sub-new', plan: 'monthly', credits: 25 })
+    expect(result).toEqual({ id: 'sub-new', plan: 'monthly', credits: 60 })
     expect(txMock.subscription.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
-        credits: 25,
-        creditsTotal: 25,
+        credits: 60,
+        creditsTotal: 60,
       }),
     })
   })
@@ -181,7 +181,7 @@ describe('switchSubscription', () => {
     const txMock = {
       subscription: {
         findFirst: vi.fn().mockResolvedValue(null),
-        create: vi.fn().mockResolvedValue({ id: 'sub-new', plan: 'weekly', credits: 5 }),
+        create: vi.fn().mockResolvedValue({ id: 'sub-new', plan: 'weekly', credits: 15 }),
         update: vi.fn(),
       },
       user: { update: vi.fn().mockResolvedValue({}) },
@@ -190,15 +190,15 @@ describe('switchSubscription', () => {
 
     const result = await switchSubscription(prismaMock, 'user-1', 'weekly')
 
-    expect(result).toEqual({ id: 'sub-new', plan: 'weekly', credits: 5 })
+    expect(result).toEqual({ id: 'sub-new', plan: 'weekly', credits: 15 })
     expect(txMock.subscription.update).not.toHaveBeenCalled()
     expect(txMock.subscription.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         userId: 'user-1',
         plan: 'weekly',
         status: 'active',
-        credits: 5,
-        creditsTotal: 5,
+        credits: 15,
+        creditsTotal: 15,
       }),
     })
   })
@@ -211,7 +211,7 @@ describe('switchSubscription', () => {
           status: 'active',
           cancelAtPeriodEnd: true,
         }),
-        create: vi.fn().mockResolvedValue({ id: 'sub-new', plan: 'monthly', credits: 25 }),
+        create: vi.fn().mockResolvedValue({ id: 'sub-new', plan: 'monthly', credits: 60 }),
         update: vi.fn().mockResolvedValue({}),
       },
       user: { update: vi.fn().mockResolvedValue({}) },
@@ -220,7 +220,7 @@ describe('switchSubscription', () => {
 
     const result = await switchSubscription(prismaMock, 'user-1', 'monthly')
 
-    expect(result).toEqual({ id: 'sub-new', plan: 'monthly', credits: 25 })
+    expect(result).toEqual({ id: 'sub-new', plan: 'monthly', credits: 60 })
     expect(txMock.subscription.update).toHaveBeenCalledWith({
       where: { id: 'old-sub' },
       data: { status: 'expired', credits: 0 },
@@ -229,7 +229,7 @@ describe('switchSubscription', () => {
       data: expect.objectContaining({
         plan: 'monthly',
         status: 'active',
-        credits: 25,
+        credits: 60,
       }),
     })
   })
@@ -355,7 +355,7 @@ describe('renewSubscription', () => {
       id: 'sub-1',
       status: 'active',
       plan: 'weekly',
-      creditsTotal: 5,
+      creditsTotal: 15,
     })
     prismaMock.subscription.update.mockResolvedValue({})
 
@@ -364,7 +364,7 @@ describe('renewSubscription', () => {
     expect(prismaMock.subscription.update).toHaveBeenCalledWith({
       where: { id: 'sub-1' },
       data: expect.objectContaining({
-        credits: 5,
+        credits: 15,
         retryCount: 0,
         lastRetryAt: null,
         status: 'active',
@@ -378,7 +378,7 @@ describe('renewSubscription', () => {
       id: 'sub-1',
       status: 'past_due',
       plan: 'monthly',
-      creditsTotal: 25,
+      creditsTotal: 60,
     })
     prismaMock.subscription.update.mockResolvedValue({})
 
@@ -387,7 +387,7 @@ describe('renewSubscription', () => {
     expect(prismaMock.subscription.update).toHaveBeenCalledWith({
       where: { id: 'sub-1' },
       data: expect.objectContaining({
-        credits: 25,
+        credits: 60,
         status: 'active',
       }),
     })
@@ -428,7 +428,7 @@ describe('renewSubscription', () => {
       id: 'sub-1',
       status: 'active',
       plan: 'weekly',
-      creditsTotal: 5,
+      creditsTotal: 15,
     })
     prismaMock.subscription.update.mockResolvedValue({})
 
@@ -444,7 +444,7 @@ describe('renewSubscription', () => {
       id: 'sub-1',
       status: 'active',
       plan: 'monthly',
-      creditsTotal: 25,
+      creditsTotal: 60,
     })
     prismaMock.subscription.update.mockResolvedValue({})
 

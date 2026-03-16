@@ -9,6 +9,7 @@ import {
   AdminSubscriptionsListType,
   AdminCalculationsListType,
   AdminUserAnalyticsType,
+  AdminRetentionType,
   type AdminStatsData,
   type AdminUserDetailData,
   type AdminUsersListData,
@@ -16,6 +17,8 @@ import {
   type AdminSubscriptionsListData,
   type AdminCalculationsListData,
   type AdminUserAnalyticsData,
+  type AdminRetentionData,
+  type AdminRetentionCohortData,
 } from '../types/admin'
 
 const SORT_FIELDS = {
@@ -465,8 +468,9 @@ builder.queryField('adminUserAnalytics', (t) =>
       assertAdmin(ctx)
 
       const days = Math.min(Math.max(args.days ?? 14, 1), 90)
+      const fetchDays = Math.max(days, 30)
       const since = new Date()
-      since.setDate(since.getDate() - days)
+      since.setDate(since.getDate() - fetchDays)
       since.setHours(0, 0, 0, 0)
 
       const todayStart = new Date()
@@ -491,20 +495,32 @@ builder.queryField('adminUserAnalytics', (t) =>
         }),
         ctx.prisma.usageLog.findMany({
           where: { createdAt: { gte: since } },
-          select: { userId: true, createdAt: true },
+          select: { userId: true, createdAt: true, action: true },
         }),
         ctx.prisma.user.count({ where: { createdAt: { gte: todayStart } } }),
         ctx.prisma.user.count({ where: { createdAt: { gte: weekAgo } } }),
         ctx.prisma.user.count({ where: { createdAt: { gte: monthAgo } } }),
       ])
 
-      const dateMap = new Map<string, { newUsers: number; calculations: number; activeUserIds: Set<string> }>()
+      const dateMap = new Map<string, {
+        newUsers: number
+        calculations: number
+        activeUserIds: Set<string>
+        appOpenUserIds: Set<string>
+        calculateUserIds: Set<string>
+      }>()
 
       for (let i = 0; i < days; i++) {
         const d = new Date()
         d.setDate(d.getDate() - i)
         const key = d.toISOString().slice(0, 10)
-        dateMap.set(key, { newUsers: 0, calculations: 0, activeUserIds: new Set() })
+        dateMap.set(key, {
+          newUsers: 0,
+          calculations: 0,
+          activeUserIds: new Set(),
+          appOpenUserIds: new Set(),
+          calculateUserIds: new Set(),
+        })
       }
 
       for (const u of users) {
@@ -519,28 +535,183 @@ builder.queryField('adminUserAnalytics', (t) =>
         if (entry) entry.calculations++
       }
 
+      const dauSet = new Set<string>()
+      const wauSet = new Set<string>()
+      const mauSet = new Set<string>()
+
       for (const l of usageLogs) {
         const key = l.createdAt.toISOString().slice(0, 10)
         const entry = dateMap.get(key)
-        if (entry) entry.activeUserIds.add(l.userId)
+        if (entry) {
+          entry.activeUserIds.add(l.userId)
+          if (l.action === 'APP_OPEN') entry.appOpenUserIds.add(l.userId)
+          if (l.action === 'CALCULATE') entry.calculateUserIds.add(l.userId)
+        }
+
+        if (l.createdAt >= todayStart) dauSet.add(l.userId)
+        if (l.createdAt >= weekAgo) wauSet.add(l.userId)
+        if (l.createdAt >= monthAgo) mauSet.add(l.userId)
       }
 
       const dailyStats = Array.from(dateMap.entries())
         .sort(([a], [b]) => a.localeCompare(b))
-        .map(([date, data]) => ({
-          date,
-          newUsers: data.newUsers,
-          calculations: data.calculations,
-          activeUsers: data.activeUserIds.size,
-        }))
+        .map(([date, data]) => {
+          const activeUsers = data.activeUserIds.size
+          const calcs = data.calculations
+          const appOpenCount = data.appOpenUserIds.size
+          const calcUserCount = data.calculateUserIds.size
+
+          return {
+            date,
+            newUsers: data.newUsers,
+            calculations: calcs,
+            activeUsers,
+            calculationsPerUser: calcUserCount > 0
+              ? Math.round((calcs / calcUserCount) * 10) / 10
+              : 0,
+            conversionRate: appOpenCount > 0
+              ? Math.round((calcUserCount / appOpenCount) * 1000) / 10
+              : 0,
+          }
+        })
 
       return {
         dailyStats,
         totals: {
-          today: todayUsers,
-          week: weekUsers,
-          month: monthUsers,
+          dau: dauSet.size,
+          wau: wauSet.size,
+          mau: mauSet.size,
+          newToday: todayUsers,
+          newWeek: weekUsers,
+          newMonth: monthUsers,
         },
+      }
+    },
+  })
+)
+
+builder.queryField('adminRetention', (t) =>
+  t.field({
+    type: AdminRetentionType,
+    args: {
+      cohortDays: t.arg.int({ required: false }),
+    },
+    resolve: async (_root, args, ctx): Promise<AdminRetentionData> => {
+      assertAdmin(ctx)
+
+      const cohortDays = Math.min(Math.max(args.cohortDays ?? 30, 1), 60)
+      const since = new Date()
+      since.setDate(since.getDate() - (cohortDays + 30))
+      since.setHours(0, 0, 0, 0)
+
+      const [users, usageLogs] = await Promise.all([
+        ctx.prisma.user.findMany({
+          where: { createdAt: { gte: since } },
+          select: { id: true, createdAt: true },
+        }),
+        ctx.prisma.usageLog.findMany({
+          where: { createdAt: { gte: since } },
+          select: { userId: true, createdAt: true },
+        }),
+      ])
+
+      const userLogDates = new Map<string, Set<string>>()
+      for (const l of usageLogs) {
+        const dates = userLogDates.get(l.userId)
+        const dateKey = l.createdAt.toISOString().slice(0, 10)
+        if (dates) {
+          dates.add(dateKey)
+        } else {
+          userLogDates.set(l.userId, new Set([dateKey]))
+        }
+      }
+
+      const now = new Date()
+      now.setHours(0, 0, 0, 0)
+      const nowTime = now.getTime()
+
+      const cohortMap = new Map<string, string[]>()
+      for (const u of users) {
+        const key = u.createdAt.toISOString().slice(0, 10)
+        const arr = cohortMap.get(key)
+        if (arr) {
+          arr.push(u.id)
+        } else {
+          cohortMap.set(key, [u.id])
+        }
+      }
+
+      const cohorts: AdminRetentionCohortData[] = []
+      let retainedSumDay1 = 0, retainedSumDay7 = 0, retainedSumDay30 = 0
+      let sizeSumDay1 = 0, sizeSumDay7 = 0, sizeSumDay30 = 0
+
+      for (let i = cohortDays - 1; i >= 0; i--) {
+        const d = new Date(nowTime)
+        d.setDate(d.getDate() - i)
+        const cohortDate = d.toISOString().slice(0, 10)
+        const userIds = cohortMap.get(cohortDate) ?? []
+        const cohortSize = userIds.length
+
+        if (cohortSize === 0) {
+          cohorts.push({
+            cohortDate,
+            cohortSize: 0,
+            retainedDay1: 0, retainedDay7: 0, retainedDay30: 0,
+            rateDay1: -1, rateDay7: -1, rateDay30: -1,
+          })
+          continue
+        }
+
+        const daysAgo = i
+        let retainedDay1 = 0, retainedDay7 = 0, retainedDay30 = 0
+
+        const day1Date = new Date(d)
+        day1Date.setDate(day1Date.getDate() + 1)
+        const day1Key = day1Date.toISOString().slice(0, 10)
+
+        const day7Date = new Date(d)
+        day7Date.setDate(day7Date.getDate() + 7)
+        const day7Key = day7Date.toISOString().slice(0, 10)
+
+        const day30Date = new Date(d)
+        day30Date.setDate(day30Date.getDate() + 30)
+        const day30Key = day30Date.toISOString().slice(0, 10)
+
+        for (const userId of userIds) {
+          const dates = userLogDates.get(userId)
+          if (!dates) continue
+          if (dates.has(day1Key)) retainedDay1++
+          if (dates.has(day7Key)) retainedDay7++
+          if (dates.has(day30Key)) retainedDay30++
+        }
+
+        const rateDay1 = daysAgo >= 1
+          ? Math.round((retainedDay1 / cohortSize) * 1000) / 10
+          : -1
+        const rateDay7 = daysAgo >= 7
+          ? Math.round((retainedDay7 / cohortSize) * 1000) / 10
+          : -1
+        const rateDay30 = daysAgo >= 30
+          ? Math.round((retainedDay30 / cohortSize) * 1000) / 10
+          : -1
+
+        if (rateDay1 >= 0) { retainedSumDay1 += retainedDay1; sizeSumDay1 += cohortSize }
+        if (rateDay7 >= 0) { retainedSumDay7 += retainedDay7; sizeSumDay7 += cohortSize }
+        if (rateDay30 >= 0) { retainedSumDay30 += retainedDay30; sizeSumDay30 += cohortSize }
+
+        cohorts.push({
+          cohortDate,
+          cohortSize,
+          retainedDay1, retainedDay7, retainedDay30,
+          rateDay1, rateDay7, rateDay30,
+        })
+      }
+
+      return {
+        cohorts,
+        averageDay1: sizeSumDay1 > 0 ? Math.round((retainedSumDay1 / sizeSumDay1) * 1000) / 10 : 0,
+        averageDay7: sizeSumDay7 > 0 ? Math.round((retainedSumDay7 / sizeSumDay7) * 1000) / 10 : 0,
+        averageDay30: sizeSumDay30 > 0 ? Math.round((retainedSumDay30 / sizeSumDay30) * 1000) / 10 : 0,
       }
     },
   })

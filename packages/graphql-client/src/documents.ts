@@ -645,12 +645,36 @@ export const queries = {
           newUsers
           calculations
           activeUsers
+          calculationsPerUser
+          conversionRate
         }
         totals {
-          today
-          week
-          month
+          dau
+          wau
+          mau
+          newToday
+          newWeek
+          newMonth
         }
+      }
+    }
+  `,
+  adminRetention: `
+    query AdminRetention($cohortDays: Int) {
+      adminRetention(cohortDays: $cohortDays) {
+        cohorts {
+          cohortDate
+          cohortSize
+          retainedDay1
+          retainedDay7
+          retainedDay30
+          rateDay1
+          rateDay7
+          rateDay30
+        }
+        averageDay1
+        averageDay7
+        averageDay30
       }
     }
   `,

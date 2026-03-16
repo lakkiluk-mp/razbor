@@ -46,16 +46,16 @@ describe('usageInfo', () => {
   })
 
   it('should return subscriptionCredits=0 when authenticated but no subscription', async () => {
-    getRemainingCreditsMock.mockResolvedValue({ trial: 3, subscription: 0, total: 3 })
+    getRemainingCreditsMock.mockResolvedValue({ trial: 10, subscription: 0, total: 10 })
     prismaMock.subscription.findFirst.mockResolvedValue(null)
 
     const result = await executeQuery(USAGE_QUERY)
 
     expect(result.errors).toBeUndefined()
     expect(result.data?.usageInfo).toEqual({
-      trialCredits: 3,
+      trialCredits: 10,
       subscriptionCredits: 0,
-      totalCredits: 3,
+      totalCredits: 10,
       hasActiveSubscription: false,
     })
   })
@@ -65,9 +65,9 @@ describe('usageInfo', () => {
 
     expect(result.errors).toBeUndefined()
     expect(result.data?.usageInfo).toEqual({
-      trialCredits: 3,
+      trialCredits: 10,
       subscriptionCredits: 0,
-      totalCredits: 3,
+      totalCredits: 10,
       hasActiveSubscription: false,
     })
     expect(getRemainingCreditsMock).not.toHaveBeenCalled()

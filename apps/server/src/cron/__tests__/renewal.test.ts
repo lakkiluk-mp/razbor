@@ -9,8 +9,8 @@ vi.mock('@razbor/api', () => ({
 
 vi.mock('@razbor/shared', () => ({
   SUBSCRIPTION_PLANS: {
-    weekly: { price: 249, label: '1 неделя', days: 7, credits: 5, graceDays: 1, maxRetries: 2 },
-    monthly: { price: 799, label: '1 месяц', days: 30, credits: 25, graceDays: 3, maxRetries: 3 },
+    weekly: { price: 249, label: '1 неделя', days: 7, credits: 15, graceDays: 1, maxRetries: 2 },
+    monthly: { price: 799, label: '1 месяц', days: 30, credits: 60, graceDays: 3, maxRetries: 3 },
   },
   SUBSCRIPTION_MAX_RETRIES: 3,
   getMonitorSlotLimits: () => ({ trial: 1, premium: 3 }),

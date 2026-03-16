@@ -270,7 +270,7 @@ export function TelegramRequired() {
           <FeatureCard
             icon={Shield}
             title="Бесплатные оценки"
-            description="3 бесплатные оценки"
+            description="10 бесплатных оценок"
             index={3}
           />
         </div>

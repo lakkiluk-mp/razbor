@@ -36,6 +36,6 @@ test.describe('E2E-8: Credits display on profile', () => {
 
     await page.goto('/?web=1#/profile')
     await expect(page.getByRole('heading', { name: 'Premium User' })).toBeVisible()
-    await expect(page.getByText(/Осталось:.*20.*из 25/)).toBeVisible()
+    await expect(page.getByText(/Осталось:.*20.*из 60/)).toBeVisible()
   })
 })

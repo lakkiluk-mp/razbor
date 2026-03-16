@@ -19,7 +19,7 @@ test.describe('E2E-2: Subscribe page (no active subscription)', () => {
 
   test('shows Premium heading and feature list', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Premium подписка' })).toBeVisible()
-    await expect(page.getByText('До 25 расчётов в месяц')).toBeVisible()
+    await expect(page.getByText('До 60 расчётов в месяц')).toBeVisible()
     await expect(page.getByText('Доступ к истории расчётов')).toBeVisible()
     await expect(page.getByText('Подробная детализация запчастей')).toBeVisible()
     await expect(page.getByText('Поддержка всех марок')).toBeVisible()
@@ -46,8 +46,8 @@ test.describe('E2E-2: Subscribe page (no active subscription)', () => {
   })
 
   test('shows plan label with credits', async ({ page }) => {
-    await expect(page.getByText('5 расчётов', { exact: true })).toBeVisible()
-    await expect(page.getByText('25 расчётов', { exact: true })).toBeVisible()
+    await expect(page.getByText('15 расчётов', { exact: true })).toBeVisible()
+    await expect(page.getByText('60 расчётов', { exact: true })).toBeVisible()
   })
 
   test('CTA button navigates to /payment', async ({ page }) => {

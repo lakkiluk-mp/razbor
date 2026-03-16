@@ -187,6 +187,8 @@ export interface AdminDailyStatData {
   newUsers: number
   calculations: number
   activeUsers: number
+  calculationsPerUser: number
+  conversionRate: number
 }
 
 export const AdminDailyStatType = builder.objectRef<AdminDailyStatData>('AdminDailyStat')
@@ -197,15 +199,20 @@ builder.objectType(AdminDailyStatType, {
     newUsers: t.exposeInt('newUsers'),
     calculations: t.exposeInt('calculations'),
     activeUsers: t.exposeInt('activeUsers'),
+    calculationsPerUser: t.exposeFloat('calculationsPerUser'),
+    conversionRate: t.exposeFloat('conversionRate'),
   }),
 })
 
 export interface AdminUserAnalyticsData {
   dailyStats: AdminDailyStatData[]
   totals: {
-    today: number
-    week: number
-    month: number
+    dau: number
+    wau: number
+    mau: number
+    newToday: number
+    newWeek: number
+    newMonth: number
   }
 }
 
@@ -213,9 +220,12 @@ export const AdminUserAnalyticsTotalsType = builder.objectRef<AdminUserAnalytics
 
 builder.objectType(AdminUserAnalyticsTotalsType, {
   fields: (t) => ({
-    today: t.exposeInt('today'),
-    week: t.exposeInt('week'),
-    month: t.exposeInt('month'),
+    dau: t.exposeInt('dau'),
+    wau: t.exposeInt('wau'),
+    mau: t.exposeInt('mau'),
+    newToday: t.exposeInt('newToday'),
+    newWeek: t.exposeInt('newWeek'),
+    newMonth: t.exposeInt('newMonth'),
   }),
 })
 
@@ -372,5 +382,54 @@ builder.objectType(AdminUserDetailType, {
       type: [AdminMonitorSubscriptionItemType],
       resolve: (parent) => parent.monitorSubscriptions,
     }),
+  }),
+})
+
+export interface AdminRetentionCohortData {
+  cohortDate: string
+  cohortSize: number
+  retainedDay1: number
+  retainedDay7: number
+  retainedDay30: number
+  rateDay1: number
+  rateDay7: number
+  rateDay30: number
+}
+
+export const AdminRetentionCohortType =
+  builder.objectRef<AdminRetentionCohortData>('AdminRetentionCohort')
+
+builder.objectType(AdminRetentionCohortType, {
+  fields: (t) => ({
+    cohortDate: t.exposeString('cohortDate'),
+    cohortSize: t.exposeInt('cohortSize'),
+    retainedDay1: t.exposeInt('retainedDay1'),
+    retainedDay7: t.exposeInt('retainedDay7'),
+    retainedDay30: t.exposeInt('retainedDay30'),
+    rateDay1: t.exposeFloat('rateDay1'),
+    rateDay7: t.exposeFloat('rateDay7'),
+    rateDay30: t.exposeFloat('rateDay30'),
+  }),
+})
+
+export interface AdminRetentionData {
+  cohorts: AdminRetentionCohortData[]
+  averageDay1: number
+  averageDay7: number
+  averageDay30: number
+}
+
+export const AdminRetentionType =
+  builder.objectRef<AdminRetentionData>('AdminRetention')
+
+builder.objectType(AdminRetentionType, {
+  fields: (t) => ({
+    cohorts: t.field({
+      type: [AdminRetentionCohortType],
+      resolve: (parent) => parent.cohorts,
+    }),
+    averageDay1: t.exposeFloat('averageDay1'),
+    averageDay7: t.exposeFloat('averageDay7'),
+    averageDay30: t.exposeFloat('averageDay30'),
   }),
 })

@@ -159,6 +159,6 @@ test.describe('E2E-4: Payment page', () => {
 
     await expect(page.getByRole('heading', { name: 'Оплата' })).toBeVisible()
     await expect(page.getByText(/Premium.*1 неделя/)).toBeVisible()
-    await expect(page.getByText(/5 расчётов/)).toBeVisible()
+    await expect(page.getByText(/15 расчётов/)).toBeVisible()
   })
 })

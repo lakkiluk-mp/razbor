@@ -258,7 +258,7 @@ model User {
   lastName   String?
   username   String?
   isPremium    Boolean  @default(false)
-  trialCredits Int      @default(3)
+  trialCredits Int      @default(10)
 
   trialMonitorStartedAt DateTime?
 

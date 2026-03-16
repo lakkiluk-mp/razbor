@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Users, Calculator, Banknote, Crown, UserPlus, BarChart3, Radio, Bell, TrendingUp } from 'lucide-react'
+import { Users, Calculator, Banknote, Crown, UserPlus, BarChart3, Radio, Bell, TrendingUp, RefreshCw } from 'lucide-react'
 import { fetchGraphQL, queries } from '@/lib/graphql-client'
 import { formatMoney } from '@/lib/format'
-import type { AdminStatsResponse, AdminMonitorStatsResponse, AdminUserAnalyticsResponse } from '@/types/admin'
+import type { AdminStatsResponse, AdminMonitorStatsResponse, AdminUserAnalyticsResponse, AdminRetentionResponse } from '@/types/admin'
 
 const PERIOD_OPTIONS = [
   { label: '7д', value: 7 },
@@ -37,9 +37,16 @@ export function AdminDashboard() {
     staleTime: 60 * 1000,
   })
 
+  const { data: retentionData } = useQuery({
+    queryKey: ['adminRetention'],
+    queryFn: () => fetchGraphQL<AdminRetentionResponse>(queries.adminRetention, { cohortDays: 30 }),
+    staleTime: 5 * 60 * 1000,
+  })
+
   const stats = data?.adminStats
   const monitorStats = monitorData?.adminMonitorStats
   const analytics = analyticsData?.adminUserAnalytics
+  const retention = retentionData?.adminRetention
 
   const cards = [
     {
@@ -148,18 +155,44 @@ export function AdminDashboard() {
         </div>
 
         {analytics?.totals && (
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="bg-zinc-900 rounded-xl p-3 text-center">
-              <p className="text-xs text-zinc-500">Сегодня</p>
-              <p className="text-lg font-bold text-amber-500">{analytics.totals.today}</p>
+          <div className="space-y-3 mb-4">
+            <div>
+              <p className="text-xs text-zinc-500 mb-1.5 flex items-center gap-1">
+                <Users className="w-3 h-3" /> Активные пользователи
+              </p>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-zinc-900 rounded-xl p-3 text-center">
+                  <p className="text-[10px] text-zinc-500">DAU</p>
+                  <p className="text-lg font-bold text-amber-500">{analytics.totals.dau}</p>
+                </div>
+                <div className="bg-zinc-900 rounded-xl p-3 text-center">
+                  <p className="text-[10px] text-zinc-500">WAU</p>
+                  <p className="text-lg font-bold text-amber-500">{analytics.totals.wau}</p>
+                </div>
+                <div className="bg-zinc-900 rounded-xl p-3 text-center">
+                  <p className="text-[10px] text-zinc-500">MAU</p>
+                  <p className="text-lg font-bold text-amber-500">{analytics.totals.mau}</p>
+                </div>
+              </div>
             </div>
-            <div className="bg-zinc-900 rounded-xl p-3 text-center">
-              <p className="text-xs text-zinc-500">За 7 дней</p>
-              <p className="text-lg font-bold text-amber-500">{analytics.totals.week}</p>
-            </div>
-            <div className="bg-zinc-900 rounded-xl p-3 text-center">
-              <p className="text-xs text-zinc-500">За 30 дней</p>
-              <p className="text-lg font-bold text-amber-500">{analytics.totals.month}</p>
+            <div>
+              <p className="text-xs text-zinc-500 mb-1.5 flex items-center gap-1">
+                <UserPlus className="w-3 h-3" /> Новые пользователи
+              </p>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-zinc-900 rounded-xl p-3 text-center">
+                  <p className="text-[10px] text-zinc-500">Сегодня</p>
+                  <p className="text-lg font-bold text-green-400">{analytics.totals.newToday}</p>
+                </div>
+                <div className="bg-zinc-900 rounded-xl p-3 text-center">
+                  <p className="text-[10px] text-zinc-500">7 дней</p>
+                  <p className="text-lg font-bold text-green-400">{analytics.totals.newWeek}</p>
+                </div>
+                <div className="bg-zinc-900 rounded-xl p-3 text-center">
+                  <p className="text-[10px] text-zinc-500">30 дней</p>
+                  <p className="text-lg font-bold text-green-400">{analytics.totals.newMonth}</p>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -174,6 +207,8 @@ export function AdminDashboard() {
                     <th className="text-right px-3 py-2 text-xs text-zinc-500 font-medium">Новые</th>
                     <th className="text-right px-3 py-2 text-xs text-zinc-500 font-medium">Расчёты</th>
                     <th className="text-right px-3 py-2 text-xs text-zinc-500 font-medium">Активные</th>
+                    <th className="text-right px-3 py-2 text-xs text-zinc-500 font-medium">Расч/юзер</th>
+                    <th className="text-right px-3 py-2 text-xs text-zinc-500 font-medium">Конверсия</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -203,6 +238,16 @@ export function AdminDashboard() {
                             {day.activeUsers}
                           </span>
                         </td>
+                        <td className="text-right px-3 py-2">
+                          <span className={day.calculationsPerUser > 0 ? 'text-purple-400' : 'text-zinc-600'}>
+                            {day.calculationsPerUser.toFixed(1)}
+                          </span>
+                        </td>
+                        <td className="text-right px-3 py-2">
+                          <span className={day.conversionRate > 0 ? 'text-cyan-400' : 'text-zinc-600'}>
+                            {day.conversionRate.toFixed(1)}%
+                          </span>
+                        </td>
                       </tr>
                     )
                   })}
@@ -212,6 +257,83 @@ export function AdminDashboard() {
           </div>
         )}
       </div>
+
+      {retention && (
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <RefreshCw className="w-5 h-5 text-amber-500/60" />
+            <h2 className="text-lg font-bold">Retention</h2>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="bg-zinc-900 rounded-xl p-3 text-center">
+              <p className="text-[10px] text-zinc-500">Day 1</p>
+              <p className="text-lg font-bold text-amber-500">{retention.averageDay1}%</p>
+            </div>
+            <div className="bg-zinc-900 rounded-xl p-3 text-center">
+              <p className="text-[10px] text-zinc-500">Day 7</p>
+              <p className="text-lg font-bold text-amber-500">{retention.averageDay7}%</p>
+            </div>
+            <div className="bg-zinc-900 rounded-xl p-3 text-center">
+              <p className="text-[10px] text-zinc-500">Day 30</p>
+              <p className="text-lg font-bold text-amber-500">{retention.averageDay30}%</p>
+            </div>
+          </div>
+
+          {retention.cohorts.length > 0 && (
+            <div className="bg-zinc-900 rounded-xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-zinc-800">
+                      <th className="text-left px-3 py-2 text-xs text-zinc-500 font-medium">Дата</th>
+                      <th className="text-right px-3 py-2 text-xs text-zinc-500 font-medium">Размер</th>
+                      <th className="text-right px-3 py-2 text-xs text-zinc-500 font-medium">Day 1</th>
+                      <th className="text-right px-3 py-2 text-xs text-zinc-500 font-medium">Day 7</th>
+                      <th className="text-right px-3 py-2 text-xs text-zinc-500 font-medium">Day 30</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...retention.cohorts].reverse().map((c) => (
+                      <tr key={c.cohortDate} className="border-b border-zinc-800/50 last:border-0">
+                        <td className="px-3 py-2 text-zinc-300">{formatDate(c.cohortDate)}</td>
+                        <td className="text-right px-3 py-2 text-zinc-400">{c.cohortSize}</td>
+                        <td className="text-right px-3 py-2">
+                          {c.rateDay1 < 0 ? (
+                            <span className="text-zinc-600">&mdash;</span>
+                          ) : (
+                            <span className={c.rateDay1 > 0 ? 'text-green-400' : 'text-zinc-600'}>
+                              {c.retainedDay1} ({c.rateDay1}%)
+                            </span>
+                          )}
+                        </td>
+                        <td className="text-right px-3 py-2">
+                          {c.rateDay7 < 0 ? (
+                            <span className="text-zinc-600">&mdash;</span>
+                          ) : (
+                            <span className={c.rateDay7 > 0 ? 'text-green-400' : 'text-zinc-600'}>
+                              {c.retainedDay7} ({c.rateDay7}%)
+                            </span>
+                          )}
+                        </td>
+                        <td className="text-right px-3 py-2">
+                          {c.rateDay30 < 0 ? (
+                            <span className="text-zinc-600">&mdash;</span>
+                          ) : (
+                            <span className={c.rateDay30 > 0 ? 'text-green-400' : 'text-zinc-600'}>
+                              {c.retainedDay30} ({c.rateDay30}%)
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

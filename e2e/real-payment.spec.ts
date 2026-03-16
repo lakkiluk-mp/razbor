@@ -181,8 +181,8 @@ test.describe.serial('Real payment flow (staging, no mocks)', () => {
     expect(sub).toBeTruthy()
     expect(sub!.plan).toBe('weekly')
     expect(sub!.status).toBe('active')
-    expect(sub!.credits).toBe(5)
-    expect(sub!.creditsTotal).toBe(5)
+    expect(sub!.credits).toBe(15)
+    expect(sub!.creditsTotal).toBe(15)
   })
 
   test('2. double purchase blocked — shows management UI', async ({ page }) => {
@@ -246,7 +246,7 @@ test.describe.serial('Real payment flow (staging, no mocks)', () => {
 
     await expect(page.getByRole('heading', { name: 'Dev User' })).toBeVisible({ timeout: 10_000 })
     await expect(page.getByText(/Premium.*1 неделя/)).toBeVisible()
-    await expect(page.getByText(/Осталось:.*\d+.*из 5/)).toBeVisible()
+    await expect(page.getByText(/Осталось:.*\d+.*из 15/)).toBeVisible()
   })
 
   test('7. remove last payment method auto-cancels subscription', async ({ page }) => {
@@ -292,20 +292,20 @@ test.describe.serial('Real payment flow (staging, no mocks)', () => {
     expect(sub).toBeTruthy()
     expect(sub!.plan).toBe('monthly')
     expect(sub!.status).toBe('active')
-    expect(sub!.credits).toBe(25)
-    expect(sub!.creditsTotal).toBe(25)
+    expect(sub!.credits).toBe(60)
+    expect(sub!.creditsTotal).toBe(60)
   })
 
   test('10. subscription credits verified via API', async ({ page }) => {
     const before = await fetchGraphQLStaging<SubResponse>(GQL.mySubscription)
     expect(before.mySubscription?.status).toBe('active')
-    expect(before.mySubscription?.credits).toBe(25)
+    expect(before.mySubscription?.credits).toBe(60)
 
     const me = await fetchGraphQLStaging<{
       me: { totalCredits: number; subscriptionCredits: number }
     }>(GQL.me)
-    expect(me.me.subscriptionCredits).toBe(25)
-    expect(me.me.totalCredits).toBeGreaterThanOrEqual(25)
+    expect(me.me.subscriptionCredits).toBe(60)
+    expect(me.me.totalCredits).toBeGreaterThanOrEqual(60)
   })
 
   test('11. expire subscription via DB — profile shows no subscription', async ({ page }) => {
@@ -411,7 +411,7 @@ test.describe.serial('Real payment flow (staging, no mocks)', () => {
     expect(sub).toBeTruthy()
     expect(sub!.plan).toBe('weekly')
     expect(sub!.status).toBe('active')
-    expect(sub!.credits).toBe(5)
+    expect(sub!.credits).toBe(15)
 
     const paymentCount = getYooPaymentCount()
     expect(paymentCount).toBeGreaterThanOrEqual(3)
