@@ -36,6 +36,9 @@ tools/
 !tools/price-updater/src/
 !tools/price-updater/tsconfig.json
 
+e2e/
+docs/
+
 coverage
 .nyc_output
 

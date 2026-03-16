@@ -27,12 +27,10 @@ export async function cacheInvalidate(pattern: string): Promise<void> {
     const redis = getRedis()
     if (!redis) return
     const stream = redis.scanStream({ match: pattern, count: 100 })
-    const toDelete: string[] = []
     for await (const keys of stream) {
-      toDelete.push(...(keys as string[]))
-    }
-    if (toDelete.length > 0) {
-      await redis.del(...toDelete)
+      if ((keys as string[]).length > 0) {
+        await redis.del(...(keys as string[]))
+      }
     }
   } catch {}
 }

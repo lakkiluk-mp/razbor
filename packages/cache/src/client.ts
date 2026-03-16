@@ -28,8 +28,7 @@ function initRedis(): void {
     })
 
     redis.on('close', () => {
-      redis = null
-      initialized = false
+      console.log('[Cache] Redis connection closed, will reconnect automatically')
     })
   } catch {
     redis = null

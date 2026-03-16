@@ -24,7 +24,7 @@ export async function authenticateUser(
   }
 
   try {
-    validate(initDataRaw, BOT_TOKEN, { expiresIn: 86400 })
+    validate(initDataRaw, BOT_TOKEN, { expiresIn: 43200 })
   } catch {
     return null
   }
@@ -44,22 +44,44 @@ export async function authenticateUser(
     return cached.user
   }
 
-  const user = await prisma.user.upsert({
+  let user = await prisma.user.findUnique({
     where: { telegramId: BigInt(tgId) },
-    create: {
-      telegramId: BigInt(tgId),
-      firstName: firstName ?? '',
-      lastName: lastName ?? null,
-      username: username ?? null,
-      isPremium: false,
-    },
-    update: {
-      firstName: firstName ?? '',
-      lastName: lastName ?? null,
-      username: username ?? null,
-    },
-    select: { id: true, telegramId: true, username: true },
+    select: { id: true, telegramId: true, username: true, firstName: true, lastName: true },
   })
+
+  const newFirstName = firstName ?? ''
+  const newLastName = lastName ?? null
+  const newUsername = username ?? null
+
+  if (!user) {
+    try {
+      user = await prisma.user.create({
+        data: {
+          telegramId: BigInt(tgId),
+          firstName: newFirstName,
+          lastName: newLastName,
+          username: newUsername,
+          isPremium: false,
+        },
+        select: { id: true, telegramId: true, username: true, firstName: true, lastName: true },
+      })
+    } catch {
+      user = await prisma.user.findUnique({
+        where: { telegramId: BigInt(tgId) },
+        select: { id: true, telegramId: true, username: true, firstName: true, lastName: true },
+      })
+    }
+  } else if (
+    user.firstName !== newFirstName ||
+    user.lastName !== newLastName ||
+    user.username !== newUsername
+  ) {
+    user = await prisma.user.update({
+      where: { telegramId: BigInt(tgId) },
+      data: { firstName: newFirstName, lastName: newLastName, username: newUsername },
+      select: { id: true, telegramId: true, username: true, firstName: true, lastName: true },
+    })
+  }
 
   userCache.set(cacheKey, { user, expiresAt: now + AUTH_CACHE_TTL })
 

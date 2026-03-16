@@ -10,12 +10,18 @@ import { bot } from './bot/index.js'
 import type { Context } from '@razbor/api'
 
 const isProduction = process.env.NODE_ENV === 'production'
-const allowWebAccess = process.env.ALLOW_WEB_ACCESS === 'true'
 
 let devUserCache: { id: string; telegramId: bigint } | null = null
 
 const recentLogs = new Map<string, number>()
 const LOG_DEDUP_MS = 60_000
+
+setInterval(() => {
+  const now = Date.now()
+  for (const [key, ts] of recentLogs) {
+    if (now - ts > LOG_DEDUP_MS) recentLogs.delete(key)
+  }
+}, LOG_DEDUP_MS).unref()
 
 function useGraphQLLogging(): Plugin {
   return {
@@ -56,7 +62,7 @@ export const yoga = createYoga({
     const initDataRaw = request.headers.get('x-telegram-init-data')
     let user = initDataRaw ? await authenticateUser(initDataRaw, prisma) : null
 
-    if (!user && (!isProduction || allowWebAccess)) {
+    if (!user && !isProduction) {
       if (devUserCache) {
         user = devUserCache
       } else {
@@ -78,7 +84,7 @@ export const yoga = createYoga({
       }
     }
 
-    if (!user && isProduction && !allowWebAccess) {
+    if (!user && isProduction) {
       throw new GraphQLError('Authentication required', {
         extensions: { code: 'UNAUTHENTICATED' },
       })

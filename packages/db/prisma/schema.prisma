@@ -177,7 +177,6 @@ model Part {
   @@index([schematicZoneId])
   @@index([configGroup])
   @@index([isShared])
-  @@index([oemCode])
   @@map("parts")
 }
 
@@ -195,6 +194,7 @@ model ModelPart {
 
   @@unique([generationId, partId])
   @@index([generationId])
+  @@index([generationId, isDefault])
   @@index([partId])
   @@map("model_parts")
 }
@@ -313,6 +313,7 @@ model Subscription {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+  @@index([userId, status])
   @@index([status, currentPeriodEnd])
   @@map("subscriptions")
 }
@@ -368,6 +369,7 @@ model UsageLog {
   createdAt DateTime @default(now())
 
   @@index([userId, createdAt])
+  @@index([createdAt])
   @@index([action])
   @@map("usage_logs")
 }

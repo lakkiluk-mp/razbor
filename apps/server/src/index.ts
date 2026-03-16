@@ -1,5 +1,4 @@
 import { createServer } from 'node:http'
-import { createGzip } from 'node:zlib'
 import { createReadStream, existsSync, mkdirSync, createWriteStream } from 'node:fs'
 import { join, extname } from 'node:path'
 import { randomUUID } from 'node:crypto'
@@ -94,31 +93,7 @@ const server = createServer(async (req, res) => {
   }
 
   if (url.startsWith('/api/graphql')) {
-    const acceptEncoding = req.headers['accept-encoding'] ?? ''
-    const supportsGzip = typeof acceptEncoding === 'string' && acceptEncoding.includes('gzip')
-
-    if (supportsGzip) {
-      const response = await yoga.handleNodeRequest(req)
-      const body = Buffer.from(await response.arrayBuffer())
-
-      const gzipStream = createGzip()
-      const chunks: Buffer[] = []
-
-      gzipStream.on('data', (chunk: Buffer) => chunks.push(chunk))
-      gzipStream.on('end', () => {
-        const compressed = Buffer.concat(chunks)
-        res.writeHead(response.status, {
-          'Content-Type': response.headers.get('content-type') ?? 'application/json',
-          'Content-Encoding': 'gzip',
-          'Content-Length': compressed.length,
-        })
-        res.end(compressed)
-      })
-
-      gzipStream.end(body)
-    } else {
-      yoga(req, res)
-    }
+    yoga(req, res)
     return
   }
 
@@ -261,6 +236,8 @@ server.listen(PORT, async () => {
 })
 
 const shutdown = () => {
+  const forceTimer = setTimeout(() => process.exit(1), 10_000)
+  forceTimer.unref()
   server.close(() => {
     process.exit(0)
   })
