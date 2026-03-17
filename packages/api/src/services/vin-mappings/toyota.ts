@@ -94,6 +94,16 @@ export const toyotaRuMapping: VinBrandMapping = {
         },
       },
     },
+    {
+      modelSlug: 'rav4',
+      engineCodes: {
+        position: 4,
+        mapping: {
+          D: ['engine:2.0-149'],
+          F: ['engine:2.5-199', 'engine:2.5-180'],
+        },
+      },
+    },
   ],
 }
 
@@ -121,6 +131,17 @@ export const toyotaJpMapping: VinBrandMapping = {
         mapping: {
           A: ['engine:1.6-124', 'engine:1.6-122'],
           R: ['engine:1.8-136', 'engine:1.8-140'],
+        },
+      },
+    },
+    {
+      modelSlug: 'rav4',
+      engineCodes: {
+        position: 4,
+        mapping: {
+          D: ['engine:2.0-149'],
+          F: ['engine:2.5-199', 'engine:2.5-180'],
+          R: ['engine:2.0-152', 'engine:2.0-146'],
         },
       },
     },

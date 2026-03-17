@@ -14,6 +14,8 @@ export const AVITO_MODEL_MAP: Record<string, Record<string, string>> = {
     'Vesta Cross': 'vesta',
     'Priora': 'priora',
     'Приора': 'priora',
+    '2114': '2114',
+    '2107': '2107',
   },
   'mercedes-benz': {
     'C-класс': 'c-class',
@@ -45,6 +47,9 @@ export const AVITO_MODEL_MAP: Record<string, Record<string, string>> = {
     'Land Cruiser': 'land-cruiser',
     'Camry': 'camry',
     'Corolla': 'corolla',
+    'RAV4': 'rav4',
+    'RAV 4': 'rav4',
+    'Rav4': 'rav4',
   },
   'volkswagen': {
     'Polo': 'polo',
@@ -98,6 +103,8 @@ export const AVITO_MODEL_MAP: Record<string, Record<string, string>> = {
     'Solaris': 'solaris',
     'Creta': 'creta',
     'Elantra': 'elantra',
+    'Tucson': 'tucson',
+    'ix35': 'tucson',
   },
   'renault': {
     'Duster': 'duster',

@@ -728,7 +728,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 2.4 2AZ-FE (167 л.с.)',
     category: 'engine',
     searchQueries: ['oem:1900028D00', 'двигатель 2.4 2AZ-FE', 'мотор 2AZ-FE', 'двигатель 2AZ'],
-    usedBy: ['toyota-camry'],
+    usedBy: ['toyota-camry', 'toyota-rav4'],
   },
   {
     oemCode: '190000P090',
@@ -742,21 +742,21 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Двигатель 2.5 2AR-FE (181 л.с.)',
     category: 'engine',
     searchQueries: ['oem:190000V010', 'двигатель 2.5 2AR-FE', 'мотор 2AR-FE', 'двигатель 2AR'],
-    usedBy: ['toyota-camry'],
+    usedBy: ['toyota-camry', 'toyota-rav4'],
   },
   {
     oemCode: '190003Y280',
     name: 'Двигатель 2.0 M20A-FKS (150 л.с.)',
     category: 'engine',
     searchQueries: ['oem:190003Y280', 'двигатель 2.0 M20A-FKS', 'мотор M20A', 'двигатель M20A'],
-    usedBy: ['toyota-camry'],
+    usedBy: ['toyota-camry', 'toyota-rav4'],
   },
   {
     oemCode: '19000F0010',
     name: 'Двигатель 2.5 A25A-FKS (200 л.с.)',
     category: 'engine',
     searchQueries: ['oem:19000F0010', 'двигатель 2.5 A25A-FKS', 'мотор A25A', 'двигатель A25A'],
-    usedBy: ['toyota-camry'],
+    usedBy: ['toyota-camry', 'toyota-rav4'],
   },
   {
     oemCode: '190000P440',
@@ -796,7 +796,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
     name: 'Direct Shift-CVT K120',
     category: 'transmission',
     searchQueries: ['oem:3040012760', 'вариатор K120 тойота', 'cvt K120 камри', 'Direct Shift CVT'],
-    usedBy: ['toyota-camry'],
+    usedBy: ['toyota-camry', 'toyota-rav4'],
   },
 
   // ========================================
@@ -988,7 +988,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель G4FD GDI',
       'двигатель 1.6 GDI Gamma',
     ],
-    usedBy: ['kia-rio', 'kia-ceed', 'kia-sportage'],
+    usedBy: ['kia-rio', 'kia-ceed', 'kia-sportage', 'hyundai-tucson'],
   },
   {
     oemCode: 'G4LD',
@@ -1012,7 +1012,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель G4FJ турбо',
       'двигатель 1.6T Gamma',
     ],
-    usedBy: ['kia-ceed', 'kia-sportage'],
+    usedBy: ['kia-ceed', 'kia-sportage', 'hyundai-tucson'],
   },
 
   // ========================================
@@ -1028,7 +1028,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель G4NA',
       'двигатель 2.0 Nu',
     ],
-    usedBy: ['hyundai-creta', 'kia-sportage', 'hyundai-elantra'],
+    usedBy: ['hyundai-creta', 'kia-sportage', 'hyundai-elantra', 'hyundai-tucson'],
   },
 
   // ========================================
@@ -1044,7 +1044,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель G4GC',
       'двигатель 2.0 Beta II',
     ],
-    usedBy: ['kia-ceed', 'hyundai-elantra'],
+    usedBy: ['kia-ceed', 'hyundai-elantra', 'hyundai-tucson'],
   },
 
   // ========================================
@@ -1060,7 +1060,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель G4NL',
       'двигатель 2.0 Nu GDI',
     ],
-    usedBy: ['kia-sportage', 'hyundai-elantra'],
+    usedBy: ['kia-sportage', 'hyundai-elantra', 'hyundai-tucson'],
   },
 
   // ========================================
@@ -1076,7 +1076,7 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель G4KD',
       'двигатель 2.0 Theta II',
     ],
-    usedBy: ['kia-sportage', 'kia-optima'],
+    usedBy: ['kia-sportage', 'kia-optima', 'hyundai-tucson'],
   },
   {
     oemCode: 'G4KE',
@@ -1100,7 +1100,19 @@ export const SHARED_PARTS_REGISTRY: SharedPartDefinition[] = [
       'двигатель G4KJ GDI',
       'двигатель 2.4 GDI Theta II',
     ],
-    usedBy: ['kia-sportage', 'kia-optima'],
+    usedBy: ['kia-sportage', 'kia-optima', 'hyundai-tucson'],
+  },
+  {
+    oemCode: 'G4KN',
+    name: 'Двигатель 2.5 G4KN GDI (190 л.с.)',
+    category: 'engine',
+    searchQueries: [
+      'двигатель 2.5 G4KN',
+      'мотор G4KN',
+      'двигатель G4KN GDI',
+      'двигатель 2.5 GDI Theta II',
+    ],
+    usedBy: ['kia-sportage', 'hyundai-tucson'],
   },
 
   // ========================================

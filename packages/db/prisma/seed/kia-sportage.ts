@@ -56,7 +56,7 @@ const modelSpecificParts: (PartData | SharedPartRef)[] = [
   intercooler(P, S, '1.5t-200'),
 
   // NQ5 — G4KN 2.5 GDI
-  engine(P, S, '2.5-190', 'G4KN', 190),
+  engine(P, S, '2.5-190', 'G4KN', 190, ['G4KN']),
   starter(P, S, '2.5-190'),
   alternator(P, S, '2.5-190'),
   fuelPumpHP(P, S, '2.5-190'),

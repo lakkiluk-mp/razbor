@@ -38,5 +38,13 @@ export const ladaMapping: VinBrandMapping = {
       modelSlug: 'priora',
       modelCodes: { position: [3, 6], codes: ['217'] },
     },
+    {
+      modelSlug: '2114',
+      modelCodes: { position: [3, 7], codes: ['2114'] },
+    },
+    {
+      modelSlug: '2107',
+      modelCodes: { position: [3, 7], codes: ['2107'] },
+    },
   ],
 }
