@@ -93,6 +93,11 @@ export const queries = {
               searchUrl
               sampleSize
             }
+            liquidity {
+              score
+              totalListings
+              medianAgeDays
+            }
           }
         }
       }
@@ -144,6 +149,11 @@ export const queries = {
               maxPriceUrl
               searchUrl
               sampleSize
+            }
+            liquidity {
+              score
+              totalListings
+              medianAgeDays
             }
           }
         }
@@ -789,6 +799,11 @@ export const mutations = {
                 maxPriceUrl
                 searchUrl
                 sampleSize
+              }
+              liquidity {
+                score
+                totalListings
+                medianAgeDays
               }
             }
           }

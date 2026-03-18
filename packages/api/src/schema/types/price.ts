@@ -10,6 +10,12 @@ export interface SourcePriceData {
   sampleSize: number
 }
 
+export interface LiquidityData {
+  score: string
+  totalListings: number
+  medianAgeDays: number
+}
+
 export interface PriceData {
   median: number
   min: number
@@ -20,6 +26,7 @@ export interface PriceData {
   maxPriceUrl: string | null
   medianPriceUrl: string | null
   sources: SourcePriceData[]
+  liquidity: LiquidityData | null
 }
 
 export const SourcePriceType = builder.objectRef<SourcePriceData>('SourcePrice')
@@ -33,6 +40,16 @@ builder.objectType(SourcePriceType, {
     maxPriceUrl: t.string({ nullable: true, resolve: (sp) => sp.maxPriceUrl }),
     searchUrl: t.string({ nullable: true, resolve: (sp) => sp.searchUrl }),
     sampleSize: t.exposeInt('sampleSize'),
+  }),
+})
+
+export const LiquidityType = builder.objectRef<LiquidityData>('Liquidity')
+
+builder.objectType(LiquidityType, {
+  fields: (t) => ({
+    score: t.exposeString('score'),
+    totalListings: t.exposeInt('totalListings'),
+    medianAgeDays: t.exposeFloat('medianAgeDays'),
   }),
 })
 
@@ -54,6 +71,11 @@ builder.objectType(PriceType, {
     sources: t.field({
       type: [SourcePriceType],
       resolve: (price) => price.sources,
+    }),
+    liquidity: t.field({
+      type: LiquidityType,
+      nullable: true,
+      resolve: (price) => price.liquidity,
     }),
   }),
 })

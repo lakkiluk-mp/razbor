@@ -1,5 +1,14 @@
 import type { Price } from '@prisma/client'
-import type { PriceData, SourcePriceData } from '../schema/types/price'
+import type { LiquidityData, PriceData, SourcePriceData } from '../schema/types/price'
+
+function extractLiquidity(p: Price): LiquidityData | null {
+  if (!p.liquidityScore || p.liquidityListings == null || p.liquidityAgeDays == null) return null
+  return {
+    score: p.liquidityScore,
+    totalListings: p.liquidityListings,
+    medianAgeDays: p.liquidityAgeDays,
+  }
+}
 
 function buildSourcePriceData(p: Price): SourcePriceData {
   return {
@@ -54,6 +63,7 @@ export function aggregatePrices(prices: Price[]): Map<string, PriceData> {
         maxPriceUrl: p.maxPriceUrl,
         medianPriceUrl: p.medianPriceUrl,
         sources,
+        liquidity: extractLiquidity(p),
       })
       continue
     }
@@ -79,6 +89,10 @@ export function aggregatePrices(prices: Price[]): Map<string, PriceData> {
       ? Math.round(weightedSum / totalSampleSize)
       : 0
 
+    const liquidity = extractLiquidity(bestSource)
+      ?? sourcePrices.map(extractLiquidity).find(l => l !== null)
+      ?? null
+
     result.set(partId, {
       median: weightedMedian,
       min: minPrice,
@@ -89,6 +103,7 @@ export function aggregatePrices(prices: Price[]): Map<string, PriceData> {
       maxPriceUrl: bestSource.maxPriceUrl,
       medianPriceUrl: bestSource.medianPriceUrl,
       sources,
+      liquidity,
     })
   }
 

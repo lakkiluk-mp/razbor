@@ -29,6 +29,11 @@ interface PriceDetailsDrawerProps {
     maxPriceUrl?: string | null
     medianPriceUrl?: string | null
     sources?: PriceSource[] | null
+    liquidity?: {
+      score: string
+      totalListings: number
+      medianAgeDays: number
+    } | null
   } | null
   isSubscribed?: boolean
   open: boolean
@@ -152,6 +157,31 @@ export function PriceDetailsDrawer({
                 <span className="text-sm text-zinc-400">Объявлений</span>
                 <span className="text-sm text-zinc-300">{price.count} шт.</span>
               </div>
+              {price.liquidity && price.liquidity.score !== 'no_data' && (
+                <>
+                  <div className="border-t border-zinc-800 my-2" />
+                  <div className="flex items-center justify-between py-3">
+                    <span className="text-sm text-zinc-400">Ликвидность</span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="text-sm tracking-wider">
+                        {'🔥'.repeat(price.liquidity.score === 'high' ? 3 : price.liquidity.score === 'medium' ? 2 : 1)}
+                      </span>
+                      <span className="text-xs text-zinc-400">
+                        {price.liquidity.score === 'high' ? 'Высокая' :
+                         price.liquidity.score === 'medium' ? 'Средняя' : 'Низкая'}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between py-1">
+                    <span className="text-xs text-zinc-500">Активных за 30 дн</span>
+                    <span className="text-xs text-zinc-400">{price.liquidity.totalListings} шт.</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1">
+                    <span className="text-xs text-zinc-500">Медиана возраста</span>
+                    <span className="text-xs text-zinc-400">{price.liquidity.medianAgeDays} дн.</span>
+                  </div>
+                </>
+              )}
             </div>
           ) : (
             <div className="py-6 space-y-2 text-center">

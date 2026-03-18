@@ -247,14 +247,34 @@ export function ResultPage() {
                                 <div className="flex items-center gap-2">
                                   {item.part.price ? (
                                     <>
-                                      <span
-                                        className={cn(
-                                          'text-sm font-semibold whitespace-nowrap',
-                                          isExcluded ? 'text-red-400/40 line-through' : 'text-zinc-300'
+                                      <div className="flex items-center gap-1.5">
+                                        {item.part.price?.liquidity?.score && item.part.price.liquidity.score !== 'no_data' && (
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation()
+                                              setSelectedPart({
+                                                name: item.part.name,
+                                                oemCode: item.part.oemCode,
+                                                price: item.part.price
+                                                  ? { ...item.part.price, sources: item.part.price.sources ?? null, liquidity: item.part.price.liquidity ?? null }
+                                                  : null,
+                                              })
+                                              setDrawerOpen(true)
+                                            }}
+                                            className="flex-shrink-0 text-xs leading-none tracking-wider"
+                                          >
+                                            {'🔥'.repeat(item.part.price.liquidity.score === 'high' ? 3 : item.part.price.liquidity.score === 'medium' ? 2 : 1)}
+                                          </button>
                                         )}
-                                      >
-                                        {item.price.toLocaleString('ru-RU')} ₽
-                                      </span>
+                                        <span
+                                          className={cn(
+                                            'text-sm font-semibold whitespace-nowrap',
+                                            isExcluded ? 'text-red-400/40 line-through' : 'text-zinc-300'
+                                          )}
+                                        >
+                                          {item.price.toLocaleString('ru-RU')} ₽
+                                        </span>
+                                      </div>
                                       <button
                                         onClick={(e) => {
                                           e.stopPropagation()
@@ -262,7 +282,7 @@ export function ResultPage() {
                                             name: item.part.name,
                                             oemCode: item.part.oemCode,
                                             price: item.part.price
-                                              ? { ...item.part.price, sources: item.part.price.sources ?? null }
+                                              ? { ...item.part.price, sources: item.part.price.sources ?? null, liquidity: item.part.price.liquidity ?? null }
                                               : null,
                                           })
                                           setDrawerOpen(true)

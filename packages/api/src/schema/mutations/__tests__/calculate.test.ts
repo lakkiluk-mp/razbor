@@ -67,7 +67,7 @@ describe('calculate', () => {
             configGroup: null,
             isShared: false,
             oemCode: null,
-            price: { median: 5000, min: 3000, max: 7000, sampleSize: 10 },
+            price: { median: 5000, min: 3000, max: 7000, count: 10, updatedAt: new Date(), minPriceUrl: null, maxPriceUrl: null, medianPriceUrl: null, sources: [], liquidity: null },
           },
           included: true,
           isDamaged: false,

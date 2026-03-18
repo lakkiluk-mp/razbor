@@ -97,7 +97,7 @@ export function RegionFeedPage() {
     () => (readSS(SS_DAMAGED) as DamagedFilter) || 'all',
   )
   const [sortBy, setSortBy] = useState<SortOption>(
-    () => (readSS(SS_SORT) as SortOption) || 'DATE_DESC',
+    () => (readSS(SS_SORT) as SortOption) || 'PROFIT_DESC',
   )
 
   const [selectedListing, setSelectedListing] = useState<RegionListingItem | null>(null)

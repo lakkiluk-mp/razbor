@@ -238,6 +238,10 @@ model Price {
   source       String   @default("avito")
   fetchedAt    DateTime @default(now())
 
+  liquidityScore    String?
+  liquidityListings Int?
+  liquidityAgeDays  Float?
+
   part       Part        @relation(fields: [partId], references: [id], onDelete: Cascade)
   generation Generation? @relation(fields: [generationId], references: [id], onDelete: Cascade)
 

@@ -27,6 +27,11 @@ export interface Price {
   maxPriceUrl?: string | null
   medianPriceUrl?: string | null
   sources?: PriceSource[] | null
+  liquidity?: {
+    score: string
+    totalListings: number
+    medianAgeDays: number
+  } | null
 }
 
 export interface Part {

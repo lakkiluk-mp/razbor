@@ -38,6 +38,11 @@ export interface CalculationPart {
         searchUrl?: string | null
         sampleSize: number
       }> | null
+      liquidity?: {
+        score: string
+        totalListings: number
+        medianAgeDays: number
+      } | null
     } | null
   }
   included: boolean
