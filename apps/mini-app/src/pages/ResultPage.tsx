@@ -57,6 +57,11 @@ export function ResultPage() {
         searchUrl?: string | null
         sampleSize: number
       }> | null
+      liquidity?: {
+        score: string
+        totalListings: number
+        medianAgeDays: number
+      } | null
     } | null
   } | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
