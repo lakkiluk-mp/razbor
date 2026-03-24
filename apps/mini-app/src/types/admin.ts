@@ -1,3 +1,18 @@
+export interface AdminSearchWatch {
+  id: string
+  label: string
+  url: string
+  isActive: boolean
+  notificationsSent: number
+  lastNotifiedAt: string | null
+  lastCrawledAt: string | null
+  createdAt: string
+}
+
+export interface AdminSearchWatchesResponse {
+  adminSearchWatches: AdminSearchWatch[]
+}
+
 export interface AdminStatsResponse {
   adminStats: {
     totalUsers: number

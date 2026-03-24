@@ -272,6 +272,7 @@ model User {
   paymentMethods        PaymentMethod[]
   yooPayments           YooPayment[]
   monitorSubscriptions  MonitorSubscription[]
+  adminSearchWatches    AdminSearchWatch[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -477,6 +478,27 @@ model MonitorListing {
   @@index([regionSlug, profit(sort: Desc)])
   @@index([lastSeenAt])
   @@map("monitor_listings")
+}
+
+model AdminSearchWatch {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  label     String
+  url       String
+  isActive  Boolean  @default(true)
+
+  notificationsSent Int       @default(0)
+  lastNotifiedAt    DateTime?
+  lastCrawledAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([isActive])
+  @@map("admin_search_watches")
 }
 
 model UnmatchedListing {

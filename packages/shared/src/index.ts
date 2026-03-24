@@ -59,6 +59,7 @@ export function getMonitorSlotLimits(): { trial: number; premium: number } {
 }
 
 export const MONITOR_SUBSCRIPTIONS_CHANNEL = 'monitor:subscriptions:changed'
+export const ADMIN_SEARCH_WATCH_CHANNEL = 'admin:search-watch:changed'
 
 export { parseAvitoUrl, type AvitoUrlParseResult } from './avito-url-parser'
 

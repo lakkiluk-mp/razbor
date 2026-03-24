@@ -1,11 +1,13 @@
 import { Queue } from 'bullmq'
-import { MONITOR_SUBSCRIPTIONS_CHANNEL, MONITOR_REGIONS } from '@razbor/shared'
+import { MONITOR_SUBSCRIPTIONS_CHANNEL, ADMIN_SEARCH_WATCH_CHANNEL, MONITOR_REGIONS } from '@razbor/shared'
 import { SubscriptionMatcher, type CrawlGroup } from '../matcher/subscription-matcher.js'
 import { redis, redisSub } from '../storage/redis.js'
+import { prisma } from '../storage/prisma.js'
 import { createLogger } from '../logger/index.js'
 import { config } from '../config.js'
 import { type CrawlJobData } from './crawler.worker.js'
 import { type RegionCrawlJobData, type RegionCrawlResult } from './region-crawler.worker.js'
+import { type AdminSearchWatchJobData } from './admin-search-watch.worker.js'
 import { writeMonitorLog, cleanupOldLogs } from '../storage/monitor-log.js'
 import { RegionPrioritizer } from './region-prioritizer.js'
 
@@ -18,12 +20,14 @@ function delay(ms: number): Promise<void> {
 export class MonitorScheduler {
   private crawlQueue: Queue<CrawlJobData>
   private regionCrawlQueue: Queue<RegionCrawlJobData>
+  private adminWatchQueue: Queue<AdminSearchWatchJobData>
   private matcher: SubscriptionMatcher
   private activeGroupKeys = new Set<string>()
   private lastCleanupAt: number = 0
   private isRunning = false
   private cyclePromise: Promise<void> | null = null
   private regionCyclePromise: Promise<void> | null = null
+  private adminWatchCyclePromise: Promise<void> | null = null
   private deepCrawlRequested = false
   private lastDeepCrawlDate = ''
   private regionPrioritizer: RegionPrioritizer
@@ -31,10 +35,12 @@ export class MonitorScheduler {
   constructor(
     crawlQueue: Queue<CrawlJobData>,
     regionCrawlQueue: Queue<RegionCrawlJobData>,
+    adminWatchQueue: Queue<AdminSearchWatchJobData>,
     matcher: SubscriptionMatcher,
   ) {
     this.crawlQueue = crawlQueue
     this.regionCrawlQueue = regionCrawlQueue
+    this.adminWatchQueue = adminWatchQueue
     this.matcher = matcher
     this.regionPrioritizer = new RegionPrioritizer(config.regionCrawl.quickCrawlIntervalMs)
   }
@@ -54,6 +60,8 @@ export class MonitorScheduler {
       this.regionCyclePromise = this.runRegionCrawlLoop()
     }
 
+    this.adminWatchCyclePromise = this.runAdminSearchWatchLoop()
+
     logger.info({ groups: this.activeGroupKeys.size }, 'Scheduler started')
     writeMonitorLog({
       type: 'SYSTEM',
@@ -66,6 +74,7 @@ export class MonitorScheduler {
   async stop(): Promise<void> {
     this.isRunning = false
     await redisSub.unsubscribe(MONITOR_SUBSCRIPTIONS_CHANNEL)
+    await redisSub.unsubscribe(ADMIN_SEARCH_WATCH_CHANNEL)
 
     if (this.cyclePromise) {
       await this.cyclePromise.catch(() => {})
@@ -73,6 +82,10 @@ export class MonitorScheduler {
 
     if (this.regionCyclePromise) {
       await this.regionCyclePromise.catch(() => {})
+    }
+
+    if (this.adminWatchCyclePromise) {
+      await this.adminWatchCyclePromise.catch(() => {})
     }
 
     this.activeGroupKeys.clear()
@@ -392,20 +405,82 @@ export class MonitorScheduler {
 
   private async subscribeToPubSub(): Promise<void> {
     await redisSub.subscribe(MONITOR_SUBSCRIPTIONS_CHANNEL)
+    await redisSub.subscribe(ADMIN_SEARCH_WATCH_CHANNEL)
 
     redisSub.on('message', async (channel, message) => {
-      if (channel !== MONITOR_SUBSCRIPTIONS_CHANNEL) return
       if (!this.isRunning) return
 
-      logger.info({ message }, 'Subscriptions changed event')
+      if (channel === MONITOR_SUBSCRIPTIONS_CHANNEL) {
+        logger.info({ message }, 'Subscriptions changed event')
+        try {
+          await this.matcher.loadSubscriptions()
+          this.refreshGroups()
+        } catch (err) {
+          logger.error({ err }, 'Failed to sync after subscription change')
+        }
+      }
 
-      try {
-        await this.matcher.loadSubscriptions()
-        this.refreshGroups()
-      } catch (err) {
-        logger.error({ err }, 'Failed to sync after subscription change')
+      if (channel === ADMIN_SEARCH_WATCH_CHANNEL) {
+        logger.info({ message }, 'Admin search watch changed event')
       }
     })
+  }
+
+  private async runAdminSearchWatchLoop(): Promise<void> {
+    while (this.isRunning) {
+      try {
+        const watches = await prisma.adminSearchWatch.findMany({
+          where: { isActive: true },
+          include: { user: { select: { telegramId: true } } },
+        })
+
+        if (watches.length === 0) {
+          await delay(30_000)
+          continue
+        }
+
+        const cycleStart = Date.now()
+
+        for (const watch of watches) {
+          if (!this.isRunning) break
+
+          await this.adminWatchQueue.add(`admin-watch:${watch.id}`, {
+            watchId: watch.id,
+            url: watch.url,
+            label: watch.label,
+            telegramId: String(watch.user.telegramId),
+          })
+
+          await this.waitForAdminWatchJob(watch.id)
+        }
+
+        const elapsed = Date.now() - cycleStart
+        const remaining = config.monitor.crawlIntervalMs - elapsed
+        if (remaining > 0 && this.isRunning) await delay(remaining)
+      } catch (err) {
+        logger.error({ err }, 'Admin search watch loop error')
+        await delay(10_000)
+      }
+    }
+  }
+
+  private async waitForAdminWatchJob(watchId: string): Promise<void> {
+    const maxWait = 120_000
+    const pollInterval = 1000
+    const start = Date.now()
+
+    while (this.isRunning && Date.now() - start < maxWait) {
+      const waiting = await this.adminWatchQueue.getWaitingCount()
+      const active = await this.adminWatchQueue.getActiveCount()
+
+      if (waiting === 0 && active === 0) return
+
+      await delay(pollInterval)
+    }
+
+    if (Date.now() - start >= maxWait) {
+      logger.warn({ watchId }, 'Timed out waiting for admin watch job')
+    }
   }
 
   private buildGroupKey(group: CrawlGroup): string {

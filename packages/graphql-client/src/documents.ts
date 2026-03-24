@@ -688,6 +688,20 @@ export const queries = {
       }
     }
   `,
+  adminSearchWatches: `
+    query AdminSearchWatches {
+      adminSearchWatches {
+        id
+        label
+        url
+        isActive
+        notificationsSent
+        lastNotifiedAt
+        lastCrawledAt
+        createdAt
+      }
+    }
+  `,
   monitorRegions: `
     query MonitorRegions {
       monitorRegions {
@@ -971,6 +985,30 @@ export const mutations = {
   logAppOpen: `
     mutation LogAppOpen {
       logAppOpen
+    }
+  `,
+  createAdminSearchWatch: `
+    mutation CreateAdminSearchWatch($input: CreateAdminSearchWatchInput!) {
+      createAdminSearchWatch(input: $input) {
+        id
+        label
+        url
+        isActive
+        createdAt
+      }
+    }
+  `,
+  deleteAdminSearchWatch: `
+    mutation DeleteAdminSearchWatch($id: ID!) {
+      deleteAdminSearchWatch(id: $id)
+    }
+  `,
+  toggleAdminSearchWatch: `
+    mutation ToggleAdminSearchWatch($id: ID!) {
+      toggleAdminSearchWatch(id: $id) {
+        id
+        isActive
+      }
     }
   `,
   adminSetRegionCrawlPaused: `
