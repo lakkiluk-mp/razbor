@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { Search, Users, Bell, Radio, Layers, ShieldAlert, MapPin } from 'lucide-react'
+import { Search, Users, Bell, Radio, Layers, ShieldAlert, MapPin, Eye, Plus, X, Trash2, EyeOff, ExternalLink } from 'lucide-react'
 import { fetchGraphQL, queries, mutations } from '@/lib/graphql-client'
 import { DataTable } from '@/components/admin/data-table'
 import { formatDate } from '@/lib/format'
@@ -18,7 +18,198 @@ import type {
   AdminToggleMonitorSubscriptionResponse,
   AdminRegionCrawlStatsResponse,
   AdminSetRegionCrawlPausedResponse,
+  AdminSearchWatchesResponse,
 } from '@/types/admin'
+
+function formatAgo(dateStr: string | null): string {
+  if (!dateStr) return 'нет данных'
+  const mins = Math.round((Date.now() - new Date(dateStr).getTime()) / 60000)
+  if (mins < 1) return 'только что'
+  if (mins < 60) return `${mins} мин назад`
+  const hours = Math.round(mins / 60)
+  if (hours < 24) return `${hours} ч назад`
+  return `${Math.round(hours / 24)} д назад`
+}
+
+function AdminSearchWatchPanel() {
+  const queryClient = useQueryClient()
+  const [showForm, setShowForm] = useState(false)
+  const [watchUrl, setWatchUrl] = useState('')
+  const [watchLabel, setWatchLabel] = useState('')
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['adminSearchWatches'],
+    queryFn: () => fetchGraphQL<AdminSearchWatchesResponse>(queries.adminSearchWatches),
+    refetchInterval: 30_000,
+  })
+
+  const createMutation = useMutation({
+    mutationFn: () =>
+      fetchGraphQL(mutations.createAdminSearchWatch, {
+        input: { label: watchLabel, url: watchUrl },
+      }),
+    onSuccess: () => {
+      setWatchUrl('')
+      setWatchLabel('')
+      setShowForm(false)
+      queryClient.invalidateQueries({ queryKey: ['adminSearchWatches'] })
+    },
+    onError: (error: Error) => alert(error.message),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) =>
+      fetchGraphQL(mutations.deleteAdminSearchWatch, { id }),
+    onSettled: () => {
+      setDeleteId(null)
+      queryClient.invalidateQueries({ queryKey: ['adminSearchWatches'] })
+    },
+  })
+
+  const toggleMutation = useMutation({
+    mutationFn: (id: string) =>
+      fetchGraphQL(mutations.toggleAdminSearchWatch, { id }),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminSearchWatches'] })
+    },
+  })
+
+  const watches = data?.adminSearchWatches ?? []
+
+  return (
+    <div className="bg-zinc-900 rounded-xl p-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Eye className="w-4 h-4 text-amber-500" />
+          <span className="text-sm font-semibold text-zinc-200">Search Watch</span>
+          <span className="text-xs text-zinc-500">({watches.length})</span>
+        </div>
+        <button
+          type="button"
+          onClick={() => setShowForm(!showForm)}
+          className="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center"
+        >
+          {showForm ? <X className="w-3.5 h-3.5 text-amber-400" /> : <Plus className="w-3.5 h-3.5 text-amber-400" />}
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input
+            type="text"
+            value={watchLabel}
+            onChange={(e) => setWatchLabel(e.target.value)}
+            placeholder="Название"
+            className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-amber-500/50"
+          />
+          <input
+            type="text"
+            value={watchUrl}
+            onChange={(e) => setWatchUrl(e.target.value)}
+            placeholder="Ссылка Avito поиска"
+            className="flex-[2] bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-amber-500/50"
+          />
+          <button
+            type="button"
+            onClick={() => createMutation.mutate()}
+            disabled={!watchUrl || !watchLabel || createMutation.isPending}
+            className="bg-amber-500 text-zinc-950 rounded-lg px-4 py-2 text-sm font-medium active:scale-95 transition-transform disabled:opacity-50 whitespace-nowrap"
+          >
+            {createMutation.isPending ? '...' : 'Создать'}
+          </button>
+        </div>
+      )}
+
+      {isLoading ? (
+        <div className="flex justify-center py-4">
+          <div className="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : watches.length === 0 ? (
+        <p className="text-xs text-zinc-500 py-1">Нет watch-ей</p>
+      ) : (
+        <div className="space-y-1">
+          {watches.map((w) => {
+            const crawlAge = w.lastCrawledAt
+              ? Math.round((Date.now() - new Date(w.lastCrawledAt).getTime()) / 60000)
+              : null
+            const isStale = crawlAge !== null && crawlAge > 10
+
+            return (
+              <div key={w.id} className="flex items-center justify-between gap-2 py-2 border-b border-zinc-800 last:border-0">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className={cn(
+                      'w-2 h-2 rounded-full shrink-0',
+                      w.isActive ? 'bg-green-500' : 'bg-zinc-600'
+                    )} />
+                    <span className="text-sm text-zinc-200 truncate">{w.label}</span>
+                  </div>
+                  <a
+                    href={w.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-zinc-500 truncate hover:text-amber-400 flex items-center gap-1 ml-4"
+                  >
+                    <ExternalLink className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{w.url.replace(/^https?:\/\/(www\.)?/, '')}</span>
+                  </a>
+                </div>
+
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="text-right">
+                    <p className="text-xs text-zinc-400">{w.notificationsSent} уведомл.</p>
+                    <p className={cn('text-xs', isStale ? 'text-red-400' : 'text-green-400')}>
+                      {formatAgo(w.lastCrawledAt)}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => toggleMutation.mutate(w.id)}
+                      disabled={toggleMutation.isPending}
+                      className="w-7 h-7 flex items-center justify-center bg-zinc-800 rounded-lg text-zinc-400 hover:text-zinc-200 active:scale-95"
+                    >
+                      {w.isActive ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    </button>
+
+                    {deleteId === w.id ? (
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => deleteMutation.mutate(w.id)}
+                          className="text-xs text-red-400 bg-red-500/20 rounded-lg px-2 py-1"
+                        >
+                          Да
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDeleteId(null)}
+                          className="text-xs text-zinc-400 bg-zinc-800 rounded-lg px-2 py-1"
+                        >
+                          Нет
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setDeleteId(w.id)}
+                        className="w-7 h-7 flex items-center justify-center bg-zinc-800 rounded-lg text-red-400 hover:text-red-300 active:scale-95"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
 
 const PAGE_SIZE = 20
 
@@ -497,6 +688,8 @@ export function AdminMonitorPage() {
           </div>
         )}
       </div>
+
+      <AdminSearchWatchPanel />
 
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
