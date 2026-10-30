@@ -4,13 +4,18 @@ Telegram Mini App для авторазборщиков: за минуту по�
 
 > **Витринная версия реального проекта.** Razbor работал в продакшене (январь – март 2026) как Telegram Mini App с платной подпиской через ЮKassa. В этой версии модуль сбора объявлений и цен с внешних площадок заменён демо-источником с тем же интерфейсом (`apps/listing-monitor/src/providers/demo-listings-fetcher.ts`). Остальной код — тот, что работал в проде.
 
-<!-- Добавь скриншоты или GIF в docs/screenshots и раскомментируй:
-<p align="center">
-  <img src="docs/screenshots/estimate.png" width="240" />
-  <img src="docs/screenshots/result.png" width="240" />
-  <img src="docs/screenshots/feed.png" width="240" />
-</p>
--->
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/01-brands.jpg" width="200" alt="Выбор марки" /><br /><sub>Марка или VIN</sub></td>
+    <td align="center"><img src="docs/screenshots/02-config.jpg" width="200" alt="Комплектация" /><br /><sub>Комплектация</sub></td>
+    <td align="center"><img src="docs/screenshots/03-damage.jpg" width="200" alt="Схема повреждений" /><br /><sub>Схема повреждений</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/04-result.jpg" width="200" alt="Результат оценки" /><br /><sub>Стоимость по группам деталей</sub></td>
+    <td align="center"><img src="docs/screenshots/05-feed.jpg" width="200" alt="Лента авто на разбор" /><br /><sub>Лента выгодных авто</sub></td>
+    <td align="center"><img src="docs/screenshots/06-monitor.jpg" width="200" alt="Мониторинг" /><br /><sub>Мониторинг объявлений</sub></td>
+  </tr>
+</table>
 
 ## Что умеет
 
