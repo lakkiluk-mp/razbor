@@ -29,7 +29,6 @@
     "docker:prod:down": "docker compose down",
     "docker:prod:logs": "docker compose logs -f",
     "docker:prod:logs:server": "docker compose logs -f server",
-    "price-update": "pnpm --filter @razbor/price-updater start",
     "dev:server": "pnpm --filter @razbor/server dev",
     "dev:mini-app": "pnpm --filter @razbor/mini-app dev",
     "build:server": "pnpm --filter @razbor/server build",

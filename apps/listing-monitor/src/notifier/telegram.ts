@@ -1,5 +1,5 @@
 import { config } from '../config.js'
-import { type ListingCard } from '../crawler/listing-parser.js'
+import { type ListingCard } from '../crawler/listing-card.js'
 import {
   buildListingMessage,
   buildBatchMessage,
@@ -112,7 +112,7 @@ export async function sendListing(
   const text = buildListingMessage(card, label)
 
   const inlineKeyboard = {
-    inline_keyboard: [[{ text: 'Открыть на Avito', url: card.url }]],
+    inline_keyboard: [[{ text: 'Открыть объявление', url: card.url }]],
   }
 
   if (card.imageUrl) {

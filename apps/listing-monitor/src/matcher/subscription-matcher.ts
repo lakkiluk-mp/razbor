@@ -1,5 +1,5 @@
 import { prisma } from '../storage/prisma.js'
-import { type ListingCard } from '../crawler/listing-parser.js'
+import { type ListingCard } from '../crawler/listing-card.js'
 import { createLogger } from '../logger/index.js'
 
 export interface CrawlGroup {

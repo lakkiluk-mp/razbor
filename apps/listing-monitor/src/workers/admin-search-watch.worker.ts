@@ -1,6 +1,6 @@
 import { Worker, type Job } from 'bullmq'
-import { AvitoListingsFetcher } from '../providers/avito-http.js'
-import { type ListingCard } from '../crawler/listing-parser.js'
+import { DemoListingsFetcher } from '../providers/demo-listings-fetcher.js'
+import { type ListingCard } from '../crawler/listing-card.js'
 import { sendListing } from '../notifier/telegram.js'
 import { redis, createBullConnection } from '../storage/redis.js'
 import { prisma } from '../storage/prisma.js'
@@ -16,10 +16,10 @@ export interface AdminSearchWatchJobData {
   telegramId: string
 }
 
-let fetcher: AvitoListingsFetcher | null = null
+let fetcher: DemoListingsFetcher | null = null
 
-function getFetcher(): AvitoListingsFetcher {
-  if (!fetcher) fetcher = new AvitoListingsFetcher()
+function getFetcher(): DemoListingsFetcher {
+  if (!fetcher) fetcher = new DemoListingsFetcher()
   return fetcher
 }
 

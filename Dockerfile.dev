@@ -15,7 +15,6 @@ COPY packages/shared/package.json ./packages/shared/
 COPY packages/cache/package.json ./packages/cache/
 COPY packages/graphql-client/package.json ./packages/graphql-client/
 COPY packages/hooks/package.json ./packages/hooks/
-COPY tools/price-updater/package.json ./tools/price-updater/
 
 RUN pnpm install --frozen-lockfile
 

@@ -1,3 +1,4 @@
+import type { Prisma } from '@razbor/db'
 import { prisma } from './prisma.js'
 
 export async function cleanupOldLogs(retentionDays: number = 2): Promise<number> {
@@ -29,7 +30,7 @@ export async function writeMonitorLog(params: {
         brandSlug: params.brandSlug,
         modelSlug: params.modelSlug,
         message: params.message,
-        meta: params.meta ?? undefined,
+        meta: params.meta as Prisma.InputJsonValue | undefined,
       },
     })
   } catch (err) {

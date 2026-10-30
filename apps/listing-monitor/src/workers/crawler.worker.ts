@@ -1,12 +1,12 @@
 import { Worker, Queue, type Job } from 'bullmq'
 import {
-  crawlAvitoListings,
+  crawlListings,
   resetFetcher,
   type CrawlParams,
-} from '../crawler/avito-listings.js'
+} from '../crawler/listings.js'
 import { filterNew, markAllSeen } from '../storage/deduplicator.js'
 import { type SubscriptionMatcher } from '../matcher/subscription-matcher.js'
-import { type ListingCard } from '../crawler/listing-parser.js'
+import { type ListingCard } from '../crawler/listing-card.js'
 import { sendAdminAlert } from '../notifier/telegram.js'
 import { createLogger } from '../logger/index.js'
 import { redis, createBullConnection } from '../storage/redis.js'
@@ -45,7 +45,7 @@ export function createCrawlerWorker(
       logger.info(`[${groupKey}] Crawl start (firstRun=${isFirstRun})`)
 
       resetFetcher()
-      const result = await crawlAvitoListings({
+      const result = await crawlListings({
         brandSlug,
         modelSlug,
         city,

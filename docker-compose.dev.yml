@@ -106,9 +106,6 @@ services:
       REDIS_URL: redis://redis:6379
       BOT_TOKEN: ${BOT_TOKEN}
       ADMIN_CHAT_ID: ${ADMIN_CHAT_ID}
-      MOBILE_PROXY_URL: ${MOBILE_PROXY_URL}
-      MOBILE_PROXY_CHANGE_URL: ${MOBILE_PROXY_CHANGE_URL}
-      SPFA_API_KEY: ${SPFA_API_KEY}
       ADMIN_PORT: ${ADMIN_PORT}
       LOG_LEVEL: debug
       NODE_ENV: development

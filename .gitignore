@@ -7,4 +7,10 @@ dist
 .DS_Store
 .turbo
 .env.docker
-tools/price-updater/output/
+playwright-report/
+test-results/
+uploads/
+.playwright-mcp/
+.claude/
+CLAUDE.md
+AGENTS.md

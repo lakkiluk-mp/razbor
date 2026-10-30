@@ -387,7 +387,7 @@ describe('handlePaymentCanceled', () => {
     await vi.advanceTimersByTimeAsync(5000)
     await promise
 
-    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('YooPayment not found for cancel'))
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('YooPayment not found in DB for cancel'))
     expect(prismaMock.yooPayment.updateMany).not.toHaveBeenCalled()
     consoleSpy.mockRestore()
     vi.useRealTimers()

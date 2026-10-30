@@ -1,11 +1,11 @@
 import { Worker, type Job } from 'bullmq'
 import type { PrismaClient } from '@razbor/db'
-import { AvitoListingsFetcher } from '../providers/avito-http.js'
+import { DemoListingsFetcher } from '../providers/demo-listings-fetcher.js'
 import {
   buildRegionUrls,
   buildDamagedRegionUrls,
-} from '../crawler/avito-region-urls.js'
-import { type ListingCard, isFromRegion } from '../crawler/listing-parser.js'
+} from '../crawler/search-urls.js'
+import { type ListingCard, isFromRegion } from '../crawler/listing-card.js'
 import { extractListingData } from '../matcher/title-parser.js'
 import { detectDamaged } from '../matcher/damage-detector.js'
 import { matchToGeneration } from '../matcher/generation-matcher.js'
@@ -58,10 +58,10 @@ interface EnrichedListingCard {
   profit: number | null
 }
 
-let fetcher: AvitoListingsFetcher | null = null
+let fetcher: DemoListingsFetcher | null = null
 
-function getFetcher(): AvitoListingsFetcher {
-  if (!fetcher) fetcher = new AvitoListingsFetcher()
+function getFetcher(): DemoListingsFetcher {
+  if (!fetcher) fetcher = new DemoListingsFetcher()
   return fetcher
 }
 

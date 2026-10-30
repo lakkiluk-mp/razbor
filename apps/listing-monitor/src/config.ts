@@ -15,11 +15,6 @@ export const config = {
     botToken: requireEnv('BOT_TOKEN'),
     adminChatId: process.env.ADMIN_CHAT_ID || '',
   },
-  proxy: {
-    mobileProxyUrl: process.env.MOBILE_PROXY_URL || '',
-    mobileProxyChangeUrl: process.env.MOBILE_PROXY_CHANGE_URL || '',
-    spfaApiKey: process.env.SPFA_API_KEY || '',
-  },
   admin: {
     port: parseInt(process.env.ADMIN_PORT || '3001', 10),
   },

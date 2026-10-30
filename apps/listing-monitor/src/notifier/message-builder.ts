@@ -1,4 +1,4 @@
-import { type ListingCard } from '../crawler/listing-parser.js'
+import { type ListingCard } from '../crawler/listing-card.js'
 
 function escapeHtml(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
